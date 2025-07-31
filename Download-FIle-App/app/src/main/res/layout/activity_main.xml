@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:id="@+id/rootView"
+    android:layout_margin="16dp"
+    tools:context=".MainActivity">
+
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/download_main_tar_gz"
+        android:onClick="downloadmain"
+        tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/download_termux"
+        android:onClick="downloadtermux"
+        tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/download_note"
+        android:onClick="downloadnote"
+        tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+
+    <Button
+        android:id="@+id/button4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/install_termux"
+        android:onClick="installtermux"
+        tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+
+    <Button
+        android:id="@+id/button5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/install_total_commander"
+        android:onClick="installtc"
+        tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+
+    <Button
+        android:id="@+id/button6"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/installnekobox"
+        android:onClick="installnekobox"
+        tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+
+    <Button
+        android:id="@+id/button7"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/install_chrome"
+        android:onClick="installchrome"
+        tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+
+    <Button
+        android:id="@+id/button8"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/install_firefox"
+        android:onClick="installfirefox"
+        tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+
+    <Button
+        android:id="@+id/button9"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/install_gnucash"
+        android:onClick="installgnucash"
+        tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+
+    <Button
+        android:id="@+id/button10"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/install_mpv"
+        android:onClick="installmpv"/>
+
+    <Button
+        android:id="@+id/button11"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/install_aimp"
+        android:onClick="installaimp"/>
+
+    <Button
+        android:id="@+id/button12"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Install Pluma"
+        android:onClick="installpluma"/>
+
+    <Button
+        android:id="@+id/button13"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Install ByeDPI"
+        android:onClick="installbyedpi"/>
+
+    <Button
+        android:id="@+id/button14"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Install LibreTorrent"
+        android:onClick="installlibretorrent"/>
+
+    <Button
+        android:id="@+id/button15"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Install Gesture"
+        android:onClick="installgesture"/>
+
+    <Button
+        android:id="@+id/button16"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Install  Hibernator"
+        android:onClick="installhibernator"/>
+
+    <Button
+        android:id="@+id/button17"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Install V2rayNG"
+        android:onClick="installv2rayng"/>
+
+</LinearLayout>

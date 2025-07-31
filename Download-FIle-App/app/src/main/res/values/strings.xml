@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Download FIle App</string>
+    <string name="download_main_tar_gz">Download Main.tar.gz</string>
+    <string name="download_termux">Download Termux</string>
+    <string name="download_note">Download note</string>
+    <string name="install_termux">Install Termux</string>
+    <string name="install_total_commander">Install Total Commander</string>
+    <string name="installnekobox">Install NekoBox</string>
+    <string name="install_chrome">Install Chrome</string>
+    <string name="install_firefox">Install Firefox</string>
+    <string name="install_gnucash">Install Gnucash</string>
+    <string name="install_mpv">Install MPV</string>
+    <string name="install_aimp">Install aimp</string>
+</resources>
