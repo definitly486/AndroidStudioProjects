@@ -63,21 +63,6 @@ class MainActivity : AppCompatActivity() {
 
 
 
-        val myButton: Button = findViewById(R.id.buttoncanel)
-        myButton.setOnClickListener {
-            // Code to be executed when the button is clicked
-            Toast.makeText(this, "canel", Toast.LENGTH_SHORT).show()
-            val name = "TEST"
-           getfio5()
-
-            // Toast.makeText(it.context, "Button clicked!", Toast.LENGTH_SHORT).show()
-        }
-
-
-        val myButton2: Button = findViewById(R.id.buttonOK)
-        myButton2.setOnClickListener {
-            Toast.makeText(this, "OK", Toast.LENGTH_SHORT).show()
-        }
 
         val myButton3: Button = findViewById(R.id.buttonread)
         myButton3.setOnClickListener {
