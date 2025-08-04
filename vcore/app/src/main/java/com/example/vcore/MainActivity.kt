@@ -1,6 +1,7 @@
 package com.example.vcore
 
 import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
@@ -66,6 +67,7 @@ class MainActivity : AppCompatActivity() {
 
         val myButton3: Button = findViewById(R.id.buttonread)
         myButton3.setOnClickListener {
+            myButton3.setBackgroundColor(Color.GREEN);
             Toast.makeText(this, "READ", Toast.LENGTH_SHORT).show()
             getfio5()
          TimeUnit.SECONDS.sleep(2L)
