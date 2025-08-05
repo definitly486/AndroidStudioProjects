@@ -45,6 +45,6 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    implementation("org.apache.commons:commons-compress:1.26.0") // Use the latest version
+    implementation("org.apache.commons:commons-compress:1.20") // Use the latest version
     implementation("org.tukaani:xz:1.9")
 }

@@ -2,18 +2,15 @@ package com.example.unpack
 
 
 import android.app.DownloadManager
-import android.content.DialogInterface
-import android.content.Intent
-import android.content.pm.PackageManager
+
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.view.View
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
+
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
+
 import androidx.core.net.toUri
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream
 import org.apache.commons.compress.compressors.xz.XZCompressorInputStream
@@ -22,12 +19,12 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 
-import android.provider.Settings
+import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream
 
 
 
-import androidx.core.net.toUri
-import com.google.android.material.snackbar.Snackbar
+import java.io.FileNotFoundException
+
 class MainActivity : AppCompatActivity() {
 
     private val multiplePermissionId = 14
@@ -48,6 +45,40 @@ class MainActivity : AppCompatActivity() {
 
 
     }
+
+
+    fun decompressTarGz(tarGzFile: File, outputDir: File) {
+
+        // Ensure canonical path for security
+        val canonicalOutputDir = outputDir.canonicalFile
+
+        if (!tarGzFile.exists()) throw FileNotFoundException("File not found: ${tarGzFile.path}") as Throwable
+        GzipCompressorInputStream(BufferedInputStream(FileInputStream(tarGzFile))).use { gzIn ->
+            TarArchiveInputStream(gzIn).use { tarIn ->
+                generateSequence { tarIn.nextEntry }.forEach { entry ->
+
+                    val outputFile = File(outputDir, entry.name).canonicalFile
+
+                    // Check if the extracted file stays inside outputDir
+                    // Prevent Zip Slip Vulnerability
+                   // if (!outputFile.toPath().startsWith(canonicalOutputDir.toPath())) {
+                   //     throw SecurityException("Zip Slip vulnerability detected! Malicious entry: ${entry.name}")
+                  //  }
+
+                    if (entry.isDirectory) outputFile.mkdirs()
+                    else {
+                        outputFile.parentFile.mkdirs()
+                        outputFile.outputStream().use { outStream ->
+                            tarIn.copyTo(outStream)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+
 
 
     fun unpackTarXz(tarXzFile: File, outputDirectory: File) {
@@ -80,7 +111,7 @@ class MainActivity : AppCompatActivity() {
 
 
     fun unpackfile(view: View) {
-        val tarXzFile = File("/storage/emulated/0/Download/com.termux.tar.xz")
+        val tarXzFile = File("/storage/emulated/0/Download/main.tar.gz")
         val outputDir = File("/storage/emulated/0/Download/")
         unpackTarXz(tarXzFile, outputDir)
 
@@ -129,7 +160,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun downloadcomtermux(view: View) {
-        downloadfile("https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/shared/com.termux.tar.xz")
+        downloadfile("https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/archive/main.tar.gz")
 
+    }
+    fun unpackmaintargz(view: View) {
+
+        decompressTarGz(File("/storage/emulated/0/Download/main.tar.gz"), File("/storage/emulated/0/Download/"))
     }
 }
