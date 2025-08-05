@@ -172,6 +172,13 @@ class  MainActivity : AppCompatActivity() {
         install("Telegram+X+0.27.5.1747-arm64-v8a.apk")
     }
 
+    fun installmt(@Suppress("UNUSED_PARAMETER")view: View) {
+
+        download("https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/apk/MT2.17.2.apk")
+        install("MT2.17.2.apk")
+    }
+
+
     @SuppressLint("UnspecifiedRegisterReceiverFlag")
     private fun install(url: String) {
 

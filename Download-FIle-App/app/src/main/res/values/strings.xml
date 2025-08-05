@@ -17,4 +17,7 @@
     <string name="install_gesture">Install Gesture</string>
     <string name="install_hibernator">Install Hibernator</string>
     <string name="install_v2rayng">Install V2rayNG</string>
+    <string name="install_terminal">Install Terminal</string>
+    <string name="install_telegram">Install Telegram</string>
+    <string name="install_mt_manager">Install MT Manager</string>
 </resources>

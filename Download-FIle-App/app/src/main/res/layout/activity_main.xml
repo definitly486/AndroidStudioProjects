@@ -151,14 +151,21 @@
         android:id="@+id/button18"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Install Terminal"
+        android:text="@string/install_terminal"
         android:onClick="installterminal"/>
 
     <Button
         android:id="@+id/button19"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Install Telegram"
+        android:text="@string/install_telegram"
         android:onClick="installtelegram"/>
+
+    <Button
+        android:id="@+id/button20"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/install_mt_manager"
+        android:onClick="installmt"/>
 </LinearLayout>
  </ScrollView>
