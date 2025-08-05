@@ -26,6 +26,8 @@ import java.io.File
 class  MainActivity : AppCompatActivity() {
 
     var mydownloaid : Long = 0
+    var apk_http = "https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/apk/"
+
 
     private val multiplePermissionId = 14
     private val multiplePermissionNameList = if (Build.VERSION.SDK_INT >= 33) {
@@ -57,7 +59,7 @@ class  MainActivity : AppCompatActivity() {
 
     fun downloadtermux(@Suppress("UNUSED_PARAMETER")view: View) {
 
-        download("https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/apk/termux-app_v0.119.0-beta.3+apt-android-5-github-debug_arm64-v8a.apk")
+        download(apk_http+"termux-app_v0.119.0-beta.3+apt-android-5-github-debug_arm64-v8a.apk")
 
     }
 
@@ -83,19 +85,19 @@ class  MainActivity : AppCompatActivity() {
 
     fun installtc(@Suppress("UNUSED_PARAMETER")view: View) {
 
-        download("https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/apk/Total_Commander_v.3.60b4d.apk")
+        download(apk_http+"Total_Commander_v.3.60b4d.apk")
         install("Total_Commander_v.3.60b4d.apk")
     }
 
     fun installnekobox(@Suppress("UNUSED_PARAMETER")view: View) {
 
-        download("https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/apk/NekoBox-1.3.8-arm64-v8a.apk")
+        download(apk_http+"NekoBox-1.3.8-arm64-v8a.apk")
         install("NekoBox-1.3.8-arm64-v8a.apk")
     }
 
     fun installfirefox(@Suppress("UNUSED_PARAMETER")view: View) {
 
-        download("https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/apk/Firefox+139.0.4.apk")
+        download(apk_http+"Firefox+139.0.4.apk")
         install("Firefox+139.0.4.apk")
     }
 
@@ -103,90 +105,90 @@ class  MainActivity : AppCompatActivity() {
 
     fun installchrome(@Suppress("UNUSED_PARAMETER")view: View) {
 
-        download("https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/apk/Google+Chrome+106.0.5249.126+Android6.arm.apk")
+        download(apk_http+"Google+Chrome+106.0.5249.126+Android6.arm.apk")
         install("Google+Chrome+106.0.5249.126+Android6.arm.apk")
     }
 
     fun installgnucash(@Suppress("UNUSED_PARAMETER")view: View) {
 
-        download("https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/apk/GnucashAndroid_v2.4.0.apk")
+        download(apk_http+"GnucashAndroid_v2.4.0.apk")
         install("GnucashAndroid_v2.4.0.apk")
     }
 
     fun installmpv(@Suppress("UNUSED_PARAMETER")view: View) {
 
-        download("https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/apk/is.xyz.mpv_41.apk")
+        download(apk_http+"is.xyz.mpv_41.apk")
         install("is.xyz.mpv_41.apk")
     }
 
     fun installaimp(@Suppress("UNUSED_PARAMETER")view: View) {
 
-        download("https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/apk/AIMP_vv3.30.1250.apk")
+        download(apk_http+"AIMP_vv3.30.1250.apk")
         install("AIMP_vv3.30.1250.apk")
     }
 
     fun installpluma(@Suppress("UNUSED_PARAMETER")view: View) {
 
-        download("https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/apk/Pluma_.private_fast.browser_1.80_APKPure.apk")
+        download(apk_http+"Pluma_.private_fast.browser_1.80_APKPure.apk")
         install("Pluma_.private_fast.browser_1.80_APKPure.apk")
     }
 
     fun installbyedpi(@Suppress("UNUSED_PARAMETER")view: View) {
 
-        download("https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/apk/byedpi-1.2.0.apk")
+        download(apk_http+"byedpi-1.2.0.apk")
         install("byedpi-1.2.0.apk")
     }
 
     fun installlibretorrent(@Suppress("UNUSED_PARAMETER")view: View) {
 
-        download("https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/apk/LibreTorrent-3.2-armeabi-v7a.apk")
+        download(apk_http+"LibreTorrent-3.2-armeabi-v7a.apk")
         install("LibreTorrent-3.2-armeabi-v7a.apk")
     }
 
     fun installgesture(@Suppress("UNUSED_PARAMETER")view: View) {
 
-        download("https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/apk/Gesture.apk")
+        download(apk_http+"Gesture.apk")
         install("Gesture.apk")
     }
     fun installhibernator(@Suppress("UNUSED_PARAMETER")view: View) {
 
-        download("https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/apk/Hibernator.apk")
+        download(apk_http+"Hibernator.apk")
         install("Hibernator.apk")
     }
 
     fun installv2rayng(@Suppress("UNUSED_PARAMETER")view: View) {
 
-        download("https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/apk/v2rayNG.apk")
+        download(apk_http+"v2rayNG.apk")
         install("v2rayNG.apk")
     }
 
     fun installterminal(@Suppress("UNUSED_PARAMETER")view: View) {
 
-        download("https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/apk/terminal.apk")
+        download(apk_http+"terminal.apk")
         install("terminal.apk")
     }
 
     fun installtelegram(@Suppress("UNUSED_PARAMETER")view: View) {
 
-        download("https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/apk/Telegram+X+0.27.5.1747-arm64-v8a.apk")
+        download(apk_http+"Telegram+X+0.27.5.1747-arm64-v8a.apk")
         install("Telegram+X+0.27.5.1747-arm64-v8a.apk")
     }
 
     fun installmt(@Suppress("UNUSED_PARAMETER")view: View) {
 
-        download("https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/apk/MT2.17.2.apk")
+        download(apk_http+"MT2.17.2.apk")
         install("MT2.17.2.apk")
     }
 
     fun installwebview(@Suppress("UNUSED_PARAMETER")view: View) {
 
-        download("https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/apk/webview_Arm64.apk")
+        download(apk_http+"webview_Arm64.apk")
         install("webview_Arm64.apk")
     }
 
     fun installwifiadb(@Suppress("UNUSED_PARAMETER")view: View) {
 
-        download("https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/apk/Wireless_ADB_1.3.apk")
+        download(apk_http+"Wireless_ADB_1.3.apk")
         install("Wireless_ADB_1.3.apk")
     }
 
@@ -248,5 +250,5 @@ class  MainActivity : AppCompatActivity() {
         mydownloaid = downloadManager.enqueue(request)
 
     }
-    
+
 }
