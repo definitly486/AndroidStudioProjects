@@ -167,5 +167,12 @@
         android:layout_height="wrap_content"
         android:text="@string/install_mt_manager"
         android:onClick="installmt"/>
+
+    <Button
+        android:id="@+id/button21"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Install Webview"
+        android:onClick="installwebview"/>
 </LinearLayout>
  </ScrollView>
