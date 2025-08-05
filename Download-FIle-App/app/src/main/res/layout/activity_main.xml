@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+<LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -99,42 +103,55 @@
         android:id="@+id/button12"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Install Pluma"
-        android:onClick="installpluma"/>
+        android:text="@string/install_pluma"
+        android:onClick="installpluma"
+        tools:ignore="UsingOnClickInXml" />
 
     <Button
         android:id="@+id/button13"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Install ByeDPI"
-        android:onClick="installbyedpi"/>
+        android:text="@string/install_byedpi"
+        android:onClick="installbyedpi"
+        tools:ignore="UsingOnClickInXml" />
 
     <Button
         android:id="@+id/button14"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Install LibreTorrent"
-        android:onClick="installlibretorrent"/>
+        android:text="@string/install_libretorrent"
+        android:onClick="installlibretorrent"
+        tools:ignore="UsingOnClickInXml" />
 
     <Button
         android:id="@+id/button15"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Install Gesture"
-        android:onClick="installgesture"/>
+        android:text="@string/install_gesture"
+        android:onClick="installgesture"
+        tools:ignore="UsingOnClickInXml" />
 
     <Button
         android:id="@+id/button16"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Install  Hibernator"
-        android:onClick="installhibernator"/>
+        android:text="@string/install_hibernator"
+        android:onClick="installhibernator"
+        tools:ignore="UsingOnClickInXml" />
 
     <Button
         android:id="@+id/button17"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Install V2rayNG"
-        android:onClick="installv2rayng"/>
+        android:text="@string/install_v2rayng"
+        android:onClick="installv2rayng"
+        tools:ignore="UsingOnClickInXml" />
 
+    <Button
+        android:id="@+id/button18"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Install Terminal"
+        android:onClick="installterminal"/>
 </LinearLayout>
+ </ScrollView>
