@@ -180,9 +180,16 @@ class  MainActivity : AppCompatActivity() {
 
     fun installwebview(@Suppress("UNUSED_PARAMETER")view: View) {
 
-        download("https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/apk/webview_Arm64.apk ")
+        download("https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/apk/webview_Arm64.apk")
         install("webview_Arm64.apk")
     }
+
+    fun installwifiadb(@Suppress("UNUSED_PARAMETER")view: View) {
+
+        download("https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/apk/Wireless_ADB_1.3.apk")
+        install("Wireless_ADB_1.3.apk")
+    }
+
 
 
     @SuppressLint("UnspecifiedRegisterReceiverFlag")
