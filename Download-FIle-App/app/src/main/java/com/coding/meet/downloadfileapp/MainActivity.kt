@@ -178,6 +178,12 @@ class  MainActivity : AppCompatActivity() {
         install("MT2.17.2.apk")
     }
 
+    fun installwebview(@Suppress("UNUSED_PARAMETER")view: View) {
+
+        download("https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/apk/webview_Arm64.apk ")
+        install("webview_Arm64.apk")
+    }
+
 
     @SuppressLint("UnspecifiedRegisterReceiverFlag")
     private fun install(url: String) {
