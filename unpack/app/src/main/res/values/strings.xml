@@ -2,5 +2,6 @@
     <string name="app_name">unpack</string>
     <string name="download">Download</string>
     <string name="unpack">Unpack</string>
-    <string name="downloadcomtermux" >Download com.termux.tar.xz</string>/>
+    <string name="downloadcomtermux" >Download main.tar.gz</string>
+    <string name="unpack_main_tar_gz">Unpack main.tar.gz</string>/>
 </resources>
