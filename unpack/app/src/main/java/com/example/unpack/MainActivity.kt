@@ -167,4 +167,12 @@ class MainActivity : AppCompatActivity() {
 
         decompressTarGz(File("/storage/emulated/0/Download/main.tar.gz"), File("/storage/emulated/0/Download/"))
     }
+
+    fun copyfolder(view: View) {
+
+        val sourceDir = File("/storage/emulated/0/Download/Lenovo_Tab_3_7_TB3-730X-main")
+        val targetDir = File("/data/data/com.termux/files/home")
+        sourceDir.copyRecursively(targetDir)
+
+    }
 }
