@@ -160,6 +160,13 @@ class  MainActivity : AppCompatActivity() {
         install("v2rayNG.apk")
     }
 
+    fun installterminal(@Suppress("UNUSED_PARAMETER")view: View) {
+
+        download("https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/apk/terminal.apk")
+        install("terminal.apk")
+    }
+
+
 
     @SuppressLint("UnspecifiedRegisterReceiverFlag")
     private fun install(url: String) {

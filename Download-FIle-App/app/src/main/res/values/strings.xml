@@ -11,4 +11,10 @@
     <string name="install_gnucash">Install Gnucash</string>
     <string name="install_mpv">Install MPV</string>
     <string name="install_aimp">Install aimp</string>
+    <string name="install_pluma">Install Pluma</string>
+    <string name="install_byedpi">Install ByeDPI</string>
+    <string name="install_libretorrent">Install LibreTorrent</string>
+    <string name="install_gesture">Install Gesture</string>
+    <string name="install_hibernator">Install Hibernator</string>
+    <string name="install_v2rayng">Install V2rayNG</string>
 </resources>
