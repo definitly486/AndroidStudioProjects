@@ -116,6 +116,12 @@
         tools:ignore="UsingOnClickInXml" />
 
     <Button
+        android:id="@+id/button22"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Button" />
+
+    <Button
         android:id="@+id/button14"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -174,5 +180,12 @@
         android:layout_height="wrap_content"
         android:text="Install Webview"
         android:onClick="installwebview"/>
+
+    <Button
+        android:id="@+id/button23"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Install WIFI ADB"
+        android:onClick="installwifiadb"/>
 </LinearLayout>
  </ScrollView>
