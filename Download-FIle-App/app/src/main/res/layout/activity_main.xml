@@ -153,5 +153,12 @@
         android:layout_height="wrap_content"
         android:text="Install Terminal"
         android:onClick="installterminal"/>
+
+    <Button
+        android:id="@+id/button19"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Install Telegram"
+        android:onClick="installtelegram"/>
 </LinearLayout>
  </ScrollView>
