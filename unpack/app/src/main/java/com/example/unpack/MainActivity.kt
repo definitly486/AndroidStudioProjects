@@ -2,6 +2,7 @@ package com.example.unpack
 
 
 import android.Manifest
+import android.R.attr.path
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.DownloadManager
@@ -22,13 +23,9 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
-import java.nio.file.Files
 
 import java.io.IOException
-import java.nio.file.Paths
 
-import java.nio.file.attribute.PosixFilePermission
-import kotlin.io.path.createDirectories
 
 
 class MainActivity : AppCompatActivity() {
@@ -203,21 +200,54 @@ class MainActivity : AppCompatActivity() {
 
         val foldertarget = File(
             Environment.getDataDirectory().toString() + "/data/com.termux/files/home/Lenovo_Tab_3_7_TB3-730X-main"
-
         )
 
         val foldersource = File(
             Environment.getExternalStorageDirectory().toString() + "/Download/" + "Lenovo_Tab_3_7_TB3-730X-main"
-
         )
+
+        if (foldertarget .exists()) {
+            Toast.makeText(this, "folder  exist", Toast.LENGTH_SHORT).show()
+            return
+        }
 
        foldersource.copyRecursively(foldertarget)
 
     }
 
+    fun deleteFiles(path: String) {
+        val file = File(path)
+
+        if (file.exists()) {
+            val deleteCmd = "sudo - root -c rm -r $path"
+            val runtime = Runtime.getRuntime()
+            try {
+                runtime.exec(deleteCmd)
+            } catch (e: IOException) {
+                // Handle exception
+            }
+        }
+    }
+
+
+
     fun createfolder(view: View) {
         Runtime.getRuntime().exec("su - root -c chmod -R 777 /data/data/com.termux/files/home/")
         Runtime.getRuntime().exec("mkdir -p  /data/data/com.termux/files/home/Lenovo_Tab_3_7_TB3-730X-main")
-        Runtime.getRuntime().exec("su - root -c chmod -R 777 /data/data/com.termux/files/home/Lenovo_Tab_3_7_TB3-730X-main")
+        Runtime.getRuntime().exec("su - root -c chmod -R 777 ")
     }
+
+    fun deleteLenovo_Tab_3_7_TB3(view: View) {
+
+        deleteFiles("/data/data/com.termux/files/home/Lenovo_Tab_3_7_TB3-730X-main")
+
+    }
+
+    fun deletemaintargz(view: View) {
+
+        deleteFiles("/storage/emulated/0/Download/main.tar.gz")
+
+    }
+
+
 }
