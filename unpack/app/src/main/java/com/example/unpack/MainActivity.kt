@@ -2,12 +2,10 @@ package com.example.unpack
 
 
 import android.Manifest
-import android.R.attr.path
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.DownloadManager
 import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.view.View
