@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Decrypt</string>
+    <string name="decrypt">Decrypt</string>
+    <string name="_0">1</string>
+    <string name="password">Enter password</string>
+    <string name="button">Button</string>
+</resources>
