@@ -211,18 +211,13 @@ class MainActivity : AppCompatActivity() {
 
         )
 
-        Runtime.getRuntime().exec("su - root -c chmod -R 755 /data/data/com.termux/files/home/")
-
-
        foldersource.copyRecursively(foldertarget)
-
-      //  Runtime.getRuntime().exec("su - root -c cp -pr /storage/emulated/0/Download/Lenovo_Tab_3_7_TB3-730X-main /data/data/com.termux/files/home")
-    //    Runtime.getRuntime().exec("su - root -c chmod 755 /data/data/com.termux/files/home/Lenovo_Tab_3_7_TB3-730X-main")
 
     }
 
     fun createfolder(view: View) {
         Runtime.getRuntime().exec("su - root -c chmod -R 777 /data/data/com.termux/files/home/")
         Runtime.getRuntime().exec("mkdir -p  /data/data/com.termux/files/home/Lenovo_Tab_3_7_TB3-730X-main")
+        Runtime.getRuntime().exec("su - root -c chmod -R 777 /data/data/com.termux/files/home/Lenovo_Tab_3_7_TB3-730X-main")
     }
 }
