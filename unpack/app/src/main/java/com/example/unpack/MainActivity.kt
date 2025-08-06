@@ -1,41 +1,67 @@
 package com.example.unpack
 
 
+import android.Manifest
+import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.DownloadManager
-
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.view.View
 import android.widget.Toast
-
 import androidx.appcompat.app.AppCompatActivity
-
+import androidx.core.app.ActivityCompat
 import androidx.core.net.toUri
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream
+import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream
 import org.apache.commons.compress.compressors.xz.XZCompressorInputStream
 import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileInputStream
-import java.io.FileOutputStream
-
-import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream
-
-
-
 import java.io.FileNotFoundException
+import java.io.FileOutputStream
+import java.nio.file.Files
+
+import java.io.IOException
+import java.nio.file.Paths
+
+import java.nio.file.attribute.PosixFilePermission
+import kotlin.io.path.createDirectories
+
 
 class MainActivity : AppCompatActivity() {
 
-    private val multiplePermissionId = 14
-    private val multiplePermissionNameList = if (Build.VERSION.SDK_INT >= 33) {
-        arrayListOf()
-    } else {
-        arrayListOf(
-            android.Manifest.permission.READ_EXTERNAL_STORAGE,
-            android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
-        )
+
+    private val REQUEST_EXTERNAL_STORAGE = 1
+    private val PERMISSIONS_STORAGE = arrayOf(
+        Manifest.permission.READ_EXTERNAL_STORAGE,
+        Manifest.permission.WRITE_EXTERNAL_STORAGE
+    )
+
+    /**
+     * Checks if the app has permission to write to device storage
+     *
+     * If the app does not have permission then the user will be prompted to grant permissions
+     *
+     * @param activity
+     */
+    fun verifyStoragePermissions(activity: Activity) {
+        // Check if we have write permission
+        val permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            // We don't have permission so prompt the user
+            ActivityCompat.requestPermissions(
+                activity,
+                PERMISSIONS_STORAGE,
+                REQUEST_EXTERNAL_STORAGE
+            )
+        }
     }
+
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -77,7 +103,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
+  
 
 
 
@@ -121,8 +147,7 @@ class MainActivity : AppCompatActivity() {
 
 
         val folder = File(
-            Environment.getExternalStorageDirectory().toString() + "/Download/"
-
+           Environment.getExternalStorageDirectory().toString() + "/Download/"
         )
         if (!folder.exists()) {
             folder.mkdirs()
@@ -151,10 +176,11 @@ class MainActivity : AppCompatActivity() {
         request.setTitle(fileName)
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
 
+
         request.setDestinationInExternalPublicDir(
            Environment.DIRECTORY_DOWNLOADS,
             fileName
-        )
+       )
         downloadManager.enqueue(request)
 
     }
@@ -168,11 +194,35 @@ class MainActivity : AppCompatActivity() {
         decompressTarGz(File("/storage/emulated/0/Download/main.tar.gz"), File("/storage/emulated/0/Download/"))
     }
 
+
+    @SuppressLint("SdCardPath")
     fun copyfolder(view: View) {
+        verifyStoragePermissions(this
 
-        val sourceDir = File("/storage/emulated/0/Download/Lenovo_Tab_3_7_TB3-730X-main")
-        val targetDir = File("/data/data/com.termux/files/home")
-        sourceDir.copyRecursively(targetDir)
+        )
 
+        val foldertarget = File(
+            Environment.getDataDirectory().toString() + "/data/com.termux/files/home/Lenovo_Tab_3_7_TB3-730X-main"
+
+        )
+
+        val foldersource = File(
+            Environment.getExternalStorageDirectory().toString() + "/Download/" + "Lenovo_Tab_3_7_TB3-730X-main"
+
+        )
+
+        Runtime.getRuntime().exec("su - root -c chmod -R 755 /data/data/com.termux/files/home/")
+
+
+       foldersource.copyRecursively(foldertarget)
+
+      //  Runtime.getRuntime().exec("su - root -c cp -pr /storage/emulated/0/Download/Lenovo_Tab_3_7_TB3-730X-main /data/data/com.termux/files/home")
+    //    Runtime.getRuntime().exec("su - root -c chmod 755 /data/data/com.termux/files/home/Lenovo_Tab_3_7_TB3-730X-main")
+
+    }
+
+    fun createfolder(view: View) {
+        Runtime.getRuntime().exec("su - root -c chmod -R 777 /data/data/com.termux/files/home/")
+        Runtime.getRuntime().exec("mkdir -p  /data/data/com.termux/files/home/Lenovo_Tab_3_7_TB3-730X-main")
     }
 }
