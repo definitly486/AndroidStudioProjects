@@ -188,6 +188,13 @@ class MainActivity : AppCompatActivity() {
     }
     fun unpackmaintargz(view: View) {
 
+        val foldertarget = File("/storage/emulated/0/Download/main.tar.gz")
+
+        if ( ! foldertarget .exists()) {
+            Toast.makeText(this, "file don't  exist ,please download first main.tar.gz", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         decompressTarGz(File("/storage/emulated/0/Download/main.tar.gz"), File("/storage/emulated/0/Download/"))
     }
 
@@ -219,7 +226,7 @@ class MainActivity : AppCompatActivity() {
         val file = File(path)
 
         if (file.exists()) {
-            val deleteCmd = "sudo - root -c rm -r $path"
+            val deleteCmd = "su - root -c rm -r $path"
             val runtime = Runtime.getRuntime()
             try {
                 runtime.exec(deleteCmd)
