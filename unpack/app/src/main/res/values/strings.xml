@@ -1,11 +1,12 @@
 <resources>
     <string name="app_name">unpack</string>
     <string name="download">Download</string>
-    <string name="unpack">Unpack</string>
+    <string name="unpack">Unpack com.termux.tar.xz</string>
     <string name="downloadcomtermux" >Download main.tar.gz</string>
     <string name="unpack_main_tar_gz">Unpack main.tar.gz</string>
     <string name="create_folder">Create folder</string>
     <string name="delete_folder">Delete folder</string>
     <string name="delete_main_tar_gz">Delete main.tar.gz</string>
-    <string name="copy_main_to_data">Copy main to data</string>/>
+    <string name="copy_main_to_data">Copy main to data</string>
+    <string name="download_com_termux_tar_xz">Download com.termux.tar.xz</string>/>
 </resources>

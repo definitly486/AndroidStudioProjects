@@ -133,8 +133,8 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    fun unpackfile(view: View) {
-        val tarXzFile = File("/storage/emulated/0/Download/main.tar.gz")
+    fun unpackcomtermuxtarxz(view: View) {
+        val tarXzFile = File("/storage/emulated/0/Download/com.termux.tar.xz")
         val outputDir = File("/storage/emulated/0/Download/")
         unpackTarXz(tarXzFile, outputDir)
 
@@ -182,7 +182,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    fun downloadcomtermux(view: View) {
+    fun downloadmain(view: View) {
         downloadfile("https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/archive/main.tar.gz")
 
     }
@@ -254,6 +254,10 @@ class MainActivity : AppCompatActivity() {
 
         deleteFiles("/storage/emulated/0/Download/main.tar.gz")
 
+    }
+
+    fun downloadcomtermux(view: View) {
+        downloadfile("https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/shared/com.termux.tar.xz")
     }
 
 
