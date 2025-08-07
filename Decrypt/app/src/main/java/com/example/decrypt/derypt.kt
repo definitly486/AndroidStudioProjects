@@ -51,3 +51,4 @@ fun decryptFile(fileName: String?, pass: String) {
     target.write(decData)
     target.close()
 }
+
