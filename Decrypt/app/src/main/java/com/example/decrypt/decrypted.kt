@@ -1,5 +1,6 @@
 package com.example.decrypt
 
+import android.annotation.SuppressLint
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -9,7 +10,6 @@ import java.security.GeneralSecurityException
 import javax.crypto.Cipher
 import javax.crypto.SecretKey
 import javax.crypto.SecretKeyFactory
-import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.PBEKeySpec
 import javax.crypto.spec.PBEParameterSpec
 
@@ -35,24 +35,15 @@ object FileEncryptor {
        0x5b.toByte(), 0xd7.toByte(), 0x45.toByte(), 0x17.toByte()
    )
 
+    @SuppressLint("GetInstance")
     @Throws(GeneralSecurityException::class)
     fun makeCipher(pass: String, decryptMode: Boolean): Cipher {
-        val fileBytes = 12
-        val headerSize = 8 // "Salted__".toByteArray().size
-        val saltSize = 8
-        val expectedHeader = "Salted__".toByteArray(Charsets.US_ASCII)
-
-       // val salt = fileBytes.copyOfRange(headerSize, headerSize + saltSize)
         //Use a KeyFactory to derive the corresponding key from the passphrase:
-        val keyLength = 256 // AES-256
-        val ivSize = 16 // AES block size for IV
-        val keySpec = PBEKeySpec(pass.toCharArray(),salt, 100000, 256+128)
+
+        val keySpec = PBEKeySpec(pass.toCharArray(), salt, 65536, 256)
         val keyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1")
         val key = keyFactory.generateSecret(keySpec)
-        val tmp = keyFactory.generateSecret(keySpec)
-        val derivedBytes = tmp.encoded
-        val iv = derivedBytes.copyOfRange(keyLength / 8, keyLength / 8 + ivSize)
-        val ivParameterSpec = IvParameterSpec(iv)
+
         //Create parameters from the salt and an arbitrary number of iterations:
         val pbeParamSpec = PBEParameterSpec(salt, 42)
 
@@ -60,13 +51,13 @@ object FileEncryptor {
         keyToFile(key)
 
         //Set up the cipher:
-        val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
+        val cipher = Cipher.getInstance("AES/ECB/NoPadding")
 
         //Set the cipher mode to decryption or encryption:
         if (decryptMode) {
-            cipher.init(Cipher.ENCRYPT_MODE,key, ivParameterSpec )
+            cipher.init(Cipher.ENCRYPT_MODE, key, pbeParamSpec)
         } else {
-            cipher.init(Cipher.DECRYPT_MODE, key, ivParameterSpec )
+            cipher.init(Cipher.DECRYPT_MODE, key, pbeParamSpec)
         }
 
         return cipher
