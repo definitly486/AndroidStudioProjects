@@ -13,7 +13,7 @@ import javax.crypto.spec.SecretKeySpec
 
 fun makeCipherver2(pass: String, decryptMode: Boolean): Cipher {
   val passwd = "639639"
-    val encryptedFile = File("/storage/emulated/0/Download/com.qflair.browserq.tar.xz.enc")
+    val encryptedFile = File("/storage/emulated/0/Download/com.qflair.browserq.tar.xz.encrypted")
     val fileBytes = encryptedFile.readBytes()
 
     // Assuming "Salted__" header and 8-byte salt
@@ -44,7 +44,7 @@ fun makeCipherver2(pass: String, decryptMode: Boolean): Cipher {
     val secretKey = SecretKeySpec(key, "AES")
     val ivParameterSpec = IvParameterSpec(iv)
 
-    val cipher = Cipher.getInstance("AES/CBC/NoPadding") // Or appropriate mode/padding
+    val cipher = Cipher.getInstance("AES/CBC/PKCS7Padding") // Or appropriate mode/padding
 
 passToFile(pass)
 
