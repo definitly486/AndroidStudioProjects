@@ -211,6 +211,14 @@ class MainActivity : AppCompatActivity() {
             Environment.getExternalStorageDirectory().toString() + "/Download/" + "Lenovo_Tab_3_7_TB3-730X-main"
         )
 
+
+        if ( ! foldersource .exists()) {
+            Toast.makeText(this, "folder don't  exist,please upack main.tar.gz", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+
+
         if (foldertarget .exists()) {
             Toast.makeText(this, "folder  exist", Toast.LENGTH_SHORT).show()
             return
