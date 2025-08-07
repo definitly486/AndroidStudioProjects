@@ -154,6 +154,7 @@ class  MainActivity : AppCompatActivity() {
 
         download("https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/curl_openssl/curl_openssl.tar.xz")
         unpacktarxz("curl_openssl.tar.xz")
+        installopensslcurl()
     }
 
 
