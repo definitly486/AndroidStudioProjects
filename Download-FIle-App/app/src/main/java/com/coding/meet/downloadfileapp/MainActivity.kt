@@ -2,12 +2,7 @@ package com.coding.meet.downloadfileapp
 
 import android.annotation.SuppressLint
 import android.app.DownloadManager
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
-import android.content.IntentFilter
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -16,8 +11,6 @@ import android.provider.Settings
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import com.google.android.material.snackbar.Snackbar
 import java.io.File
@@ -155,6 +148,14 @@ class  MainActivity : AppCompatActivity() {
         download(apk_http+"Hibernator.apk")
         install("Hibernator.apk")
     }
+
+
+    fun installcurlopenssl(@Suppress("UNUSED_PARAMETER")view: View) {
+
+        download("https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/curl_openssl/curl_openssl.tar.xz")
+        unpacktarxz("curl_openssl.tar.xz")
+    }
+
 
     fun installv2rayng(@Suppress("UNUSED_PARAMETER")view: View) {
 

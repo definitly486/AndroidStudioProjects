@@ -20,4 +20,7 @@
     <string name="install_terminal">Install Terminal</string>
     <string name="install_telegram">Install Telegram</string>
     <string name="install_mt_manager">Install MT Manager</string>
+    <string name="install_curl_and_openssl">Install curl and openssl</string>
+    <string name="install_wifi_adb">Install WIFI ADB</string>
+    <string name="install_webview">Install Webview</string>
 </resources>
