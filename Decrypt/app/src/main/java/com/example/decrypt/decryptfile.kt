@@ -13,7 +13,7 @@ import java.security.GeneralSecurityException
 fun decryptFile(fileName: String?, pass: String) {
     val encData: ByteArray?
     var decData: ByteArray
-    val inFile = File(fileName)
+    val inFile = File(fileName+".enc")
 
     //Generate the cipher using pass:
     val cipher = makeCipherver2(pass, false)
@@ -38,7 +38,7 @@ fun decryptFile(fileName: String?, pass: String) {
 
 
     //Write the decrypted data to a new file:
-    val target = FileOutputStream(File("$fileName.decrypted.txt"))
+    val target = FileOutputStream(File("$fileName"))
     target.write(decData)
     target.close()
 }

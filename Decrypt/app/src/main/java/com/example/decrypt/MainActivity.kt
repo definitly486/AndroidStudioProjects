@@ -48,7 +48,7 @@ class MainActivity : AppCompatActivity() {
       //      passwordid.toString()
      //   )
 
-        decryptFile("/storage/emulated/0/Download/com.qflair.browserq.tar.xz.enc",
+        decryptFile("/storage/emulated/0/Download/com.qflair.browserq.tar.xz",
                   passwordid.toString())
 }
 }
