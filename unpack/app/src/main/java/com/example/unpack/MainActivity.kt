@@ -71,7 +71,7 @@ class MainActivity : AppCompatActivity() {
     fun decompressTarGz(tarGzFile: File, outputDir: File) {
 
         // Ensure canonical path for security
-        val canonicalOutputDir = outputDir.canonicalFile
+        outputDir.canonicalFile
 
         if (!tarGzFile.exists()) throw FileNotFoundException("File not found: ${tarGzFile.path}") as Throwable
         GzipCompressorInputStream(BufferedInputStream(FileInputStream(tarGzFile))).use { gzIn ->
@@ -137,6 +137,15 @@ class MainActivity : AppCompatActivity() {
         unpackTarXz(tarXzFile, outputDir)
 
     }
+
+
+    fun unpackv2raytarxz() {
+        val tarXzFile = File("/storage/emulated/0/Download/com.v2ray.ang.tar.xz")
+        val outputDir = File("/storage/emulated/0/Download/")
+        unpackTarXz(tarXzFile, outputDir)
+
+    }
+
 
     fun downloadfile(url: String) {
 
@@ -265,6 +274,13 @@ class MainActivity : AppCompatActivity() {
     fun downloadcomtermux(view: View) {
         downloadfile("https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/shared/com.termux.tar.xz")
     }
+
+    fun downloadvray2tarxz(view: View) {
+
+        downloadfile("https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/shared/com.v2ray.ang.tar.xz")
+        unpackv2raytarxz()
+    }
+
 
 
 }

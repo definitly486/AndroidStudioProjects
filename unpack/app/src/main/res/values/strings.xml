@@ -8,5 +8,6 @@
     <string name="delete_folder">Delete folder</string>
     <string name="delete_main_tar_gz">Delete main.tar.gz</string>
     <string name="copy_main_to_data">Copy main to data</string>
-    <string name="download_com_termux_tar_xz">Download com.termux.tar.xz</string>/>
+    <string name="download_com_termux_tar_xz">Download com.termux.tar.xz</string>
+    <string name="download_com_v2ray_ang_tar_xz">Download and unpack com.v2ray.ang.tar.xz</string>/>
 </resources>
