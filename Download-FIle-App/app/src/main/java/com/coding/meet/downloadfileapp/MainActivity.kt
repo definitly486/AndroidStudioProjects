@@ -152,7 +152,22 @@ class  MainActivity : AppCompatActivity() {
 
     fun installcurlopenssl(@Suppress("UNUSED_PARAMETER")view: View) {
 
+
+        val foldertarget = File(
+            Environment.getExternalStorageDirectory().toString() + "/Download/" + "curl_openssl"
+        )
+
+
         download("https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/curl_openssl/curl_openssl.tar.xz")
+
+        if (foldertarget .exists()) {
+            Toast.makeText(this, "folder  curl_openssl  exist", Toast.LENGTH_SHORT).show()
+            installopensslcurl()
+            return
+        }
+
+
+
         unpacktarxz("curl_openssl.tar.xz")
         installopensslcurl()
     }
