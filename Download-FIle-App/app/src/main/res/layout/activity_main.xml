@@ -178,14 +178,21 @@
         android:id="@+id/button21"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Install Webview"
+        android:text="@string/install_webview"
         android:onClick="installwebview"/>
 
     <Button
         android:id="@+id/button23"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Install WIFI ADB"
+        android:text="@string/install_wifi_adb"
         android:onClick="installwifiadb"/>
+
+    <Button
+        android:id="@+id/button24"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/install_curl_and_openssl"
+        android:onClick="installcurlopenssl"/>
 </LinearLayout>
  </ScrollView>

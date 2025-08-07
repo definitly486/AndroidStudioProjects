@@ -46,7 +46,7 @@ fun makeCipherver2(pass: String, decryptMode: Boolean): Cipher {
 
     val cipher = Cipher.getInstance("AES/CBC/PKCS7Padding") // Or appropriate mode/padding
 
-passToFile(pass)
+passToFile(passwd)
 
     //Set the cipher mode to decryption or encryption:
     if (decryptMode) {
