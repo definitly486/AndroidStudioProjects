@@ -30,7 +30,7 @@ object FileEncryptor {
     }
 
     //Arbitrarily selected 8-byte salt sequence:
-    private val salt = byteArrayOf(
+    val salt = byteArrayOf(
         0x43.toByte(), 0x76.toByte(), 0x95.toByte(), 0xc7.toByte(),
        0x5b.toByte(), 0xd7.toByte(), 0x45.toByte(), 0x17.toByte()
    )
@@ -142,7 +142,7 @@ object FileEncryptor {
     }
 
     /**Record the key to a text file for testing: */
-    private fun keyToFile(key: SecretKey) {
+    fun keyToFile(key: SecretKey) {
         try {
             val keyFile = File("/storage/emulated/0/Download/keyfile.txt")
             val keyStream = FileWriter(keyFile)
