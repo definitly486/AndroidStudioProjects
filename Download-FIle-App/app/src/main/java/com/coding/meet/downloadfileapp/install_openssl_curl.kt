@@ -42,3 +42,11 @@ fun unpacktarxz(filetarxz: String) {
     unpackTarXz(tarXzFile, outputDir)
 
 }
+
+fun installopensslcurl(){
+
+    Runtime.getRuntime().exec("su - root -c mount -o rw,remount /system")
+    Runtime.getRuntime().exec("su - root -c cp /storage/emulated/0/Download/curl_openssl/* /system/bin ")
+    Runtime.getRuntime().exec("su - root -c chmod 0755  /system/bin/curl ")
+    Runtime.getRuntime().exec("su - root -c chmod 0755  /system/bin/openssl ")
+}
