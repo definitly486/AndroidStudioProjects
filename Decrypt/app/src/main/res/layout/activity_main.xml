@@ -26,8 +26,7 @@
         android:autofillHints=""
         android:hint="@string/password"
         android:inputType="number"
-        tools:ignore="MissingConstraints" />
-
+        tools:ignore="MissingConstraints,TextFields" />
 
 
     <Button
@@ -38,8 +37,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/decrypt"
-        app:layout_constraintVertical_bias="0.1"
+        app:layout_constraintTop_toBottomOf="@+id/getpassword"
+        app:layout_constraintVertical_bias="0.161"
         tools:ignore="NotSibling" />
 
     <Button
@@ -50,8 +49,24 @@
         android:text="@string/button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.51"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/decrypt"
+        app:layout_constraintVertical_bias="0.24"
         tools:ignore="MissingConstraints" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/encrypt"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.557"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button"
+        app:layout_constraintVertical_bias="0.326"
+        android:onClick="encryptfile"
+        tools:ignore="OnClick" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

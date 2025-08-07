@@ -13,7 +13,7 @@ import java.security.GeneralSecurityException
 fun decryptFile(fileName: String?, pass: String) {
     val encData: ByteArray?
     var decData: ByteArray
-    val inFile = File(fileName+".enc")
+    val inFile = File(fileName+".encrypted")
 
     //Generate the cipher using pass:
     val cipher = makeCipherver2(pass, false)

@@ -51,5 +51,12 @@ class MainActivity : AppCompatActivity() {
         decryptFile("/storage/emulated/0/Download/com.qflair.browserq.tar.xz",
                   passwordid.toString())
 }
+
+    fun encryptfile(view: View) {
+
+
+        encryptFilever2("/storage/emulated/0/Download/com.qflair.browserq.tar.xz","639639")
+
+    }
 }
 
