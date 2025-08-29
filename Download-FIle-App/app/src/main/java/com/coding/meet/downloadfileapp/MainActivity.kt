@@ -149,6 +149,12 @@ class  MainActivity : AppCompatActivity() {
         install("Hibernator.apk")
     }
 
+    fun installkeyboard(@Suppress("UNUSED_PARAMETER")view: View) {
+
+        download(apk_http+"Hacker_v1.41.1.apk")
+        install("Hacker_v1.41.1.apk")
+    }
+
 
     fun installcurlopenssl(@Suppress("UNUSED_PARAMETER")view: View) {
 
