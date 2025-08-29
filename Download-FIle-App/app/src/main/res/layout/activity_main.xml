@@ -119,7 +119,8 @@
         android:id="@+id/button22"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Button" />
+        android:text="Install HACKER KEYBOARD"
+        android:onClick="installkeyboard"/>
 
     <Button
         android:id="@+id/button14"
