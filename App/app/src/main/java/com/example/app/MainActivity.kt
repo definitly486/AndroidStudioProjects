@@ -29,10 +29,10 @@ class MainActivity : AppCompatActivity() {
                 0 -> "Первая"
                 1 -> "Вторая"
                 2 -> "Третья"
-                2 -> "Четвертая"
+                3 -> "Четвертая"
                 else -> ""
             }
         }.attach()
     }
-}
 
+}
