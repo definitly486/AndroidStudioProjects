@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">gnupg_gnucash</string>
+    <string name="download_gnucash">Download definitly.gnucash.gpg</string>
+</resources>
