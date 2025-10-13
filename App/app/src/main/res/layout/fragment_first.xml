@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:id="@+id/main"
+        android:layout_margin="16dp"
+        tools:context=".MainActivity">
+
+
+        <Button
+            android:id="@+id/installButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/install_busybox"
+            tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+
+        <Button
+            android:id="@+id/firstButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Download BusyBox"
+            android:onClick="installApp"
+            tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+
+        <Button
+            android:id="@+id/downloadopenssl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Download Openssl"
+            tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+
+
+        <Button
+            android:id="@+id/installopenssl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Install Openssl"
+            tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+
+
+
+    </LinearLayout>
+</FrameLayout>
