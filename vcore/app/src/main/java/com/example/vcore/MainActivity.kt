@@ -32,7 +32,40 @@ class MainActivity : AppCompatActivity() {
         fun getfio5() {
 
             val url = "https://api.binance.com/api/v3/ticker/price?symbol=FIOUSDT"
+            val client = OkHttpClient()
+            val request = Request.Builder()
+                .url(url)
+                .build()
 
+            println(Thread.currentThread())
+            client.newCall(request).enqueue(object : Callback {
+                override fun onFailure(call: Call, e: IOException) {
+                    e.printStackTrace()
+                }
+
+                override fun onResponse(call: Call, response: Response) {
+                    if (!response.isSuccessful) {
+                        System.err.println("Response not successful")
+                        return
+                    }
+                    val json = response.body!!.string()
+                    val jsonArray = JSONObject(json)
+                    val name = jsonArray.getString("price")
+                    applicationContext.openFileOutput("test.txt", Context.MODE_PRIVATE).use()
+                    {
+                        it.write(name.toByteArray())
+                    }
+                }
+
+            })
+
+        }
+
+
+
+        fun getbtc() {
+
+            val url = "https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT"
             val client = OkHttpClient()
             val request = Request.Builder()
                 .url(url)
@@ -70,6 +103,7 @@ class MainActivity : AppCompatActivity() {
             myButton3.setBackgroundColor(Color.GREEN);
             Toast.makeText(this, "READ", Toast.LENGTH_SHORT).show()
             getfio5()
+            getbtc()
          TimeUnit.SECONDS.sleep(2L)
             val text = File("/data/data/com.example.vcore/files/test.txt").readText()
           textView.text = text
