@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:id="@+id/main"
+        android:layout_margin="16dp"
+        tools:context=".MainActivity">
+
+
+        <Button
+            android:id="@+id/button5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/download_app"
+            android:onClick="downloadApp"
+            tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+
+        <Button
+            android:id="@+id/button6"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/install_app"
+            android:onClick="installApp"
+            tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+
+        <Button
+            android:id="@+id/button7"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/download_binance"
+            android:onClick="downloadbinance"
+            tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+
+
+        <Button
+            android:id="@+id/button8"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/install_binance"
+            android:onClick="installbinance"
+            tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+
+
+        <Button
+            android:id="@+id/button12"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/download_gate"
+            android:onClick="downloadgate"
+            tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+
+
+        <Button
+            android:id="@+id/button13"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/install_gate"
+            android:onClick="installgate"
+            tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+
+
+
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/download_sber"
+            android:onClick="downloadsber"
+            tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+
+        <Button
+            android:id="@+id/button10"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/install_sber"
+            android:onClick="installsber"
+            tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+
+
+        <Button
+            android:id="@+id/button3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/download_trichromelibrary"
+            android:onClick="downloadntrichromelibrary" />
+
+
+        <Button
+            android:id="@+id/button14"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Install TriChromeLibrary"
+            android:onClick="installtrichromelibrary" />
+
+        <Button
+            android:id="@+id/button4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/download_ozonjob"
+            android:onClick="downloadozonjob"
+            tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+
+        <Button
+            android:id="@+id/button15"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/install_ozonjob"
+            android:onClick="installozonjob"
+            tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+
+
+    </LinearLayout>
+</FrameLayout>

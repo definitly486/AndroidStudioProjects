@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">App</string>
+    <string name="download_busybox">Download BusyBox</string>
+    <string name="install_busybox">Install BusyBox</string>
+    <string name="download_binance">Download Binance</string>
+    <string name="install_app">Install App</string>
+    <string name="download_app">Download App</string>
+    <string name="install_binance">Install Binance </string>
+    <string name="download_gate">Download Gate</string>
+    <string name="install_gate">Install Gate  </string>
+    <string name="download_sber">Download Sberbank</string>
+    <string name="install_sber">Install Sberbank </string>
+    <string name="download_trichromelibrary">Download TriChromeLibary </string>
+    <string name="download_ozonjob">Download OzonJob</string>
+    <string name="downloadgnucash">Download definitly.gnucash.gpg </string>
+    <string name="install_ozonjob">Install Ozon Job </string>
+</resources>
