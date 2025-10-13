@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val textView : TextView = findViewById(R.id.textView)
-
+        val textView2 : TextView = findViewById(R.id.textView2)
 
         fun getfio5() {
 
@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity() {
                     val json = response.body!!.string()
                     val jsonArray = JSONObject(json)
                     val name = jsonArray.getString("price")
-                    applicationContext.openFileOutput("test.txt", Context.MODE_PRIVATE).use()
+                    applicationContext.openFileOutput("fio.txt", Context.MODE_PRIVATE).use()
                     {
                         it.write(name.toByteArray())
                     }
@@ -85,7 +85,7 @@ class MainActivity : AppCompatActivity() {
                     val json = response.body!!.string()
                     val jsonArray = JSONObject(json)
                     val name = jsonArray.getString("price")
-                    applicationContext.openFileOutput("test.txt", Context.MODE_PRIVATE).use()
+                    applicationContext.openFileOutput("btc.txt", Context.MODE_PRIVATE).use()
                     {
                         it.write(name.toByteArray())
                     }
@@ -105,8 +105,10 @@ class MainActivity : AppCompatActivity() {
             getfio5()
             getbtc()
          TimeUnit.SECONDS.sleep(2L)
-            val text = File("/data/data/com.example.vcore/files/test.txt").readText()
-          textView.text = text
+            val fio = File("/data/data/com.example.vcore/files/fio.txt").readText()
+            val btc = File("/data/data/com.example.vcore/files/btc.txt").readText()
+            textView.text = fio
+            textView2.text = btc
         }
 
 
