@@ -4,6 +4,12 @@ plugins {
 }
 
 android {
+
+
+    buildFeatures {
+        viewBinding=true
+    }
+
     namespace = "com.example.app"
     compileSdk = 36
 
@@ -35,10 +41,16 @@ android {
     }
 }
 
+
 dependencies {
 implementation ("com.google.android.material:material:1.13.0")
+    implementation("org.bouncycastle:bcprov-jdk15on:1.70")
     implementation ("androidx.viewpager2:viewpager2:1.1.0")
     implementation("org.apache.commons:commons-compress:1.28.0")
+    implementation("androidx.core:core-ktx:1.10.0")
+    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("androidx.fragment:fragment-ktx:1.5.5")
+    implementation("org.bouncycastle:bcprov-jdk15on:1.70")
     implementation("org.tukaani:xz:1.9")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

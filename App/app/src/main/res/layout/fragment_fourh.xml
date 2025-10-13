@@ -1,27 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:padding="16dp"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:layout_height="match_parent">
 
-    <LinearLayout
+    <Button
+        android:id="@+id/buttonSelectFile"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:id="@+id/main"
-        android:layout_margin="16dp"
-        tools:context=".MainActivity">
+        android:text="Выбрать файл" />
 
+    <TextView
+        android:id="@+id/fileNameLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Файл не выбран" />
 
-        <Button
-            android:id="@+id/installButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/install_busybox"
-            tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+    <EditText
+        android:id="@+id/passwordInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Введите пароль"
+        android:inputType="textPassword"
+        android:minHeight="48dp" />
 
+    <Button
+        android:id="@+id/button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Расшифровать с OpenSSL" />
 
+    <Button
+        android:id="@+id/buttonDecrypt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Расшифровать" />
 
+    <TextView
+        android:id="@+id/outputData"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Результат появится здесь" />
 
-    </LinearLayout>
-</FrameLayout>
+    <Button
+        android:id="@+id/download"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Загрузить файл" />
+
+</LinearLayout>
+
