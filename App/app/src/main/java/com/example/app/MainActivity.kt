@@ -30,6 +30,7 @@ class MainActivity : AppCompatActivity() {
                 1 -> "Вторая"
                 2 -> "Третья"
                 3 -> "Четвертая"
+                4 -> "Пятая"
                 else -> ""
             }
         }.attach()
