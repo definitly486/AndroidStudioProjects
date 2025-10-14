@@ -78,6 +78,16 @@ class FourthFragment : Fragment() {
             decryptFileWithFallback(inputFileUri!!, password)
         }
 
+        binding.buttonDecryptAndSave.setOnClickListener {
+            val password = binding.passwordInput.text.toString()
+            if (password.isEmpty() || inputFileUri == null) {
+                Toast.makeText(requireContext(), "Заполните пароль и выберите файл", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            decryptAndSaveFile(inputFileUri!!, password)
+        }
+
+
     }
 
     override fun onResume() {
