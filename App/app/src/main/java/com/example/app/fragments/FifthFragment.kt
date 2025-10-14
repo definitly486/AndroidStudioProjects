@@ -32,6 +32,7 @@ import javax.crypto.spec.SecretKeySpec
 import android.annotation.SuppressLint
 import android.os.Environment
 import android.provider.OpenableColumns
+import com.example.app.databinding.FragmentFifthBinding
 import com.example.app.databinding.FragmentFourthBinding
 import java.io.InputStream
 import java.nio.charset.StandardCharsets
@@ -41,7 +42,7 @@ class FifthFragment : Fragment() {
 
     private lateinit var downloadManager: DownloadManager
     private var inputFileUri: Uri? = null
-    private var _binding: FragmentFourthBinding? = null
+    private var _binding: FragmentFifthBinding? = null
     private val binding get() = _binding!!
 
     private val selectFileLauncher = registerForActivityResult(
@@ -63,7 +64,7 @@ class FifthFragment : Fragment() {
     private var decryptedBytes: ByteArray? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        _binding = FragmentFourthBinding.inflate(inflater, container, false)
+        _binding = FragmentFifthBinding.inflate(inflater, container, false)
         return binding.root
     }
 

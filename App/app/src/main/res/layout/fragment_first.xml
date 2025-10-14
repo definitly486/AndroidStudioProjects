@@ -10,7 +10,8 @@
         android:orientation="vertical"
         android:id="@+id/main"
         android:layout_margin="16dp"
-        tools:context=".MainActivity">
+        tools:context=".MainActivity"
+        tools:ignore="UselessParent">
 
 
         <Button
@@ -26,14 +27,14 @@
             android:layout_height="wrap_content"
             android:text="Download BusyBox"
             android:onClick="installApp"
-            tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+            tools:ignore="HardcodedText,UsingOnClickInXml,VisualLintButtonSize" />
 
         <Button
             android:id="@+id/downloadopenssl"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Download Openssl"
-            tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+            tools:ignore="HardcodedText,UsingOnClickInXml,VisualLintButtonSize" />
 
 
         <Button
@@ -41,7 +42,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Install Openssl"
-            tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+            tools:ignore="HardcodedText,UsingOnClickInXml,VisualLintButtonSize" />
 
 
 
