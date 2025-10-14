@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">OpenSSL Decryptor</string>
+    <string name="select_encrypted_file">Select Encrypted File</string>
+    <string name="enter_password">Enter password</string>
+    <string name="decrypt_file">Decrypt File</string>
+    <string name="no_file_selected">No file selected</string>
+</resources>
