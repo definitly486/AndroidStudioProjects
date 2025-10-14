@@ -20,6 +20,8 @@ import javax.crypto.Cipher
 import javax.crypto.CipherInputStream
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
+import javax.crypto.SecretKeyFactory
+import javax.crypto.spec.PBEKeySpec
 
 class MainActivity : AppCompatActivity() {
 
@@ -32,6 +34,9 @@ class MainActivity : AppCompatActivity() {
 
     private var encryptedFileUri: Uri? = null
     private var encryptedFilePath: String? = null
+
+    // Default iteration count for PBKDF2
+    private val defaultIterationCount = 100000
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -129,7 +134,7 @@ class MainActivity : AppCompatActivity() {
                     showProgress(true)
 
                     val result = withContext(Dispatchers.IO) {
-                        decryptOpenSSLFile(uri, password)
+                        decryptOpenSSLFile(uri, password, defaultIterationCount)
                     }
 
                     if (result.isSuccess) {
@@ -147,30 +152,61 @@ class MainActivity : AppCompatActivity() {
         } ?: showStatus("Please select a file first", true)
     }
 
-    private fun decryptOpenSSLFile(encryptedFileUri: Uri, password: String): Result<String> = runCatching {
+    private fun decryptOpenSSLFile(
+        encryptedFileUri: Uri,
+        password: String,
+        iterationCount: Int = 100000
+    ): Result<String> = runCatching {
         val inputStream = contentResolver.openInputStream(encryptedFileUri)
             ?: throw IOException("Cannot open input file")
 
         BufferedInputStream(inputStream).use { bufferedInputStream ->
-            // Проверяем заголовок OpenSSL
+            // Check OpenSSL header
             val header = ByteArray(8)
             bufferedInputStream.mark(16)
             val bytesRead = bufferedInputStream.read(header)
 
             return@runCatching if (bytesRead == 8 && header.copyOfRange(0, 8).contentEquals("Salted__".toByteArray())) {
-                // Файл с солью - читаем соль
+                // File with salt - read the salt
                 val salt = ByteArray(8)
                 if (bufferedInputStream.read(salt) != 8) {
                     throw IOException("Cannot read salt from file")
                 }
-                val (key, iv) = generateKeyAndIV(password, salt)
+                val (key, iv) = generateKeyAndIV(password, salt, iterationCount)
                 decryptWithCipher(bufferedInputStream, key, iv, encryptedFileUri)
             } else {
-                // Файл без соли - возвращаемся к началу
+                // File without salt - reset to beginning
                 bufferedInputStream.reset()
-                val (key, iv) = generateKeyAndIV(password, ByteArray(8))
+                // For files without salt, we still need to generate key/IV
+                // Use a zero salt and specified iteration count
+                val (key, iv) = generateKeyAndIV(password, ByteArray(8), iterationCount)
                 decryptWithCipher(bufferedInputStream, key, iv, encryptedFileUri)
             }
+        }
+    }
+
+    private fun generateKeyAndIV(
+        password: String,
+        salt: ByteArray,
+        iterationCount: Int = 100000
+    ): Pair<ByteArray, ByteArray> {
+        return try {
+            // Use PBKDF2 with SHA-256 for key derivation (compatible with OpenSSL)
+            val factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256")
+            val spec = PBEKeySpec(
+                password.toCharArray(),
+                salt,
+                iterationCount,
+                48 * 8 // 48 bytes = 32 bytes key + 16 bytes IV
+            )
+            val keyBytes = factory.generateSecret(spec).encoded
+
+            val key = keyBytes.copyOfRange(0, 32)
+            val iv = keyBytes.copyOfRange(32, 48)
+
+            Pair(key, iv)
+        } catch (e: Exception) {
+            throw RuntimeException("Failed to generate key and IV: ${e.message}", e)
         }
     }
 
@@ -187,7 +223,7 @@ class MainActivity : AppCompatActivity() {
         val outputFileName = generateOutputFileName(originalFileName)
         val outputFile = File(getOutputDirectory(), outputFileName)
 
-        // Убедимся, что файл не существует
+        // Make sure file doesn't exist
         if (outputFile.exists()) {
             outputFile.delete()
         }
@@ -199,25 +235,6 @@ class MainActivity : AppCompatActivity() {
         cipherInputStream.close()
 
         return outputFile.absolutePath
-    }
-
-    private fun generateKeyAndIV(password: String, salt: ByteArray): Pair<ByteArray, ByteArray> {
-        // Упрощенная генерация ключа и IV
-        // В реальном приложении используйте PBKDF2 или аналогичный KDF
-        val passwordBytes = password.toByteArray(Charsets.UTF_8)
-        val keyAndIV = ByteArray(48) // 32 байта ключ + 16 байт IV
-
-        // Простая ключевая деривация (для демонстрации)
-        for (i in keyAndIV.indices) {
-            val passwordIndex = i % passwordBytes.size
-            val saltIndex = i % salt.size
-            keyAndIV[i] = (passwordBytes[passwordIndex].toInt() xor salt[saltIndex].toInt()).toByte()
-        }
-
-        val key = keyAndIV.copyOfRange(0, 32)
-        val iv = keyAndIV.copyOfRange(32, 48)
-
-        return Pair(key, iv)
     }
 
     private fun createOpenSSLCipher(key: ByteArray, iv: ByteArray): Cipher {
@@ -241,7 +258,7 @@ class MainActivity : AppCompatActivity() {
             .removeSuffix(".crypt")
             .removeSuffix(".encrypted")
 
-        // Удаляем multiple extensions
+        // Remove multiple extensions
         while (baseName.contains(".enc.") || baseName.contains(".aes.")) {
             baseName = baseName.removeSuffix(".enc").removeSuffix(".aes")
         }
@@ -275,15 +292,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun handleDecryptionError(exception: Throwable?) {
-        val errorMessage = when {
-            exception is javax.crypto.BadPaddingException ->
-                "Wrong password or corrupted file"
-            exception is java.io.IOException ->
-                "File error: ${exception.message}"
-            exception is java.security.InvalidKeyException ->
-                "Invalid encryption key"
-            else ->
-                "Decryption failed: ${exception?.message ?: "Unknown error"}"
+        val errorMessage = when (exception) {
+            is javax.crypto.BadPaddingException -> "Wrong password or corrupted file"
+            is IOException -> "File error: ${exception.message}"
+            is java.security.InvalidKeyException -> "Invalid encryption key"
+            is java.security.spec.InvalidKeySpecException -> "Invalid password specification"
+            else -> "Decryption failed: ${exception?.message ?: "Unknown error"}"
         }
         showStatus(errorMessage, true)
         showToast(errorMessage)
@@ -306,7 +320,7 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     startActivity(Intent.createChooser(intent, "Open decrypted file with..."))
-                } catch (e: Exception) {
+                } catch (_: Exception) {
                     showToast("Cannot open file: No suitable app found")
                 }
             }
