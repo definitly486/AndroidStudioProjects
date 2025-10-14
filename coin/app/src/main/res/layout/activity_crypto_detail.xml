@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Progress Bar -->
+        <ProgressBar
+            android:id="@+id/progressBarDetail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone" />
+
+        <!-- Error Text -->
+        <TextView
+            android:id="@+id/errorTextViewDetail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="16dp"
+            android:textColor="@android:color/holo_red_dark"
+            android:visibility="gone" />
+
+        <!-- Crypto Name -->
+        <TextView
+            android:id="@+id/cryptoNameDetail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="16dp"
+            android:text="Bitcoin (BTC)"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <!-- Current Price -->
+        <TextView
+            android:id="@+id/cryptoPriceDetail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="8dp"
+            android:text="$45,000.00"
+            android:textSize="32sp"
+            android:textStyle="bold" />
+
+        <!-- Price Changes -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="8dp">
+
+            <TextView
+                android:id="@+id/change24hDetail"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="24ч: +2.5%"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/change7dDetail"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="7д: +5.2%"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+
+        <!-- Separator -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#E0E0E0"
+            android:layout_marginVertical="16dp" />
+
+        <!-- Market Data -->
+        <TextView
+            android:id="@+id/marketCapDetail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="Капитализация: $850B"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/volumeDetail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="Объем 24ч: $25B"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/high24hDetail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="Макс 24ч: $46,200.00"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/low24hDetail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="Мин 24ч: $44,500.00"
+            android:textSize="16sp" />
+
+    </LinearLayout>
+
+</ScrollView>
