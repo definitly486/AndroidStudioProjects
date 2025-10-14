@@ -30,6 +30,7 @@ import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.PBEKeySpec
 import javax.crypto.spec.SecretKeySpec
 import android.annotation.SuppressLint
+import android.os.Environment
 import android.provider.OpenableColumns
 import com.example.app.databinding.FragmentFourthBinding
 import java.io.InputStream
@@ -48,6 +49,20 @@ class FourthFragment : Fragment() {
     ) { uri: Uri? ->
         uri?.let { updateSelectedFileInfo(it) }
     }
+
+    // Add this for saving files - FIXED: handle null case
+    private val saveFileLauncher = registerForActivityResult(
+        androidx.activity.result.contract.ActivityResultContracts.CreateDocument("text/plain")
+    ) { uri: Uri? ->
+        if (uri != null) {
+            saveDecryptedDataToUri(uri)
+        } else {
+            // User cancelled the save operation
+            Toast.makeText(requireContext(), "Сохранение отменено", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private var decryptedData: String = ""
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding = FragmentFourthBinding.inflate(inflater, container, false)
@@ -78,14 +93,14 @@ class FourthFragment : Fragment() {
             decryptFileWithFallback(inputFileUri!!, password)
         }
 
-        binding.buttonDecryptAndSave.setOnClickListener {
+        binding.buttonSaveInternal.setOnClickListener {
             val password = binding.passwordInput.text.toString()
-            if (password.isEmpty() || inputFileUri == null) {
-                Toast.makeText(requireContext(), "Заполните пароль и выберите файл", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-            decryptAndSaveFile(inputFileUri!!, password)
-        }
+           if (password.isEmpty() || inputFileUri == null) {
+               Toast.makeText(requireContext(), "Заполните пароль и выберите файл", Toast.LENGTH_SHORT).show()
+               return@setOnClickListener
+           }
+           decryptAndSaveFile(inputFileUri!!, password)
+       }
 
 
     }
@@ -139,6 +154,7 @@ class FourthFragment : Fragment() {
 
                     withContext(Dispatchers.Main) {
                         if (result.success) {
+                            decryptedData = result.data
                             binding.outputData.text = "Результат:\n${result.data}"
                             Toast.makeText(requireContext(), "Файл успешно расшифрован (${result.method})", Toast.LENGTH_LONG).show()
                         } else {
@@ -184,10 +200,10 @@ class FourthFragment : Fragment() {
             Log.d("Decryption", "Method 2 failed: ${e.message}")
         }
 
-        // Method 3: PBKDF2 with 10000 iterations
+        // Method 3: PBKDF2 with 100000 iterations
         try {
             val decrypted = decryptPBKDF2(encryptedData, password, 100000)
-            return DecryptionResult(true, String(decrypted), "PBKDF2 (10000 iterations)")
+            return DecryptionResult(true, String(decrypted), "PBKDF2 (100000 iterations)")
         } catch (e: Exception) {
             errorMessages.append("• PBKDF2 (100000): ${e.message}\n")
             Log.d("Decryption", "Method 3 failed: ${e.message}")
@@ -344,7 +360,7 @@ class FourthFragment : Fragment() {
         return cipher.doFinal(encryptedData)
     }
 
-    // Save decrypted file and share
+    // Save decrypted file using SAF (Storage Access Framework)
     private fun decryptAndSaveFile(fileUri: Uri, password: String) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -353,21 +369,14 @@ class FourthFragment : Fragment() {
 
                     val result = tryAllDecryptionMethods(encryptedData, password)
 
-                    if (result.success) {
-                        val fileName = getFileNameFromUri(fileUri) ?: "decrypted_file"
-                        val outputFileName = "${fileName.removeSuffix(".enc")}.txt"
-                        val outputFile = File(requireContext().filesDir, outputFileName)
-
-                        FileOutputStream(outputFile).use { outputStream ->
-                            outputStream.write(result.data.toByteArray(StandardCharsets.UTF_8))
-                        }
-
-                        withContext(Dispatchers.Main) {
-                            Toast.makeText(requireContext(), "Файл расшифрован: ${outputFile.name}", Toast.LENGTH_LONG).show()
-                            shareFile(outputFile)
-                        }
-                    } else {
-                        withContext(Dispatchers.Main) {
+                    withContext(Dispatchers.Main) {
+                        if (result.success) {
+                            decryptedData = result.data
+                            // Use SAF to save file
+                            val fileName = getFileNameFromUri(fileUri) ?: "decrypted_file"
+                            val outputFileName = "${fileName.removeSuffix(".enc")}"
+                            saveFileLauncher.launch(outputFileName)
+                        } else {
                             Toast.makeText(requireContext(), "Не удалось расшифровать файл", Toast.LENGTH_LONG).show()
                         }
                     }
@@ -381,7 +390,71 @@ class FourthFragment : Fragment() {
         }
     }
 
-    private fun getFileNameFromUri(uri: Uri): String? {
+    // Save decrypted data to the selected URI
+    private fun saveDecryptedDataToUri(uri: Uri) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                requireContext().contentResolver.openOutputStream(uri)?.use { outputStream ->
+                    outputStream.write(decryptedData.toByteArray(StandardCharsets.UTF_8))
+                }
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(requireContext(), "Файл успешно сохранен", Toast.LENGTH_LONG).show()
+                }
+            } catch (e: Exception) {
+                Log.e("SaveFile", "Ошибка сохранения файла", e)
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(requireContext(), "Ошибка сохранения: ${e.message}", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+    }
+
+    // Alternative method to save to app's internal storage (always works)
+    private fun saveToInternalStorage(data: String, originalFileName: String?) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val fileName = originalFileName?.removeSuffix(".enc") ?: "decrypted"
+                val outputFileName = "${fileName}_decrypted.txt"
+
+                val pathdownload = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+
+                val outputFile =File(pathdownload,outputFileName)
+
+                FileOutputStream(outputFile).use { outputStream ->
+                    outputStream.write(data.toByteArray(StandardCharsets.UTF_8))
+                }
+
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(requireContext(), "Сохранено в: ${outputFile.absolutePath}", Toast.LENGTH_LONG).show()
+
+                    // Optionally share the file
+
+                }
+            } catch (e: Exception) {
+                Log.e("SaveFile", "Ошибка сохранения", e)
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(requireContext(), "Ошибка сохранения: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    // Share file using FileProvider
+
+
+    // Add this method for quick save to internal storage
+    private fun saveToInternalStorageQuick() {
+        if (decryptedData.isNotEmpty()) {
+            val fileName = getFileNameFromUri(inputFileUri)
+            saveToInternalStorage(decryptedData, fileName)
+        } else {
+            Toast.makeText(requireContext(), "Нет данных для сохранения", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun getFileNameFromUri(uri: Uri?): String? {
+        if (uri == null) return null
+
         return when (uri.scheme) {
             "content" -> {
                 requireContext().contentResolver.query(uri, null, null, null, null)?.use { cursor ->
@@ -399,26 +472,6 @@ class FourthFragment : Fragment() {
             }
             "file" -> uri.lastPathSegment
             else -> null
-        }
-    }
-
-    private fun shareFile(file: File) {
-        try {
-            val uri = FileProvider.getUriForFile(
-                requireContext(),
-                "${requireContext().packageName}.provider",
-                file
-            )
-
-            val shareIntent = Intent(Intent.ACTION_SEND).apply {
-                type = "text/plain"
-                putExtra(Intent.EXTRA_STREAM, uri)
-                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            }
-
-            startActivity(Intent.createChooser(shareIntent, "Поделиться расшифрованным файлом"))
-        } catch (e: Exception) {
-            Toast.makeText(requireContext(), "Ошибка при открытии файла: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
 
