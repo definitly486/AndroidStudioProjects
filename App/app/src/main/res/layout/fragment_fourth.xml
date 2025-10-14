@@ -14,7 +14,7 @@
         android:textSize="20sp"
         android:textStyle="bold"
         android:gravity="center"
-        android:marginBottom="16dp" />
+        android:layout_marginBottom="16dp" />
 
     <Button
         android:id="@+id/buttonSelectFile"
