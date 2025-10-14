@@ -38,6 +38,8 @@ import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.PBEKeySpec
 import javax.crypto.spec.SecretKeySpec
 import android.annotation.SuppressLint
+import android.provider.MediaStore
+import android.provider.OpenableColumns
 import com.example.app.databinding.FragmentFourthBinding
 
 class FourthFragment : Fragment() {
@@ -214,13 +216,19 @@ class FourthFragment : Fragment() {
         val filePath = cleanFilePath(fileUri)
         val fullPath = "$filePath"
 
+        val fileName = getFileNameFromUri(fileUri)
+        if (fileName == null) {
+            Log.e("Decryption", "Не удалось получить имя файла")
+            return
+        }
+
+
         if (!File(fullPath).exists()) {
             Log.e("Decryption", "Файл не найден: $fullPath")
             return
         }
 
-        val outputFile = requireContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)?.absolutePath + "/new.txt"
-
+        val outputFile =  "/${fileName}.decrypt"
         val command = listOf(
             "openssl",
             "enc",
@@ -244,6 +252,24 @@ class FourthFragment : Fragment() {
         }
     }
 
+    fun getFileNameFromUri(uri: Uri): String? {
+        // Реализация зависит от типа Uri. Вот пример для "content://"
+        if (uri.scheme == "content") {
+            val projection = arrayOf(MediaStore.Images.Media.DATA)
+            val cursor = requireContext().contentResolver.query(uri, projection, null, null, null)
+            cursor?.use {
+                if (it.moveToFirst()) {
+                    val columnIndex = it.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+                    return it.getString(columnIndex)
+                }
+            }
+            // В случае, если не получилось, попробуйте другой способ
+            return null
+        } else if (uri.scheme == "file") {
+            return uri.path
+        }
+        return null
+    }
     private fun runCommand(command: List<String>): String {
         return try {
             ProcessBuilder().command(command)
