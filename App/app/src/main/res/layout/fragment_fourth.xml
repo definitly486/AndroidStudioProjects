@@ -5,6 +5,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!-- Заголовок -->
+    <TextView
+        android:id="@+id/headerTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Расшифровка только текстовых файлов"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:marginBottom="16dp" />
+
     <Button
         android:id="@+id/buttonSelectFile"
         android:layout_width="match_parent"
@@ -31,14 +42,11 @@
         android:layout_height="wrap_content"
         android:text="Расшифровать" />
 
-
     <Button
         android:id="@+id/buttonSaveInternal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Расшифровать и сохранить" />
-
-
 
     <TextView
         android:id="@+id/outputData"
@@ -46,7 +54,4 @@
         android:layout_height="wrap_content"
         android:text="Результат появится здесь" />
 
-    
-
 </LinearLayout>
-
