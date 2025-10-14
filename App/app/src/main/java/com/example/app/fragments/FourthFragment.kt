@@ -99,9 +99,7 @@ class FourthFragment : Fragment() {
             decryptFileopenssl(inputFileUri!!, password)
         }
 
-        binding.download.setOnClickListener {
-            download("${apkHttpUrl}new.enc")
-        }
+
     }
 
     override fun onResume() {
@@ -113,9 +111,11 @@ class FourthFragment : Fragment() {
                 Context.RECEIVER_NOT_EXPORTED
             )
         } else {
-            requireContext().registerReceiver(
+            ContextCompat.registerReceiver(
+                requireContext(),
                 downloadCompleteBroadcastReceiver,
-                IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
+                IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE),
+                ContextCompat.RECEIVER_NOT_EXPORTED
             )
         }
     }
@@ -265,107 +265,9 @@ class FourthFragment : Fragment() {
         return path
     }
 
-    fun download(url: String) {
-        val folder = requireContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS) ?: return
-        if (!folder.exists()) {
-            folder.mkdirs()
-        }
 
-        val lastPart = url.substringAfterLast('/')
-        val file = File(folder, lastPart)
 
-        if (file.exists()) {
-            Toast.makeText(requireContext(), "Файл уже существует", Toast.LENGTH_SHORT).show()
-            return
-        }
 
-        kotlinx.coroutines.CoroutineScope(Dispatchers.Main).launch {
-            try {
-                Toast.makeText(requireContext(), "Начинается загрузка...", Toast.LENGTH_SHORT).show()
-
-                val request = DownloadManager.Request(Uri.parse(url))
-                request.setAllowedNetworkTypes(
-                    DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE
-                )
-                request.setTitle(lastPart)
-                request.setDescription("Загружается...")
-                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-                request.allowScanningByMediaScanner()
-                request.setDestinationInExternalFilesDir(
-                    requireContext(),
-                    Environment.DIRECTORY_DOWNLOADS,
-                    lastPart
-                )
-
-                myDownloadID = downloadManager.enqueue(request)
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-                Toast.makeText(requireContext(), "Ошибка при загрузке: ${ex.message}", Toast.LENGTH_LONG).show()
-            }
-        }
-    }
-
-    fun installApk(filename: String) {
-        val apkFile = File(requireContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), filename)
-
-        if (apkFile.exists()) {
-            val apkUri = FileProvider.getUriForFile(
-                requireContext(),
-                "${requireContext().packageName}.fileprovider",
-                apkFile
-            )
-
-            val intent = Intent(Intent.ACTION_VIEW).apply {
-                setDataAndType(apkUri, "application/vnd.android.package-archive")
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            }
-            startActivity(intent)
-        } else {
-            Toast.makeText(requireContext(), "Файл не найден", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    fun unzip(filename: String): Boolean {
-        val zipFile = File(requireContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), filename)
-        val outputFolder = File(requireContext().getExternalFilesDir(null)?.path!!, "Download")
-        outputFolder.mkdirs()
-
-        val filePath = "/storage/emulated/0/Android/data/com.example.app/files/Download/binance.base.apk"
-        val file = File(filePath)
-
-        if (file.exists()) {
-            Toast.makeText(requireContext(), "Файл уже существует", Toast.LENGTH_SHORT).show()
-            installApk("binance.base.apk")
-            return true
-        }
-
-        val fis = FileInputStream(zipFile)
-        val zis = ZipInputStream(fis)
-
-        var entry: ZipEntry?
-        while (zis.nextEntry.also { entry = it } != null) {
-            val fileName = entry!!.name
-            val destFile = File(outputFolder, fileName)
-            destFile.parentFile?.mkdirs()
-
-            if (!entry!!.isDirectory) {
-                val fos = FileOutputStream(destFile)
-                val bufferSize = 4096
-                val data = ByteArray(bufferSize)
-                var count: Int
-                while (zis.read(data, 0, bufferSize).also { count = it } != -1) {
-                    fos.write(data, 0, count)
-                }
-                fos.flush()
-                fos.close()
-            }
-            zis.closeEntry()
-        }
-        zis.close()
-        fis.close()
-        return true
-    }
 
     // Объявление BroadcastReceiver (если нужно)
     private val downloadCompleteBroadcastReceiver = object : BroadcastReceiver() {
