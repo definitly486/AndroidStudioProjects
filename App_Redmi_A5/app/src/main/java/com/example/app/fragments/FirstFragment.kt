@@ -186,6 +186,19 @@ class FirstFragment : Fragment() {
             }
         }
 
+        val installsports = view.findViewById<Button>(R.id.installsports)
+        installsports.setOnClickListener {
+            val apkUrl1 = "https://github.com/definitly486/Lenovo_TB-X304L/releases/download/apk/sports+2024_1.2_apkcombo.com_antisplit.apk"
+            downloadHelper.download(apkUrl1) { file ->
+                if (file != null) {
+                    Toast.makeText(requireContext(), "Файл загружен: ${file.name}", Toast.LENGTH_SHORT).show()
+                    // Установка происходит автоматически после завершения
+                } else {
+                    Toast.makeText(requireContext(), "Ошибка загрузки", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
         return view
     }
 

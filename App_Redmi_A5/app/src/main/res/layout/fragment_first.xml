@@ -98,5 +98,12 @@
             android:text="@string/intalldpi"
             tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
 
+        <Button
+            android:id="@+id/installsports"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/intallsports"
+            tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+
     </LinearLayout>
 </FrameLayout>
