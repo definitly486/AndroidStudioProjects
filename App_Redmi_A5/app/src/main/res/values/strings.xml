@@ -15,4 +15,5 @@
     <string name="installgnucash">Установить Gnucash </string>
     <string name="installkeychain">Установить Keychain </string>
     <string name="downloadnote">Скачать Note </string>
+    <string name="intalldpi">Установить BYEBYEDPI </string>
 </resources>
