@@ -72,7 +72,11 @@ class SecondFragment : Fragment() {
             "com.google.android.apps.docs",
             "com.xiaomi.glgm",
             "com.google.android.gm",
-            "com.yandex.preinstallsatellite"
+            "com.yandex.preinstallsatellite",
+            "com.tencent.soter.soterserver " ,
+            "com.android.bookmarkprovider",
+            "com.xiaomi.mipicks",
+            "com.xiaomi.discover"
         )
 
         for (packageName in packagesToDelete) {
