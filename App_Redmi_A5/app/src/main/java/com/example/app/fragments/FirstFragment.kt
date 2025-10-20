@@ -92,6 +92,48 @@ class FirstFragment : Fragment() {
         }
 
 
+        val installtc = view.findViewById<Button>(R.id.installtc)
+        installtc.setOnClickListener {
+            val apkUrl1 = "https://github.com/definitly486/redmia5/releases/download/apk/Total_Commander_v.3.50d.apk"
+            downloadHelper.download(apkUrl1) { file ->
+                if (file != null) {
+                    Toast.makeText(requireContext(), "Файл загружен: ${file.name}", Toast.LENGTH_SHORT).show()
+                    // Установка происходит автоматически после завершения
+                } else {
+                    Toast.makeText(requireContext(), "Ошибка загрузки", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
+
+        val installsberbank = view.findViewById<Button>(R.id.installsberbank)
+        installsberbank.setOnClickListener {
+            val apkUrl1 = "https://github.com/definitly486/redmia5/releases/download/apk/SberbankOnline.apk"
+            downloadHelper.download(apkUrl1) { file ->
+                if (file != null) {
+                    Toast.makeText(requireContext(), "Файл загружен: ${file.name}", Toast.LENGTH_SHORT).show()
+                    // Установка происходит автоматически после завершения
+                } else {
+                    Toast.makeText(requireContext(), "Ошибка загрузки", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
+
+        val installozonbank = view.findViewById<Button>(R.id.installozonbank)
+        installozonbank.setOnClickListener {
+            val apkUrl1 = "https://github.com/definitly486/redmia5/releases/download/apk/Ozon_Bank_18.35.0.apk"
+            downloadHelper.download(apkUrl1) { file ->
+                if (file != null) {
+                    Toast.makeText(requireContext(), "Файл загружен: ${file.name}", Toast.LENGTH_SHORT).show()
+                    // Установка происходит автоматически после завершения
+                } else {
+                    Toast.makeText(requireContext(), "Ошибка загрузки", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
+
         return view
     }
 

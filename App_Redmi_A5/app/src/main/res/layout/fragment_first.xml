@@ -49,5 +49,26 @@
             android:text="@string/installjob"
             tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
 
+        <Button
+            android:id="@+id/installtc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/installtc"
+            tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+
+        <Button
+            android:id="@+id/installozonbank"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/installozonbank"
+            tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+
+        <Button
+            android:id="@+id/installsberbank"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/installsberbank"
+            tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+
     </LinearLayout>
 </FrameLayout>
