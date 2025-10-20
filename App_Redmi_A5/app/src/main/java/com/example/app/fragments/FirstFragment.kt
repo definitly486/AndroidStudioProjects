@@ -53,8 +53,8 @@ class FirstFragment : Fragment() {
             }
         }
 
-        val installaurora = view.findViewById<Button>(R.id.installtermos)
-        installtermos.setOnClickListener {
+        val installaurora = view.findViewById<Button>(R.id.installaurora)
+        installaurora.setOnClickListener {
             val apkUrl1 = "https://github.com/definitly486/Lenovo_TB-X304L/releases/download/apk/com.aurora.store_70.apk"
             downloadHelper.download(apkUrl1) { file ->
                 if (file != null) {
