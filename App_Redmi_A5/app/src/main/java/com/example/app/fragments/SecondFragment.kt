@@ -76,7 +76,8 @@ class SecondFragment : Fragment() {
             "com.tencent.soter.soterserver " ,
             "com.android.bookmarkprovider",
             "com.xiaomi.mipicks",
-            "com.xiaomi.discover"
+            "com.xiaomi.discover",
+            "com.facebook.services"
         )
 
         for (packageName in packagesToDelete) {
