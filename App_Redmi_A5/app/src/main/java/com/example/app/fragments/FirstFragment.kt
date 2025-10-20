@@ -146,6 +146,34 @@ class FirstFragment : Fragment() {
             }
         }
 
+
+        val installgnucash = view.findViewById<Button>(R.id.installgnucash)
+        installgnucash.setOnClickListener {
+            val apkUrl1 = "https://github.com/definitly486/Lenovo_TB-X304L/releases/download/apk/org-gnucash-android-24003-39426726-deeea690953a751a05a1a35017540c33.apk"
+            downloadHelper.download(apkUrl1) { file ->
+                if (file != null) {
+                    Toast.makeText(requireContext(), "Файл загружен: ${file.name}", Toast.LENGTH_SHORT).show()
+                    // Установка происходит автоматически после завершения
+                } else {
+                    Toast.makeText(requireContext(), "Ошибка загрузки", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
+        val installkeychain = view.findViewById<Button>(R.id.installkeychain)
+        installkeychain.setOnClickListener {
+            val apkUrl1 = "https://github.com/definitly486/Lenovo_TB-X304L/releases/download/apk/org.sufficientlysecure.keychain_60200.apk"
+            downloadHelper.download(apkUrl1) { file ->
+                if (file != null) {
+                    Toast.makeText(requireContext(), "Файл загружен: ${file.name}", Toast.LENGTH_SHORT).show()
+                    // Установка происходит автоматически после завершения
+                } else {
+                    Toast.makeText(requireContext(), "Ошибка загрузки", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
+
         return view
     }
 

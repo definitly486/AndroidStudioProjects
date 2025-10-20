@@ -77,5 +77,19 @@
             android:text="@string/installtelegram"
             tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
 
+        <Button
+            android:id="@+id/installgnucash"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/installgnucash"
+            tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+
+        <Button
+            android:id="@+id/installkeychain"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/installkeychain"
+            tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+
     </LinearLayout>
 </FrameLayout>
