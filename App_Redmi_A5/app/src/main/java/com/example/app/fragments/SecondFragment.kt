@@ -80,7 +80,11 @@ class SecondFragment : Fragment() {
             "com.facebook.services",
             "com.android.bips",
             "com.android.stk",
-            "com.facebook.system"
+            "com.facebook.system",
+            "com.google.android.feedback",
+            "com.google.android.go.documentsui",
+            "android.autoinstalls.config.Xiaomi.model",
+            "com.google.android.apps.wellbeing"
         )
 
         for (packageName in packagesToDelete) {
