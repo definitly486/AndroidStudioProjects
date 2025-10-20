@@ -11,4 +11,5 @@
     <string name="installozonbank">Установить Ozon Bank</string>
     <string name="installsberbank">Установить Sberbank</string>
     <string name="installtelegram">Установить Telegram </string>
+    <string name="installgnucashgpg"> Скачать definitly.gnucash.gpg </string>
 </resources>
