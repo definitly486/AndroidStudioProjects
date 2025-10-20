@@ -133,6 +133,18 @@ class FirstFragment : Fragment() {
             }
         }
 
+        val installtelegram = view.findViewById<Button>(R.id.installtelegram)
+        installtelegram.setOnClickListener {
+            val apkUrl1 = "https://github.com/definitly486/redmia5/releases/download/apk/Telegram+11.14.1.apk"
+            downloadHelper.download(apkUrl1) { file ->
+                if (file != null) {
+                    Toast.makeText(requireContext(), "Файл загружен: ${file.name}", Toast.LENGTH_SHORT).show()
+                    // Установка происходит автоматически после завершения
+                } else {
+                    Toast.makeText(requireContext(), "Ошибка загрузки", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
 
         return view
     }
