@@ -8,6 +8,10 @@ import android.os.Environment
 import android.provider.Settings
 import android.widget.Toast
 import androidx.core.content.FileProvider
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 
 class DownloadHelper(private val context: Context) {
@@ -134,6 +138,50 @@ class DownloadHelper(private val context: Context) {
             Toast.makeText(context, "Файл не найден", Toast.LENGTH_SHORT).show()
         }
     }
+
+    fun downloadgpg(url: String) {
+        val folder = getDownloadFolder() ?: return
+        if (!folder.exists()) {
+            folder.mkdirs()
+        }
+        val lastPart = url.split("/").last()
+        val file = File(folder, lastPart)
+
+        if (file.exists()) {
+            Toast.makeText(context, "Файл уже существует", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(context, "Начинается загрузка...", Toast.LENGTH_SHORT).show()
+                }
+
+                val request = DownloadManager.Request(Uri.parse(url))
+                request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
+                request.setTitle(lastPart)
+                request.setDescription("Загружается...")
+                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                request.allowScanningByMediaScanner()
+                request.setDestinationInExternalFilesDir(
+                    context,
+                    Environment.DIRECTORY_DOWNLOADS,
+                    lastPart
+                )
+
+                val downloadID = downloadManager.enqueue(request)
+                // Save downloadID if needed to track completion
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(context, "Ошибка при загрузке: ${ex.message}", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+    }
+
+
 
     fun cleanup() {
         try {
