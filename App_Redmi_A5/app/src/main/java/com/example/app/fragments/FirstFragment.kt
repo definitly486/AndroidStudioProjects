@@ -42,7 +42,7 @@ class FirstFragment : Fragment() {
 
         val installtermos = view.findViewById<Button>(R.id.installtermos)
         installtermos.setOnClickListener {
-            val apkUrl1 = "https://github.com/definitly486/redmia5/releases/download/apk/ Termos_v2.4_universal.apk "
+            val apkUrl1 = "https://github.com/definitly486/redmia5/releases/download/apk/Termos_v2.4_universal.apk"
             downloadHelper.download(apkUrl1) { file ->
                 if (file != null) {
                     Toast.makeText(requireContext(), "Файл загружен: ${file.name}", Toast.LENGTH_SHORT).show()
@@ -52,6 +52,20 @@ class FirstFragment : Fragment() {
                 }
             }
         }
+
+        val installaurora = view.findViewById<Button>(R.id.installtermos)
+        installtermos.setOnClickListener {
+            val apkUrl1 = "https://github.com/definitly486/Lenovo_TB-X304L/releases/download/apk/com.aurora.store_70.apk"
+            downloadHelper.download(apkUrl1) { file ->
+                if (file != null) {
+                    Toast.makeText(requireContext(), "Файл загружен: ${file.name}", Toast.LENGTH_SHORT).show()
+                    // Установка происходит автоматически после завершения
+                } else {
+                    Toast.makeText(requireContext(), "Ошибка загрузки", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
         return view
     }
 
