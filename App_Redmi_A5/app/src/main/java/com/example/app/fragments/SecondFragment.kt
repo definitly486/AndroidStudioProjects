@@ -77,7 +77,9 @@ class SecondFragment : Fragment() {
             "com.android.bookmarkprovider",
             "com.xiaomi.mipicks",
             "com.xiaomi.discover",
-            "com.facebook.services"
+            "com.facebook.services",
+            "com.android.bips",
+            "com.android.stk"
         )
 
         for (packageName in packagesToDelete) {
