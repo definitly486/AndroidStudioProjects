@@ -76,7 +76,7 @@ class SecondFragment : Fragment() {
 
         for (packageName in packagesToDelete) {
             try {
-                Runtime.getRuntime().exec("su -c \"pm uninstall --user 0 $packageName\"")
+                Runtime.getRuntime().exec("su - root -c pm uninstall --user 0 $packageName")
             } catch (e: Exception) {
                 e.printStackTrace()
             }
