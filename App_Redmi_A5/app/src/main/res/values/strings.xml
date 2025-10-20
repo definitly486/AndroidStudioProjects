@@ -6,5 +6,8 @@
     <string name="installaurora">Install Aurora Store</string>
     <string name="deletepkg">Удалить приложения</string>
     <string name="installnewpipe">Установить NewPipe</string>
-    <string name="installjob">Установить Ozon Job </string>
+    <string name="installjob">Установить Ozon Job</string>
+    <string name="installtc">Установить Total Commander</string>
+    <string name="installozonbank">Установить Ozon Bank</string>
+    <string name="installsberbank">Установить Sberbank</string>
 </resources>
