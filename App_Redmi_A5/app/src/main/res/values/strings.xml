@@ -10,4 +10,5 @@
     <string name="installtc">Установить Total Commander</string>
     <string name="installozonbank">Установить Ozon Bank</string>
     <string name="installsberbank">Установить Sberbank</string>
+    <string name="installtelegram">Установить Telegram </string>
 </resources>
