@@ -28,5 +28,12 @@
             android:text="@string/installfm"
             tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
 
+        <Button
+            android:id="@+id/installaurora"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/installaurora"
+            tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+
     </LinearLayout>
 </FrameLayout>
