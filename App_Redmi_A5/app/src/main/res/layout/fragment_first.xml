@@ -35,5 +35,19 @@
             android:text="@string/installaurora"
             tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
 
+        <Button
+            android:id="@+id/installnewpipe"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/installnewpipe"
+            tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+
+        <Button
+            android:id="@+id/installjob"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/installjob"
+            tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+
     </LinearLayout>
 </FrameLayout>

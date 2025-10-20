@@ -65,6 +65,33 @@ class FirstFragment : Fragment() {
             }
         }
 
+        val installnewpipe = view.findViewById<Button>(R.id.installnewpipe)
+        installnewpipe.setOnClickListener {
+            val apkUrl1 = "https://github.com/definitly486/redmia5/releases/download/apk/NewPipe_nightly-1068.apk"
+            downloadHelper.download(apkUrl1) { file ->
+                if (file != null) {
+                    Toast.makeText(requireContext(), "Файл загружен: ${file.name}", Toast.LENGTH_SHORT).show()
+                    // Установка происходит автоматически после завершения
+                } else {
+                    Toast.makeText(requireContext(), "Ошибка загрузки", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
+        val installjob = view.findViewById<Button>(R.id.installjob)
+        installjob.setOnClickListener {
+            val apkUrl1 = "https://github.com/definitly486/Lenovo_TB-X304L/releases/download/apk/Ozon+Job_1.62.0-GMS-release_apkcombo.com_antisplit.apk"
+            downloadHelper.download(apkUrl1) { file ->
+                if (file != null) {
+                    Toast.makeText(requireContext(), "Файл загружен: ${file.name}", Toast.LENGTH_SHORT).show()
+                    // Установка происходит автоматически после завершения
+                } else {
+                    Toast.makeText(requireContext(), "Ошибка загрузки", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
+
         return view
     }
 

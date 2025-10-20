@@ -71,7 +71,8 @@ class SecondFragment : Fragment() {
             "com.google.android.appsearch.apk",
             "com.google.android.apps.docs",
             "com.xiaomi.glgm",
-            "com.google.android.gm"
+            "com.google.android.gm",
+            "com.yandex.preinstallsatellite"
         )
 
         for (packageName in packagesToDelete) {
