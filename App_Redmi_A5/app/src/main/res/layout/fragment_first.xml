@@ -112,5 +112,13 @@
             android:text="@string/intallgesture"
             tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
 
+        <Button
+            android:id="@+id/installhaker"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:text="@string/intallhaker"
+            tools:ignore="UsingOnClickInXml,VisualLintButtonSize,TouchTargetSizeCheck" />
+
     </LinearLayout>
 </FrameLayout>
