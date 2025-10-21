@@ -84,7 +84,8 @@ class SecondFragment : Fragment() {
             "com.google.android.feedback",
             "com.google.android.go.documentsui",
             "android.autoinstalls.config.Xiaomi.model",
-            "com.google.android.apps.wellbeing"
+            "com.google.android.apps.wellbeing",
+            "com.android.vending"
         )
 
         for (packageName in packagesToDelete) {
