@@ -93,7 +93,9 @@ class SecondFragment : Fragment() {
             "com.android.printspooler",
             "com.google.android.printservice.recommendation",
             "com.google.android.setupwizard",
-            "com.android.ons"
+            "com.android.ons",
+            "com.google.android.partnersetup",
+            "com.android.providers.partnerbookmarks"
         )
 
         for (packageName in packagesToDelete) {
