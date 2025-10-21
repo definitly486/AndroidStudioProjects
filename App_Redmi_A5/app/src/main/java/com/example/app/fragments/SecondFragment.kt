@@ -10,7 +10,7 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.app.R
-import org.bouncycastle.crypto.params.Blake3Parameters.context
+
 
 
 class SecondFragment : Fragment() {
