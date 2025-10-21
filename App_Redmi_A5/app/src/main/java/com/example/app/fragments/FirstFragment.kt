@@ -251,6 +251,24 @@ class FirstFragment : Fragment() {
 
         }
 
+        val installmpv = view.findViewById<Button>(R.id.installmpv)
+        installmpv.setOnClickListener {
+            val apkUrl1 =
+                "https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/apk/is.xyz.mpv_41.apk"
+            downloadHelper.download(apkUrl1) { file ->
+                if (file != null) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Файл загружен: ${file.name}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    // Установка происходит автоматически после завершения
+                } else {
+                    Toast.makeText(requireContext(), "Ошибка загрузки", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+        }
 
 
         return view
