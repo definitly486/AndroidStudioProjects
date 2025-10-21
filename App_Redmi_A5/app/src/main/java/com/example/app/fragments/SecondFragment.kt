@@ -89,7 +89,9 @@ class SecondFragment : Fragment() {
             "com.android.vending",
             "com.android.musicfx",
             "com.google.android.tts",
-            "com.mi.globalminusscreen"
+            "com.mi.globalminusscreen",
+            "com.android.printspooler",
+            "com.google.android.printservice.recommendation"
         )
 
         for (packageName in packagesToDelete) {
