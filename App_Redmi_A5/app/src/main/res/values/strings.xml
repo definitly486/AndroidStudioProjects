@@ -17,4 +17,5 @@
     <string name="downloadnote">Скачать Note </string>
     <string name="intalldpi">Установить BYEBYEDPI </string>
     <string name="intallsports">Установить Sports </string>
+    <string name="intallgesture">Установить Gesture </string>
 </resources>
