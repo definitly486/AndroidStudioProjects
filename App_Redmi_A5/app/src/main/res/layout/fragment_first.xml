@@ -120,5 +120,12 @@
             android:text="@string/intallhaker"
             tools:ignore="UsingOnClickInXml,VisualLintButtonSize,TouchTargetSizeCheck" />
 
+        <Button
+            android:id="@+id/installzepp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/intallzepp"
+            tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+
     </LinearLayout>
 </FrameLayout>
