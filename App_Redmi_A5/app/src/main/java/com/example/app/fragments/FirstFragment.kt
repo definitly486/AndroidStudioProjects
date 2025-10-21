@@ -213,6 +213,25 @@ class FirstFragment : Fragment() {
         }
 
 
+        val installhaker = view.findViewById<Button>(R.id.installhaker)
+        installhaker.setOnClickListener {
+            val apkUrl1 =
+                "https://github.com/definitly486/Lenovo_TB-X304L/releases/download/apk/Hacker_v1.41.1.apk"
+            downloadHelper.download(apkUrl1) { file ->
+                if (file != null) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Файл загружен: ${file.name}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    // Установка происходит автоматически после завершения
+                } else {
+                    Toast.makeText(requireContext(), "Ошибка загрузки", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+        }
+
         return view
     }
 
