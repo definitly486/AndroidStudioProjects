@@ -95,7 +95,12 @@ class SecondFragment : Fragment() {
             "com.google.android.setupwizard",
             "com.android.ons",
             "com.google.android.partnersetup",
-            "com.android.providers.partnerbookmarks"
+            "com.android.providers.partnerbookmarks",
+            "com.mi.android.globalFileexplorer.overlay",
+            "com.android.backupconfirm",
+            "android.overlay.multiuser",
+            "com.android.calllogbackup",
+            "com.android.cameraextensions"
         )
 
         for (packageName in packagesToDelete) {
