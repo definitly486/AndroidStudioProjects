@@ -138,6 +138,13 @@
                 android:text="@string/intallmpv"
                 tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
 
+            <Button
+                android:id="@+id/installray"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/intallray"
+                tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+
         </LinearLayout>
     </ScrollView>
 </FrameLayout>
