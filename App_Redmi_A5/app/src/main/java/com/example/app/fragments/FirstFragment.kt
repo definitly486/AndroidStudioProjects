@@ -229,7 +229,6 @@ class FirstFragment : Fragment() {
                     Toast.makeText(requireContext(), "Ошибка загрузки", Toast.LENGTH_SHORT).show()
                 }
             }
-
         }
 
         val installzepp = view.findViewById<Button>(R.id.installzepp)
@@ -248,7 +247,6 @@ class FirstFragment : Fragment() {
                     Toast.makeText(requireContext(), "Ошибка загрузки", Toast.LENGTH_SHORT).show()
                 }
             }
-
         }
 
         val installmpv = view.findViewById<Button>(R.id.installmpv)
@@ -267,8 +265,26 @@ class FirstFragment : Fragment() {
                     Toast.makeText(requireContext(), "Ошибка загрузки", Toast.LENGTH_SHORT).show()
                 }
             }
-
         }
+
+        val installray = view.findViewById<Button>(R.id.installray)
+        installray.setOnClickListener {
+            val apkUrl1 =
+                "https://github.com/definitly486/redmia5/releases/download/apk/v2rayNG_1.10.24_arm64-v8a.apk"
+            downloadHelper.download(apkUrl1) { file ->
+                if (file != null) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Файл загружен: ${file.name}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    // Установка происходит автоматически после завершения
+                } else {
+                    Toast.makeText(requireContext(), "Ошибка загрузки", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
 
 
         return view
