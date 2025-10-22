@@ -26,6 +26,13 @@
                 tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
 
             <Button
+                android:id="@+id/installtermosplus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/installtermosplus"
+                tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+
+            <Button
                 android:id="@+id/installfm"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
