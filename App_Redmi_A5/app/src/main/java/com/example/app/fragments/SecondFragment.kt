@@ -134,6 +134,7 @@ class SecondFragment : Fragment() {
         )
 
         for (packageName in packagesToDelete) {
+            Toast.makeText(context, "Удаляется пакет: $packageName", Toast.LENGTH_SHORT).show()
             try {
                 Runtime.getRuntime().exec("su - root -c pm uninstall --user 0 $packageName")
                   Thread.sleep(1000)
