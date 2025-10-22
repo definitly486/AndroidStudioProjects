@@ -21,6 +21,12 @@
             android:text="@string/deletepkg"
             tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
 
+        <Button
+            android:id="@+id/downloadbusybox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/downloadbusybox"
+            tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
 
 
     </LinearLayout>
