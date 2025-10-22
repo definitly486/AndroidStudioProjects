@@ -22,4 +22,5 @@
     <string name="intallzepp">Установить Zepp Life</string>
     <string name="intallmpv">Установить MPV</string>
     <string name="intallray">Установить v2rayNG </string>
+    <string name="downloadbusybox">Установить Busybox </string>
 </resources>
