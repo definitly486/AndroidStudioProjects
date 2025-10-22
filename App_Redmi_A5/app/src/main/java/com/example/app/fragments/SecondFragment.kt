@@ -102,7 +102,9 @@ class SecondFragment : Fragment() {
             "com.android.calllogbackup",
             "com.android.cameraextensions",
             "com.google.android.marvin.talkback",
-            "org.ifaa.aidl.manager"
+            "org.ifaa.aidl.manager",
+            "com.android.wallpaperbackup",
+            "com.android.avatarpicker"
         )
 
         for (packageName in packagesToDelete) {
