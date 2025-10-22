@@ -104,7 +104,10 @@ class SecondFragment : Fragment() {
             "com.google.android.marvin.talkback",
             "org.ifaa.aidl.manager",
             "com.android.wallpaperbackup",
-            "com.android.avatarpicker"
+            "com.android.avatarpicker",
+            "com.google.android.apps.subscriptions.red",
+            "com.google.android.ext.shared",
+            "com.android.sharedstoragebackup"
         )
 
         for (packageName in packagesToDelete) {
