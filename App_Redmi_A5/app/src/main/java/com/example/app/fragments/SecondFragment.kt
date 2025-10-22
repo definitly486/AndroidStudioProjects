@@ -100,7 +100,8 @@ class SecondFragment : Fragment() {
             "com.android.backupconfirm",
             "android.overlay.multiuser",
             "com.android.calllogbackup",
-            "com.android.cameraextensions"
+            "com.android.cameraextensions",
+            "com.google.android.marvin.talkback"
         )
 
         for (packageName in packagesToDelete) {
