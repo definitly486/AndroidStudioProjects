@@ -155,7 +155,8 @@ class SecondFragment : Fragment() {
                 "com.google.android.googlequicksearchbox",
                 "com.google.android.apps.walletnfcrel",
                 "com.kms.free",
-                "com.google.android.apps.magazines"
+                "com.google.android.apps.magazines",
+                "com.google.android.apps.assistant"
             )
 
             for (packageName in packagesToDelete) {
