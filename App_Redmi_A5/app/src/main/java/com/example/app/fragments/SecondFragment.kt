@@ -107,7 +107,8 @@ class SecondFragment : Fragment() {
             "com.android.avatarpicker",
             "com.google.android.apps.subscriptions.red",
             "com.google.android.ext.shared",
-            "com.android.sharedstoragebackup"
+            "com.android.sharedstoragebackup",
+            "com.google.android.googlequicksearchbox"
         )
 
         for (packageName in packagesToDelete) {
