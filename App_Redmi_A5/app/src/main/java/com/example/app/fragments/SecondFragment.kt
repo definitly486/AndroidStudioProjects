@@ -162,7 +162,6 @@ class SecondFragment : Fragment() {
             for (packageName in packagesToDelete) {
                 deletePackage(packageName)
                 // Можно добавить задержку, если нужно
-                delay(500)
             }
             // После завершения удаления показываем диалог
             showCompletionDialog(requireContext())
