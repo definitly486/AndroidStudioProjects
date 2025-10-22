@@ -1,6 +1,7 @@
 package com.example.app.fragments
 
 import DownloadHelper
+import android.content.Context
 import kotlinx.coroutines.*
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,7 +11,7 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.app.R
-
+import androidx.appcompat.app.AlertDialog
 
 
 class SecondFragment : Fragment() {
@@ -162,13 +163,22 @@ class SecondFragment : Fragment() {
                 // Можно добавить задержку, если нужно
                 delay(500)
             }
-
+            // После завершения удаления показываем диалог
+            showCompletionDialog(requireContext())
             Toast.makeText(context, "Удаление завершено!", Toast.LENGTH_SHORT).show()
         }
     }
 
 
-
+    fun showCompletionDialog(context: Context) {
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle("Удаление завершено")
+        builder.setMessage("Все выбранные пакеты успешно удалены.")
+        builder.setPositiveButton("Продолжить") { dialog, _ ->
+            dialog.dismiss()
+        }
+        builder.show()
+    }
 
 
 
