@@ -106,15 +106,29 @@ class DownloadHelper(private val context: Context) {
     }
 
 
-    fun installbusybox(){
-
+    fun installbusybox() {
         Toast.makeText(context, "Начинается установка busybox...", Toast.LENGTH_SHORT).show()
-        Runtime.getRuntime().exec("su - root -c mount -o rw,remount /")
-        Runtime.getRuntime().exec("su - root -c remount")
-        Runtime.getRuntime().exec("su - root -c cp /storage/emulated/0/Android/data/com.example.app/files/Download/busybox /system/bin/busybox")
-        Runtime.getRuntime().exec("su - root -c chmod +x  /system/bin/busybox")
-        Runtime.getRuntime().exec("su - root -c chmod 0755  /system/bin/busybox")
 
+        val commands = arrayOf(
+            "su - root -c mount -o rw,remount /",
+            "su - root -c remount",
+            "su - root -c cp /storage/emulated/0/Android/data/com.example.app/files/Download/busybox /system/bin/busybox",
+            "su - root -c chmod +x  /system/bin/busybox",
+            "su - root -c chmod 0755  /system/bin/busybox"
+        )
+
+        var process: Process? = null
+
+        for (command in commands) {
+            process = Runtime.getRuntime().exec(command)
+            process.waitFor() // Wait for the command to finish
+            if (process.exitValue() != 0) {
+                Toast.makeText(context, "Ошибка при установке busybox: $command", Toast.LENGTH_LONG).show()
+                return
+            }
+        }
+
+        Toast.makeText(context, "Установка busybox завершена", Toast.LENGTH_SHORT).show()
     }
 
 
