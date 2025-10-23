@@ -1,15 +1,9 @@
 package com.example.app.fragments
-import DownloadHelper
+
 import android.content.Context
-import android.os.Bundle
-import android.os.Environment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.Button
+
 import android.widget.Toast
-import androidx.core.content.ContentProviderCompat.requireContext
-import com.example.app.R
+
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream
 import org.apache.commons.compress.compressors.xz.XZCompressorInputStream
@@ -82,14 +76,36 @@ class DownloadHelper2(private val context: Context) {
 
     }
 
-    fun installGH() {
-        Toast.makeText(context, "Начинается установка GH...", Toast.LENGTH_SHORT).show()
-        Runtime.getRuntime().exec("su - root -c mount -o rw,remount /")
-        Runtime.getRuntime()
-            .exec("su - root -c cp /storage/emulated/0/Android/data/com.example.app/files/Download/gh_2.76.2_aarch64/gh /system/bin/")
-        Runtime.getRuntime().exec("su - root -c chmod +x  /system/bin/gh")
-        Runtime.getRuntime().exec("su - root -c chmod 0755  /system/bin/gh")
 
+
+    fun copymain() {
+        Toast.makeText(context, "Копируем redmia5-main ...", Toast.LENGTH_SHORT).show()
+
+
+        val prepareCommands = arrayOf("su - root -c chmod -R 0755 /storage/emulated/0/Android/data/com.example.app/files/Download/redmia5-main")
+        for (command in prepareCommands) {
+            Runtime.getRuntime().exec(command).waitFor()
+        }
+
+        val commands = arrayOf(
+
+            "su - root -c cp  -R /storage/emulated/0/Android/data/com.example.app/files/Download/redmia5-main /data_mirror/data_ce/null/0/com.termos/files/home",
+          //  " cp  -R /storage/emulated/0/Android/data/com.example.app/files/Download/redmia5-main /storage/emulated/0/Android/data/com.example.app/files/Download/1",
+            "su - root -c chmod -R 0755 /data_mirror/data_ce/null/0/com.termos/files/home"
+        )
+
+        var process: Process? = null
+
+        for (command in commands) {
+            process = Runtime.getRuntime().exec(command)
+            process.waitFor() // Wait for the command to finish
+            if (process.exitValue() != 0) {
+                Toast.makeText(context, "Ошибка при копирование main: $command", Toast.LENGTH_LONG).show()
+                return
+            }
+        }
+
+        Toast.makeText(context, "Копирование  main завершенo", Toast.LENGTH_SHORT).show()
     }
 
 
