@@ -255,7 +255,8 @@ class SecondFragment : Fragment() {
                 "com.kms.free",
                 "com.google.android.apps.magazines",
                 "com.google.android.apps.assistant",
-                "com.yandex.searchapp"
+                "com.yandex.searchapp",
+                "com.silead.factorytest"
             )
 
             for (packageName in packagesToDelete) {
@@ -267,8 +268,6 @@ class SecondFragment : Fragment() {
             Toast.makeText(context, "Удаление завершено!", Toast.LENGTH_SHORT).show()
         }
     }
-
-
     fun showCompletionDialog(context: Context) {
         val builder = AlertDialog.Builder(context)
         builder.setTitle("Удаление завершено")
@@ -278,103 +277,4 @@ class SecondFragment : Fragment() {
         }
         builder.show()
     }
-
-
-
-    fun deletepkg2() {
-        Toast.makeText(context, "Начинается удаление пакетов ...", Toast.LENGTH_SHORT).show()
-
-        val packagesToDelete = listOf(
-            "com.miui.analytics.go",
-            "ru.ivi.client",
-            "ru.vk.store",
-            "ru.beru.android",
-            "ru.more.play",
-            "ru.oneme.app",
-            "com.miui.player",
-            "com.miui.videoplayer",
-            "com.miui.theme.lite",
-            "com.miui.gameCenter.overlay",
-            "com.miui.videoplayer.overlay",
-            "com.miui.bugreport",
-            "com.miui.cleaner.go",
-            "com.miui.player.overlay",
-            "com.miui.msa.global",
-            "com.yandex.searchapp",
-            "com.yandex.browser",
-            "com.google.android.youtube",
-            "com.google.android.apps.youtube.music",
-            "com.android.shareMe.overlay",
-            "com.vitastudio.mahjong",
-            "com.oakever.tiletrip",
-            "com.ordinaryjoy.woodblast",
-            "com.go.browser",
-            "com.facebook.appmanager",
-            "com.google.android.apps.tachyon",
-            "com.xiaomi.midrop",
-            "com.miui.global.packageinstaller",
-            "com.xiaomi.discover",
-            "com.xiaomi.mipicks",
-            "com.google.android.videos",
-            "com.miui.android.fashiongallery",
-            "com.google.android.apps.safetyhub",
-            "com.google.android.overlay.gmsconfig.searchgo",
-            "com.google.android.apps.searchlite",
-            "com.google.android.appsearch.apk",
-            "com.google.android.apps.docs",
-            "com.xiaomi.glgm",
-            "com.google.android.gm",
-            "com.yandex.preinstallsatellite",
-            "com.tencent.soter.soterserver " ,
-            "com.android.bookmarkprovider",
-            "com.xiaomi.mipicks",
-            "com.xiaomi.discover",
-            "com.facebook.services",
-            "com.android.bips",
-            "com.android.stk",
-            "com.facebook.system",
-            "com.google.android.feedback",
-            "com.google.android.go.documentsui",
-            "android.autoinstalls.config.Xiaomi.model",
-            "com.google.android.apps.wellbeing",
-            "com.android.vending",
-            "com.android.musicfx",
-            "com.google.android.tts",
-            "com.mi.globalminusscreen",
-            "com.android.printspooler",
-            "com.google.android.printservice.recommendation",
-            "com.google.android.setupwizard",
-            "com.android.ons",
-            "com.google.android.partnersetup",
-            "com.android.providers.partnerbookmarks",
-            "com.mi.android.globalFileexplorer.overlay",
-            "com.android.backupconfirm",
-            "android.overlay.multiuser",
-            "com.android.calllogbackup",
-            "com.android.cameraextensions",
-            "com.google.android.marvin.talkback",
-            "org.ifaa.aidl.manager",
-            "com.android.wallpaperbackup",
-            "com.android.avatarpicker",
-            "com.google.android.apps.subscriptions.red",
-            "com.google.android.ext.shared",
-            "com.android.sharedstoragebackup",
-            "com.google.android.googlequicksearchbox",
-            "com.google.android.apps.walletnfcrel",
-            "com.kms.free",
-            "com.google.android.apps.magazines"
-        )
-
-        for (packageName in packagesToDelete) {
-            Toast.makeText(context, "Удаляется пакет: $packageName", Toast.LENGTH_SHORT).show()
-            try {
-                Runtime.getRuntime().exec("su - root -c pm uninstall --user 0 $packageName")
-                  Thread.sleep(1000)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
-
-
 }
