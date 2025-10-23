@@ -27,5 +27,12 @@
             android:text="@string/downloadnote"
             tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
 
+        <Button
+            android:id="@+id/gitclonedcim"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/gitclonedcim"
+            tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+
     </LinearLayout>
 </FrameLayout>
