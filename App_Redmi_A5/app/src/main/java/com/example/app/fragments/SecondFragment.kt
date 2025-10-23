@@ -96,6 +96,7 @@ class SecondFragment : Fragment() {
                 "com.miui.analytics.go",
                 "ru.ivi.client",
                 "ru.vk.store",
+                "com.vk.vkvideo",
                 "ru.beru.android",
                 "ru.more.play",
                 "ru.oneme.app",
