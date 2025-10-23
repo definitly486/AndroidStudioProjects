@@ -1,6 +1,7 @@
 package com.example.app.fragments
 
 import DownloadHelper
+import android.annotation.SuppressLint
 import android.content.Context
 import kotlinx.coroutines.*
 import android.os.Bundle
@@ -18,6 +19,7 @@ class SecondFragment : Fragment() {
     private lateinit var downloadHelper: DownloadHelper
 
 
+    @SuppressLint("MissingInflatedId")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
@@ -48,8 +50,21 @@ class SecondFragment : Fragment() {
             }
         }
 
+        val downloadksuzip = view.findViewById<Button>(R.id.downloadksuzip)
+        downloadksuzip.setOnClickListener {
+            val apkUrl1 = "https://github.com/definitly486/redmia5/releases/download/root/APatch-KSU.zip"
+            downloadHelper.downloadgpg(apkUrl1)
+
+        }
+
+
+
         return view
     }
+
+
+
+
 
     suspend fun deletePackage(packageName: String) {
         withContext(Dispatchers.IO) {
