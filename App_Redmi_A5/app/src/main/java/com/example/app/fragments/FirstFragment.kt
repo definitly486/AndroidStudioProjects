@@ -305,6 +305,25 @@ class FirstFragment : Fragment() {
         }
 
 
+        val installapatch = view.findViewById<Button>(R.id.installapatch)
+        installapatch.setOnClickListener {
+            val apkUrl1 =
+                "https://github.com/definitly486/redmia5/releases/download/apk/APatch_11107_11107-release-signed.apk"
+            downloadHelper.download(apkUrl1) { file ->
+                if (file != null) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Файл загружен: ${file.name}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    // Установка происходит автоматически после завершения
+                } else {
+                    Toast.makeText(requireContext(), "Ошибка загрузки", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
+
         return view
     }
 
