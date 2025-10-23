@@ -15,7 +15,7 @@ class GitClone {
     suspend fun cloneRepository(): Result<Boolean> = withContext(Dispatchers.IO) {
         return@withContext try {
             val remoteUri = "https://github.com/definitly486/DCIM"
-            val localDirectory = File("/storage/emulated/0/Android/data/com.example.app/files/Download/")
+            val localDirectory = File("/storage/emulated/0/Android/data/com.example.app/files/Download/DCIM")
 
             // Создание директории, если она не существует
             if (!localDirectory.exists()) {
