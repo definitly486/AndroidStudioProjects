@@ -18,7 +18,6 @@ import java.io.InputStreamReader
 
 class DownloadHelper2(private val context: Context) {
 
-
     fun decompressTarGz(tarGzFile: File, outputDir: File) {
 
         // Ensure canonical path for security

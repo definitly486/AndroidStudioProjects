@@ -14,9 +14,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.app.R
 import androidx.appcompat.app.AlertDialog
-import kotlinx.coroutines.*
 import java.io.File
-
 
 class SecondFragment : Fragment() {
     private lateinit var downloadHelper: DownloadHelper
@@ -138,15 +136,8 @@ class SecondFragment : Fragment() {
         }
 
 
-
-
-
         return view
     }
-
-
-
-
 
     suspend fun deletePackage(packageName: String) {
         withContext(Dispatchers.IO) {
@@ -168,7 +159,6 @@ class SecondFragment : Fragment() {
             }
         }
     }
-
 
     fun deletepkg() {
         CoroutineScope(Dispatchers.Main).launch {
