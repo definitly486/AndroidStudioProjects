@@ -323,6 +323,24 @@ class FirstFragment : Fragment() {
             }
         }
 
+        val installkernelsu = view.findViewById<Button>(R.id.installkernelsu)
+        installkernelsu.setOnClickListener {
+            val apkUrl1 =
+                "https://github.com/definitly486/redmia5/releases/download/apk/KernelSU_v1.0.5_12081-release.apk"
+            downloadHelper.download(apkUrl1) { file ->
+                if (file != null) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Файл загружен: ${file.name}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    // Установка происходит автоматически после завершения
+                } else {
+                    Toast.makeText(requireContext(), "Ошибка загрузки", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
 
         return view
     }

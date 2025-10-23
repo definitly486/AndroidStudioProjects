@@ -152,6 +152,15 @@
                 android:text="@string/intallray"
                 tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
 
+
+            <Button
+                android:id="@+id/installkernelsu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/installkernelsu"
+                tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+
+
             <Button
                 android:id="@+id/installapatch"
                 android:layout_width="match_parent"
