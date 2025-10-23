@@ -27,5 +27,6 @@
     <string name="apatch">Установить APatch</string>
     <string name="downloadksuzip">Скачать APatch-KSU.zip  </string>
     <string name="installkernelsu">Установить KernelSU </string>
+    <string name="installopenssl">Установить OpenSSL </string>
 
 </resources>

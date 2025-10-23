@@ -29,6 +29,13 @@
             tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
 
         <Button
+            android:id="@+id/installopenssl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/installopenssl"
+            tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+
+        <Button
             android:id="@+id/downloadksuzip"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
