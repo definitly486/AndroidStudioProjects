@@ -50,6 +50,24 @@ class SecondFragment : Fragment() {
             }
         }
 
+        val installopenssl = view.findViewById<Button>(R.id.installopenssl)
+        downloadbusybox.setOnClickListener {
+            downloadHelper.downloadopenssl("https://github.com/definitly486/Lenovo_TB-X304L/releases/download/openssl/openssl") { file ->
+                if (file != null) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Файл загружен: ${file.name}",
+                        Toast.LENGTH_SHORT
+                    )
+                        .show()
+                    // Установка происходит автоматически после завершения
+                } else {
+                    Toast.makeText(requireContext(), "Ошибка загрузки", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
+
         val downloadksuzip = view.findViewById<Button>(R.id.downloadksuzip)
         downloadksuzip.setOnClickListener {
             val apkUrl1 = "https://github.com/definitly486/redmia5/releases/download/root/APatch-KSU.zip"
