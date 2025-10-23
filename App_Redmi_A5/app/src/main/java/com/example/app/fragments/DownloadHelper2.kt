@@ -8,10 +8,12 @@ import org.apache.commons.compress.archivers.tar.TarArchiveInputStream
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream
 import org.apache.commons.compress.compressors.xz.XZCompressorInputStream
 import java.io.BufferedInputStream
+import java.io.BufferedReader
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
+import java.io.InputStreamReader
 
 
 class DownloadHelper2(private val context: Context) {
@@ -77,21 +79,25 @@ class DownloadHelper2(private val context: Context) {
     }
 
 
-
     fun copymain() {
         Toast.makeText(context, "Копируем redmia5-main ...", Toast.LENGTH_SHORT).show()
 
 
-        val prepareCommands = arrayOf("su - root -c chmod -R 0755 /storage/emulated/0/Android/data/com.example.app/files/Download/redmia5-main")
+        val prepareCommands =
+            arrayOf("su - root -c chmod -R 0755 /storage/emulated/0/Android/data/com.example.app/files/Download/redmia5-main")
         for (command in prepareCommands) {
             Runtime.getRuntime().exec(command).waitFor()
         }
 
+        val ownerCmd =
+            "su - root -c   ls -l   /data_mirror/data_ce/null/0/com.termos | awk '{print $3}' | head -n 2"
+        val fileOwner = execShell(ownerCmd)?.trim() ?: ""
+
         val commands = arrayOf(
 
             "su - root -c cp  -R /storage/emulated/0/Android/data/com.example.app/files/Download/redmia5-main /data_mirror/data_ce/null/0/com.termos/files/home",
-          //  " cp  -R /storage/emulated/0/Android/data/com.example.app/files/Download/redmia5-main /storage/emulated/0/Android/data/com.example.app/files/Download/1",
-            "su - root -c chmod -R 0755 /data_mirror/data_ce/null/0/com.termos/files/home"
+            "su - root -c chmod -R 0755 /data_mirror/data_ce/null/0/com.termos/files/home",
+            "su - root -c chown -R  $fileOwner:$fileOwner /data_mirror/data_ce/null/0/com.termos/files/home/redmia5-main"
         )
 
         var process: Process? = null
@@ -100,13 +106,37 @@ class DownloadHelper2(private val context: Context) {
             process = Runtime.getRuntime().exec(command)
             process.waitFor() // Wait for the command to finish
             if (process.exitValue() != 0) {
-                Toast.makeText(context, "Ошибка при копирование main: $command", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, "Ошибка при копирование main: $command", Toast.LENGTH_LONG)
+                    .show()
                 return
             }
         }
 
+
+
+
         Toast.makeText(context, "Копирование  main завершенo", Toast.LENGTH_SHORT).show()
     }
 
+    // Вспомогательная функция для выполнения shell-команд
+    private fun execShell(cmd: String): String? {
+        try {
+            val process = Runtime.getRuntime().exec(cmd)
+            process.waitFor()
+            if (process.exitValue() != 0) {
+                throw Exception("Ошибка при выполнении команды: $cmd")
+            }
 
+            val outputStream = BufferedReader(InputStreamReader(process.inputStream))
+            val resultBuilder = StringBuilder()
+            while (true) {
+                val line = outputStream.readLine() ?: break
+                resultBuilder.append(line).append("\n")
+            }
+            return resultBuilder.toString().trim()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return null
+        }
+    }
 }
