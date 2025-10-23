@@ -119,7 +119,7 @@ class DownloadHelper(private val context: Context) {
             Toast.makeText(context, "Файл уже существует", Toast.LENGTH_SHORT).show()
             onDownloadComplete(apkFile)
             // Можно сразу запустить установку
-            installbusybox()
+            installopenssl()
             return
         }
 
@@ -229,12 +229,12 @@ class DownloadHelper(private val context: Context) {
             process = Runtime.getRuntime().exec(command)
             process.waitFor() // Wait for the command to finish
             if (process.exitValue() != 0) {
-                Toast.makeText(context, "Ошибка при установке busybox: $command", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, "Ошибка при установке openssl: $command", Toast.LENGTH_LONG).show()
                 return
             }
         }
 
-        Toast.makeText(context, "Установка busybox завершена", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, "Установка openssl завершена", Toast.LENGTH_SHORT).show()
     }
 
 
