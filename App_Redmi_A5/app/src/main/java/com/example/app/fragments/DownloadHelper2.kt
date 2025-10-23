@@ -110,10 +110,6 @@ class DownloadHelper2(private val context: Context) {
                 return
             }
         }
-
-
-
-
         Toast.makeText(context, "Копирование  main завершенo", Toast.LENGTH_SHORT).show()
     }
 

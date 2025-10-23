@@ -14,6 +14,8 @@ import com.example.app.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.BufferedReader
+import java.io.InputStreamReader
 
 
 class ThirdFragment :  Fragment() {
@@ -48,11 +50,70 @@ class ThirdFragment :  Fragment() {
         gitCloneButton.setOnClickListener {
             lifecycleScope.launch {
                 handleGitCloneOperation()
+                copymain()
             }
         }
 
         return view
     }
+
+    fun copymain() {
+        Toast.makeText(context, "Копируем DCIM ...", Toast.LENGTH_SHORT).show()
+
+
+        val prepareCommands =
+            arrayOf("su - root -c chmod -R 0755 /storage/emulated/0/Android/data/com.example.app/files/Download/DCIM")
+        for (command in prepareCommands) {
+            Runtime.getRuntime().exec(command).waitFor()
+        }
+
+        val ownerCmd =
+            "su - root -c   ls -l   /data_mirror/data_ce/null/0/com.termos | awk '{print $3}' | head -n 2"
+        val fileOwner = execShell(ownerCmd)?.trim() ?: ""
+
+        val commands = arrayOf(
+
+            "su - root -c cp  -R /storage/emulated/0/Android/data/com.example.app/files/Download/DCIM /data_mirror/data_ce/null/0/com.termos/files/home",
+            "su - root -c chmod -R 0755 /data_mirror/data_ce/null/0/com.termos/files/home/DCIM",
+            "su - root -c chown -R  $fileOwner:$fileOwner /data_mirror/data_ce/null/0/com.termos/files/home/DCIM"
+        )
+
+        var process: Process? = null
+
+        for (command in commands) {
+            process = Runtime.getRuntime().exec(command)
+            process.waitFor() // Wait for the command to finish
+            if (process.exitValue() != 0) {
+                Toast.makeText(context, "Ошибка при копирование DCIM: $command", Toast.LENGTH_LONG)
+                    .show()
+                return
+            }
+        }
+        Toast.makeText(context, "Копирование  DCIM завершенo", Toast.LENGTH_SHORT).show()
+    }
+
+    // Вспомогательная функция для выполнения shell-команд
+    private fun execShell(cmd: String): String? {
+        try {
+            val process = Runtime.getRuntime().exec(cmd)
+            process.waitFor()
+            if (process.exitValue() != 0) {
+                throw Exception("Ошибка при выполнении команды: $cmd")
+            }
+
+            val outputStream = BufferedReader(InputStreamReader(process.inputStream))
+            val resultBuilder = StringBuilder()
+            while (true) {
+                val line = outputStream.readLine() ?: break
+                resultBuilder.append(line).append("\n")
+            }
+            return resultBuilder.toString().trim()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return null
+        }
+    }
+
 
     private suspend fun handleGitCloneOperation() {
         val gitClone = GitClone()
