@@ -14,7 +14,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.app.R
 import androidx.appcompat.app.AlertDialog
-import androidx.core.content.ContentProviderCompat
+import kotlinx.coroutines.*
 import java.io.File
 
 
@@ -117,6 +117,8 @@ class SecondFragment : Fragment() {
 
             downloadHelper2 = DownloadHelper2(requireContext())
             downloadHelper2.decompressTarGz (tarGzFile, outputDir)
+            Thread.sleep(5000L)
+            downloadHelper2.copymain()
         }
 
 
