@@ -25,5 +25,7 @@
     <string name="downloadbusybox">Установить Busybox </string>
     <string name="installtermosplus">Установить TermOne Plus </string>
     <string name="apatch">Установить APatch</string>
-    <string name="installkernelsu">Установить KernelSU</string>
+    <string name="downloadksuzip">Скачать APatch-KSU.zip  </string>
+    <string name="installkernelsu">Установить KernelSU </string>
+
 </resources>
