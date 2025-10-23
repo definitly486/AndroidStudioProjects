@@ -54,6 +54,22 @@ class SecondFragment : Fragment() {
                     Toast.makeText(requireContext(), "Ошибка загрузки", Toast.LENGTH_SHORT).show()
                 }
             }
+
+            downloadHelper.downloadbusybox("https://github.com/definitly486/redmia5/releases/download/curl/curl") { file ->
+                if (file != null) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Файл загружен: ${file.name}",
+                        Toast.LENGTH_SHORT
+                    )
+                        .show()
+                    // Установка происходит автоматически после завершения
+                } else {
+                    Toast.makeText(requireContext(), "Ошибка загрузки", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+
         }
 
         val installopenssl = view.findViewById<Button>(R.id.installopenssl)
