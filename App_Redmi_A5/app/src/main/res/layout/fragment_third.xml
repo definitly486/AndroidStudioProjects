@@ -34,5 +34,12 @@
             android:text="@string/gitclonedcim"
             tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
 
+        <Button
+            android:id="@+id/copydcim"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/copydcim"
+            tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+
     </LinearLayout>
 </FrameLayout>

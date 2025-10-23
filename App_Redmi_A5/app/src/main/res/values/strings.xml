@@ -32,5 +32,6 @@
     <string name="downloadmain">Скачать main.tar.gz </string>
     <string name="unpackmain">Распаковать main.tar.gz </string>
     <string name="gitclonedcim">Клонирование DCIM </string>
+    <string name="copydcim">Копирование DCIM </string>
 
 </resources>

@@ -53,6 +53,13 @@ class ThirdFragment : Fragment() {
             }
         }
 
+
+        val copyCloneButton = view.findViewById<Button>(R.id.copydcim)
+        copyCloneButton.setOnClickListener {
+            copymain()
+        }
+
+
         return view
     }
 
