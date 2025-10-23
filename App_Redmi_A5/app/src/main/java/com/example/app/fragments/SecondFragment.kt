@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import kotlinx.coroutines.*
 import android.os.Bundle
+import android.os.Environment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,11 +14,16 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.app.R
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContentProviderCompat
+import java.io.File
 
 
 class SecondFragment : Fragment() {
     private lateinit var downloadHelper: DownloadHelper
-
+    private lateinit var downloadHelper2: DownloadHelper2
+    fun getDownloadFolder(): File? {
+        return context?.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
+    }
 
     @SuppressLint("MissingInflatedId")
     override fun onCreateView(
@@ -67,6 +73,23 @@ class SecondFragment : Fragment() {
             }
         }
 
+        val installgh = view.findViewById<Button>(R.id.installgh)
+        installgh.setOnClickListener {
+            downloadHelper.downloadgh("https://github.com/definitly486/redmia5/releases/download/gh/gh") { file ->
+                if (file != null) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Файл загружен: ${file.name}",
+                        Toast.LENGTH_SHORT
+                    )
+                        .show()
+                    // Установка происходит автоматически после завершения
+                } else {
+                    Toast.makeText(requireContext(), "Ошибка загрузки", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
 
         val downloadksuzip = view.findViewById<Button>(R.id.downloadksuzip)
         downloadksuzip.setOnClickListener {
@@ -74,6 +97,29 @@ class SecondFragment : Fragment() {
             downloadHelper.downloadgpg(apkUrl1)
 
         }
+
+
+        val button6 = view.findViewById<Button>(R.id.downloadmain)
+        button6.setOnClickListener {
+            val helper = DownloadHelper(requireContext())
+            helper.downloadgpg("https://github.com/definitly486/redmia5/archive/main.tar.gz")
+        }
+
+        val button7 = view.findViewById<Button>(R.id.unpackmain)
+        button7.setOnClickListener {
+            val folder = getDownloadFolder() ?: return@setOnClickListener
+            val tarGzFile = File(folder,"main.tar.gz")
+            val outputDir = File(folder, "")
+            if (!tarGzFile.exists()) {
+                Toast.makeText(requireContext(), "Файл main.tar.gz не существует", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            downloadHelper2 = DownloadHelper2(requireContext())
+            downloadHelper2.decompressTarGz (tarGzFile, outputDir)
+        }
+
+
 
 
 

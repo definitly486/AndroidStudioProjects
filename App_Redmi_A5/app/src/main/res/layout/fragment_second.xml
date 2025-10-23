@@ -29,6 +29,14 @@
             tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
 
         <Button
+            android:id="@+id/installgh"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/installgh"
+            tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+
+
+        <Button
             android:id="@+id/installopenssl"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -40,6 +48,21 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/downloadksuzip"
+            tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+
+
+        <Button
+            android:id="@+id/downloadmain"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/downloadmain"
+            tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+
+        <Button
+            android:id="@+id/unpackmain"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/unpackmain"
             tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
 
 
