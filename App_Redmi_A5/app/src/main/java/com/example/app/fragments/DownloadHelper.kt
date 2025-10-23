@@ -186,6 +186,88 @@ class DownloadHelper(private val context: Context) {
         }
     }
 
+    fun downloadgh(url: String, onDownloadComplete: (File?) -> Unit) {
+        val folder = getDownloadFolder() ?: run {
+            Toast.makeText(context, "Невозможно получить папку загрузки", Toast.LENGTH_SHORT).show()
+            return
+        }
+        if (!folder.exists()) folder.mkdirs()
+
+        val lastPart = url.substringAfterLast("/")
+        val apkFile = File(folder, lastPart)
+
+        if (apkFile.exists()) {
+            Toast.makeText(context, "Файл уже существует", Toast.LENGTH_SHORT).show()
+            onDownloadComplete(apkFile)
+            // Можно сразу запустить установку
+            installgh()
+            return
+        }
+
+        if (downloadReceiver == null) {
+            downloadReceiver = object : BroadcastReceiver() {
+                override fun onReceive(context: Context?, intent: Intent?) {
+                    val id = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1) ?: return
+                    if (id != lastDownloadId) return
+
+                    context?.unregisterReceiver(this)
+                    downloadReceiver = null
+
+                    val query = DownloadManager.Query().setFilterById(id)
+                    val cursor = downloadManager.query(query)
+                    cursor?.use {
+                        if (it.moveToFirst()) {
+                            val statusColumnIndex = it.getColumnIndex(DownloadManager.COLUMN_STATUS)
+                            if (statusColumnIndex != -1) {
+                                val status = it.getInt(statusColumnIndex)
+                                if (status == DownloadManager.STATUS_SUCCESSFUL) {
+                                    val localUriColumnIndex = it.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI)
+                                    if (localUriColumnIndex != -1) {
+                                        val uriString = it.getString(localUriColumnIndex)
+                                        val fileUri = Uri.parse(uriString)
+                                        val downloadedFile = File(fileUri.path ?: "")
+                                        onDownloadComplete(downloadedFile)
+                                        // Автоматическая установка
+                                        installgh()
+                                    } else {
+                                        Toast.makeText(context, "Не удалось получить путь к файлу", Toast.LENGTH_SHORT).show()
+                                        onDownloadComplete(null)
+                                    }
+                                } else {
+                                    Toast.makeText(context, "Загрузка не удалась", Toast.LENGTH_SHORT).show()
+                                    onDownloadComplete(null)
+                                }
+                            } else {
+                                Toast.makeText(context, "Не удалось получить статус загрузки", Toast.LENGTH_SHORT).show()
+                                onDownloadComplete(null)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        try {
+            val request = DownloadManager.Request(Uri.parse(url)).apply {
+                setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
+                setTitle(lastPart)
+                setDescription("Загружается...")
+                setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                allowScanningByMediaScanner()
+                setDestinationInExternalFilesDir(
+                    context,
+                    Environment.DIRECTORY_DOWNLOADS,
+                    lastPart
+                )
+            }
+            lastDownloadId = downloadManager.enqueue(request)
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            Toast.makeText(context, "Ошибка при скачивании: ${ex.message}", Toast.LENGTH_LONG).show()
+        }
+    }
+
+
 
 
     fun installbusybox() {
@@ -235,6 +317,31 @@ class DownloadHelper(private val context: Context) {
 
         Toast.makeText(context, "Установка openssl завершена", Toast.LENGTH_SHORT).show()
     }
+
+    fun installgh() {
+        Toast.makeText(context, "Начинается установка GH...", Toast.LENGTH_SHORT).show()
+
+        val commands = arrayOf(
+            "su - root -c mount -o rw,remount /system",
+            "su - root -c cp /storage/emulated/0/Android/data/com.example.app/files/Download/gh /system/bin/",
+            "su - root -c chmod +x  /system/bin/gh",
+            "su - root -c chmod 0755  /system/bin/gh"
+        )
+
+        var process: Process? = null
+
+        for (command in commands) {
+            process = Runtime.getRuntime().exec(command)
+            process.waitFor() // Wait for the command to finish
+            if (process.exitValue() != 0) {
+                Toast.makeText(context, "Ошибка при установке GH: $command", Toast.LENGTH_LONG).show()
+                return
+            }
+        }
+
+        Toast.makeText(context, "Установка GH завершена", Toast.LENGTH_SHORT).show()
+    }
+
 
 
     fun installApk(filename: String) {
