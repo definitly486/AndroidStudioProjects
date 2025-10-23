@@ -23,5 +23,6 @@
     <string name="intallmpv">Установить MPV</string>
     <string name="intallray">Установить v2rayNG </string>
     <string name="downloadbusybox">Установить Busybox </string>
-    <string name="installtermosplus">TermOne Plus </string>
+    <string name="installtermosplus">Установить TermOne Plus </string>
+    <string name="apatch">Установить APatch</string>
 </resources>
