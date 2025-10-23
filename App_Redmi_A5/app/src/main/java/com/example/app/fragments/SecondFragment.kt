@@ -51,7 +51,7 @@ class SecondFragment : Fragment() {
         }
 
         val installopenssl = view.findViewById<Button>(R.id.installopenssl)
-        downloadbusybox.setOnClickListener {
+        installopenssl.setOnClickListener {
             downloadHelper.downloadopenssl("https://github.com/definitly486/Lenovo_TB-X304L/releases/download/openssl/openssl") { file ->
                 if (file != null) {
                     Toast.makeText(
