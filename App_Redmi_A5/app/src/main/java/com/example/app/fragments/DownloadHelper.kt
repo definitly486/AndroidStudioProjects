@@ -192,9 +192,8 @@ class DownloadHelper(private val context: Context) {
         Toast.makeText(context, "Начинается установка busybox...", Toast.LENGTH_SHORT).show()
 
         val commands = arrayOf(
-            "su - root -c mount -o rw,remount /",
-            "su - root -c remount",
-            "su - root -c cp /storage/emulated/0/Android/data/com.example.app/files/Download/busybox /system/bin/busybox",
+            "su - root -c mount -o rw,remount /system",
+            "su - root -c cp /storage/emulated/0/Android/data/com.example.app/files/Download/busybox /system/bin/",
             "su - root -c chmod +x  /system/bin/busybox",
             "su - root -c chmod 0755  /system/bin/busybox"
         )
