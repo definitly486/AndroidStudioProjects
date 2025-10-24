@@ -272,7 +272,8 @@ class SecondFragment : Fragment() {
                 "com.google.android.apps.magazines",
                 "com.google.android.apps.assistant",
                 "com.yandex.searchapp",
-                "com.silead.factorytest"
+                "com.silead.factorytest",
+                "com.android.chrome"
             )
 
             for (packageName in packagesToDelete) {
