@@ -167,12 +167,12 @@ class DownloadHelper2(private val context: Context) {
                 return
             }
         }
-        Toast.makeText(context, "Копирование  APatch-KSU.zip   завершенo", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, "Копирование   APatch-KSU.zip  завершенo", Toast.LENGTH_SHORT).show()
     }
 
 
     fun copygpg() {
-        Toast.makeText(context, "Копируем  APatch-KSU.zip  ...", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, "Копируем  definitly.gnucash.gpg  ...", Toast.LENGTH_SHORT).show()
 
 
         val commands = arrayOf(
@@ -188,12 +188,12 @@ class DownloadHelper2(private val context: Context) {
             process = Runtime.getRuntime().exec(command)
             process.waitFor() // Wait for the command to finish
             if (process.exitValue() != 0) {
-                Toast.makeText(context, "Ошибка при копирование  APatch-KSU.zip : $command", Toast.LENGTH_LONG)
+                Toast.makeText(context, "Ошибка при копирование  definitly.gnucash.gpg : $command", Toast.LENGTH_LONG)
                     .show()
                 return
             }
         }
-        Toast.makeText(context, "Копирование  APatch-KSU.zip   завершенo", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, "Копирование  definitly.gnucash.gpg   завершенo", Toast.LENGTH_SHORT).show()
     }
 
 
