@@ -104,6 +104,7 @@ class SecondFragment : Fragment() {
 
     private fun downloadKSUZip() {
         downloadHelper.downloadgpg("https://github.com/definitly486/redmia5/releases/download/root/APatch-KSU.zip")
+        downloadHelper2.copyKSUZip()
     }
 
     private fun downloadMain() {
