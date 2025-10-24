@@ -10,6 +10,7 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.app.R
+import java.io.File
 
 class FirstFragment : Fragment() {
 
@@ -22,16 +23,34 @@ class FirstFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_first, container, false)
 
+        // Проверка root-доступа устройства
         if (RootChecker.hasRootAccess(requireContext())) {
-            Toast.makeText(requireContext(), "Устройство имеет root-доступ.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Устройство имеет root-доступ.", Toast.LENGTH_SHORT)
+                .show()
         } else {
             Toast.makeText(requireContext(), "Root-доступ отсутствует.", Toast.LENGTH_SHORT).show()
         }
 
-        // Инициализация
+        // Проверка возможности записи в папку '/system'
+        val pathToCheck = "/system"
+        if (checkWriteAccess(pathToCheck)) {
+            Toast.makeText(
+                requireContext(),
+                "Запись в '$pathToCheck' возможна!",
+                Toast.LENGTH_SHORT
+            ).show()
+        } else {
+            Toast.makeText(
+                requireContext(),
+                "Запись в '$pathToCheck' невозможна.",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+
+        // Инициализация помощника для скачивания
         downloadHelper = DownloadHelper(requireContext())
 
-        // Обработчики кнопок для скачивания APK-файлов
+        // Карта кнопок и соответствующих URL для скачивания APK
         val installButtons = mapOf(
             R.id.installfm to "https://github.com/definitly486/redmia5/releases/download/apk/FM+v3.6.3.apk",
             R.id.installtermos to "https://github.com/definitly486/redmia5/releases/download/apk/Termos_v2.4_universal.apk",
@@ -56,15 +75,20 @@ class FirstFragment : Fragment() {
             R.id.installkernelsu to "https://github.com/definitly486/redmia5/releases/download/apk/KernelSU_v1.0.5_12081-release.apk"
         )
 
-        // Настройка обработчиков нажатия кнопок
+        // Назначаем обработчик события каждому элементу карты
         installButtons.forEach { (buttonId, url) ->
             view.findViewById<Button>(buttonId)?.apply {
-                setOnClickListener {
+                setOnClickListener { _: View -> // явное указание типа View
                     downloadHelper.download(url) { file ->
                         if (file != null) {
-                            Toast.makeText(requireContext(), "Файл загружен: ${file.name}", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                requireContext(),
+                                "Файл загружен: ${file.name}",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         } else {
-                            Toast.makeText(requireContext(), "Ошибка загрузки", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(requireContext(), "Ошибка загрузки", Toast.LENGTH_SHORT)
+                                .show()
                         }
                     }
                 }
@@ -74,10 +98,18 @@ class FirstFragment : Fragment() {
         return view
     }
 
-
-
     override fun onDestroyView() {
         super.onDestroyView()
         downloadHelper.cleanup()
+    }
+
+    private fun checkWriteAccess(path: String): Boolean {
+        return try {
+            val testFile = File("$path/.write_test")
+            if (testFile.exists()) testFile.delete()
+            testFile.createNewFile() && testFile.canWrite().also { testFile.delete() }
+        } catch (e: Exception) {
+            false
+        }
     }
 }
