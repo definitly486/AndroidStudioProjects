@@ -117,12 +117,6 @@ class DownloadHelper2(private val context: Context) {
         Toast.makeText(context, "Копируем GIT ...", Toast.LENGTH_SHORT).show()
 
 
-        val prepareCommands =
-            arrayOf("su - root -c chmod -R 0755 /storage/emulated/0/Android/data/com.example.app/files/Download/git")
-        for (command in prepareCommands) {
-            Runtime.getRuntime().exec(command).waitFor()
-        }
-
         val commands = arrayOf(
             "su - root -c  mount -o rw,remount /system",
             "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/git/git /system/bin/ ",
@@ -134,6 +128,63 @@ class DownloadHelper2(private val context: Context) {
             "su - root -c chmod -R 0755 /system/lib64/libz.so.1",
             "su - root -c chmod -R 0755 /system/lib64/libiconv.so",
             "su - root -c chmod -R 0755 /system/lib64/libcrypto.so.3",
+        )
+
+        var process: Process? = null
+
+        for (command in commands) {
+            process = Runtime.getRuntime().exec(command)
+            process.waitFor() // Wait for the command to finish
+            if (process.exitValue() != 0) {
+                Toast.makeText(context, "Ошибка при копирование main: $command", Toast.LENGTH_LONG)
+                    .show()
+                return
+            }
+        }
+        Toast.makeText(context, "Копирование  main завершенo", Toast.LENGTH_SHORT).show()
+    }
+
+
+    fun copygnupg() {
+        Toast.makeText(context, "Копируем GIT ...", Toast.LENGTH_SHORT).show()
+
+        val commands = arrayOf(
+            "su - root -c  mount -o rw,remount /system",
+            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/gnupg/gpg /system/bin/ ",
+            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/gnupg/libcrypto.so.3 /system/lib64/ ",
+            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/gnupg/libiconv.so /system/lib64/ ",
+            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/gnupg/libpcre2-8.so /system/lib64/ ",
+            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/gnupg/libz.so.1 /system/lib64/ ",
+            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/gnupg/libandroid-support.so /system/lib64/ ",
+            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/gnupg/libassuan.so /system/lib64/ ",
+            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/gnupg/libbz2.so.1.0 /system/lib64/ ",
+            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/gnupg/libcrypt.so /system/lib64/ ",
+            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/gnupg/libcrypto.so.3 /system/lib64/ ",
+            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/gnupg/libgcrypt.so /system/lib64/ ",
+            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/gnupg/libgpg-error.so /system/lib64/ ",
+            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/gnupg/libncursesw.so.6 /system/lib64/ ",
+            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/gnupg/libnpth.so /system/lib64/ ",
+            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/gnupg/libreadline.so.8 /system/lib64/ ",
+            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/gnupg/libsqlite3.so /system/lib64/ ",
+            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/gnupg/libsqlite3.so.0 /system/lib64/ ",
+
+            "su - root -c chmod -R 0755 /system/lib64/libpcre2-8.so",
+            "su - root -c chmod -R 0755 /system/lib64/libz.so.1",
+            "su - root -c chmod -R 0755 /system/lib64/libiconv.so",
+            "su - root -c chmod -R 0755 /system/lib64/libcrypto.so.3",
+
+            "su - root -c chmod -R 0755 /system/lib64/libandroid-support.so ",
+            "su - root -c chmod -R 0755 /system/lib64/libassuan.so",
+            "su - root -c chmod -R 0755 /system/lib64/libbz2.so.1.0",
+            "su - root -c chmod -R 0755 /system/lib64/libcrypt.so",
+
+            "su - root -c chmod -R 0755 /system/lib64/libcrypto.so.3",
+            "su - root -c chmod -R 0755 /system/lib64/libgpg-error.so",
+            "su - root -c chmod -R 0755 /system/lib64/libncursesw.so.6",
+            "su - root -c chmod -R 0755 /system/lib64libnpth.so/",
+            "su - root -c chmod -R 0755 /system/lib64/libreadline.so.8",
+            "su - root -c chmod -R 0755 /system/lib64/libsqlite3.so",
+            "su - root -c chmod -R 0755 /system/lib64/libsqlite3.so.0",
         )
 
         var process: Process? = null

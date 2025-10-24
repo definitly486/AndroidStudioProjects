@@ -34,5 +34,6 @@
     <string name="gitclonedcim">Клонирование DCIM </string>
     <string name="copydcim">Копирование DCIM </string>
     <string name="installgit">Установить GIT </string>
+    <string name="installgnupg">Установить GnuPG </string>
 
 </resources>

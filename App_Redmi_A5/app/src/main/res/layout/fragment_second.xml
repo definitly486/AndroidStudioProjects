@@ -72,5 +72,12 @@
             android:text="@string/installgit"
             tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
 
+        <Button
+            android:id="@+id/installgnupg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/installgnupg"
+            tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+
     </LinearLayout>
 </FrameLayout>
