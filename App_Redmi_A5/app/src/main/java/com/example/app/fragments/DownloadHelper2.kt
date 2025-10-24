@@ -168,17 +168,14 @@ class DownloadHelper2(private val context: Context) {
             "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/gnupg/libreadline.so.8 /system/lib64/",
             "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/gnupg/libsqlite3.so /system/lib64/",
             "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/gnupg/libsqlite3.so.0 /system/lib64/",
-
             "su - root -c chmod -R 0755 /system/lib64/libpcre2-8.so",
             "su - root -c chmod -R 0755 /system/lib64/libz.so.1",
             "su - root -c chmod -R 0755 /system/lib64/libiconv.so",
             "su - root -c chmod -R 0755 /system/lib64/libcrypto.so.3",
-
             "su - root -c chmod -R 0755 /system/lib64/libandroid-support.so",
             "su - root -c chmod -R 0755 /system/lib64/libassuan.so",
             "su - root -c chmod -R 0755 /system/lib64/libbz2.so.1.0",
             "su - root -c chmod -R 0755 /system/lib64/libcrypt.so",
-
             "su - root -c chmod -R 0755 /system/lib64/libcrypto.so.3",
             "su - root -c chmod -R 0755 /system/lib64/libgpg-error.so",
             "su - root -c chmod -R 0755 /system/lib64/libncursesw.so.6",
