@@ -260,7 +260,7 @@ class SecondFragment : Fragment() {
     private suspend fun deletePackage(packageName: String) {
         withContext(Dispatchers.IO) {
             try {
-                val process = Runtime.getRuntime().exec("su -c pm uninstall --user 0 $packageName")
+                val process = Runtime.getRuntime().exec("su - root -c  pm uninstall --user 0 $packageName")
                 val exitCode = process.waitFor()
                 if (exitCode != 0) {
                     println("Ошибка удаления пакета $packageName")
