@@ -128,6 +128,7 @@ class DownloadHelper2(private val context: Context) {
             "su - root -c chmod -R 0755 /system/lib64/libz.so.1",
             "su - root -c chmod -R 0755 /system/lib64/libiconv.so",
             "su - root -c chmod -R 0755 /system/lib64/libcrypto.so.3",
+            "su - root -c chmod +x /system/bin/git",
         )
 
         var process: Process? = null
@@ -185,6 +186,7 @@ class DownloadHelper2(private val context: Context) {
             "su - root -c chmod -R 0755 /system/lib64/libreadline.so.8",
             "su - root -c chmod -R 0755 /system/lib64/libsqlite3.so",
             "su - root -c chmod -R 0755 /system/lib64/libsqlite3.so.0",
+            "su - root -c chmod +x  /system/bin/gpg",
         )
 
         var process: Process? = null
