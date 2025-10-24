@@ -35,5 +35,6 @@
     <string name="copydcim">Копирование DCIM </string>
     <string name="installgit">Установить GIT </string>
     <string name="installgnupg">Установить GnuPG </string>
+    <string name="installcore">Уставновить Core Music Player </string>
 
 </resources>

@@ -168,6 +168,12 @@
                 android:text="@string/apatch"
                 tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
 
+            <Button
+                android:id="@+id/installcore"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/installcore"
+                tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
 
         </LinearLayout>
     </ScrollView>
