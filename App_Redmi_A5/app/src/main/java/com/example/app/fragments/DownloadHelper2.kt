@@ -148,11 +148,15 @@ class DownloadHelper2(private val context: Context) {
     fun copyKSUZip () {
         Toast.makeText(context, "Копируем  APatch-KSU.zip  ...", Toast.LENGTH_SHORT).show()
 
+        val ownerCmd =
+            "su - root -c   ls -l    /storage/emulated/0/Download | awk '{print $3}' | head -n 2"
+        val fileOwner = execShell(ownerCmd)?.trim() ?: ""
 
         val commands = arrayOf(
 
             "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/APatch-KSU.zip  /storage/emulated/0/Download",
             "su - root -c chmod 0755  /storage/emulated/0/Download/APatch-KSU.zip",
+            "su - root -c chown -R  $fileOwner:$fileOwner  /storage/emulated/0/Download/APatch-KSU.zip",
 
             )
 
