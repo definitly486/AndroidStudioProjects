@@ -135,6 +135,35 @@ class SecondFragment : Fragment() {
             downloadHelper2.copymain()
         }
 
+        val installgit = view.findViewById<Button>(R.id.installgit)
+        installgit.setOnClickListener {
+            val helper = DownloadHelper(requireContext())
+            val folder = getDownloadFolder() ?: return@setOnClickListener
+            val tarGzFile = File(folder,"git_aarch64.tar.xz")
+            val outputDir = File(folder, "")
+            if (!tarGzFile.exists()) {
+                Toast.makeText(requireContext(), "Файл git_aarch64.tar.xz не существует", Toast.LENGTH_SHORT).show()
+                helper.downloadgpg("https://github.com/definitly486/redmia5/releases/download/git/git_aarch64.tar.xz")
+                return@setOnClickListener
+            }
+
+            val apkUrl1 = "https://github.com/definitly486/redmia5/releases/download/git/git_aarch64.tar.xz"
+            downloadHelper.download(apkUrl1) { file ->
+                if (file != null) {
+                    Toast.makeText(requireContext(), "Файл загружен: ${file.name}", Toast.LENGTH_SHORT).show()
+                    // Установка происходит автоматически после завершения
+                } else {
+                    Toast.makeText(requireContext(), "Ошибка загрузки", Toast.LENGTH_SHORT).show()
+                }
+            }
+            downloadHelper2 = DownloadHelper2(requireContext())
+            downloadHelper2.unpackTarXz(tarGzFile, outputDir)
+            Thread.sleep(5000L)
+            downloadHelper2.copygit()
+
+
+        }
+
 
         return view
     }

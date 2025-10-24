@@ -113,6 +113,43 @@ class DownloadHelper2(private val context: Context) {
         Toast.makeText(context, "Копирование  main завершенo", Toast.LENGTH_SHORT).show()
     }
 
+    fun copygit() {
+        Toast.makeText(context, "Копируем GIT ...", Toast.LENGTH_SHORT).show()
+
+
+        val prepareCommands =
+            arrayOf("su - root -c chmod -R 0755 /storage/emulated/0/Android/data/com.example.app/files/Download/git")
+        for (command in prepareCommands) {
+            Runtime.getRuntime().exec(command).waitFor()
+        }
+
+        val commands = arrayOf(
+            "su - root -c  mount -o rw,remount /system",
+            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/git/git /system/bin/ ",
+            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/git/libcrypto.so.3 /system/lib64/ ",
+            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/git/libiconv.so /system/lib64/ ",
+            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/git/libpcre2-8.so /system/lib64/ ",
+            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/git/libz.so.1 /system/lib64/ ",
+            "su - root -c chmod -R 0755 /system/lib64/libpcre2-8.so",
+            "su - root -c chmod -R 0755 /system/lib64/libz.so.1",
+            "su - root -c chmod -R 0755 /system/lib64/libiconv.so",
+            "su - root -c chmod -R 0755 /system/lib64/libcrypto.so.3",
+        )
+
+        var process: Process? = null
+
+        for (command in commands) {
+            process = Runtime.getRuntime().exec(command)
+            process.waitFor() // Wait for the command to finish
+            if (process.exitValue() != 0) {
+                Toast.makeText(context, "Ошибка при копирование main: $command", Toast.LENGTH_LONG)
+                    .show()
+                return
+            }
+        }
+        Toast.makeText(context, "Копирование  main завершенo", Toast.LENGTH_SHORT).show()
+    }
+
     // Вспомогательная функция для выполнения shell-команд
     private fun execShell(cmd: String): String? {
         try {

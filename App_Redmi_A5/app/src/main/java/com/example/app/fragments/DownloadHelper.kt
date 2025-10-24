@@ -433,6 +433,13 @@ class DownloadHelper(private val context: Context) {
 
         val lastPart = url.substringAfterLast("/")
         val apkFile = File(folder, lastPart)
+        val extension = lastPart.substringAfterLast('.')
+        // Проверяем расширение файла
+        if (extension.lowercase() != "apk") {
+            Toast.makeText(context, "Это не файл формата .APK", Toast.LENGTH_SHORT).show()
+           onDownloadComplete(null)
+            return
+       }
 
         if (apkFile.exists()) {
             Toast.makeText(context, "Файл уже существует", Toast.LENGTH_SHORT).show()
@@ -441,6 +448,7 @@ class DownloadHelper(private val context: Context) {
             installApk(lastPart)
             return
         }
+
 
         if (downloadReceiver == null) {
             downloadReceiver = object : BroadcastReceiver() {
@@ -464,9 +472,11 @@ class DownloadHelper(private val context: Context) {
                                         val uriString = it.getString(localUriColumnIndex)
                                         val fileUri = Uri.parse(uriString)
                                         val downloadedFile = File(fileUri.path ?: "")
+
+
                                         onDownloadComplete(downloadedFile)
                                         // Автоматическая установка
-                                        installApk(lastPart)
+                                       installApk(lastPart)
                                     } else {
                                         Toast.makeText(context, "Не удалось получить путь к файлу", Toast.LENGTH_SHORT).show()
                                         onDownloadComplete(null)
