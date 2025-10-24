@@ -124,6 +124,14 @@
                 tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
 
             <Button
+                android:id="@+id/installtelegramx"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/installtelegramx"
+                tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+
+
+            <Button
                 android:id="@+id/installhaker"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
