@@ -18,6 +18,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 
 class SecondFragment : Fragment() {
@@ -45,7 +46,7 @@ class SecondFragment : Fragment() {
     private fun setupButtons(view: View) {
         // Кнопка удаления пакета
         val installButton = view.findViewById<Button>(R.id.deletepkg)
-        installButton.setOnClickListener { deletePackages() }
+        installButton.setOnClickListener { deletepkg() }
 
         // Кнопка скачивания busybox
         val downloadbusybox = view.findViewById<Button>(R.id.downloadbusybox)
@@ -161,9 +162,32 @@ class SecondFragment : Fragment() {
         }
     }
 
-    private fun deletePackages() {
+    suspend fun deletePackage(packageName: String) {
+        withContext(Dispatchers.IO) {
+            // Показываем сообщение о текущем процессе
+            withContext(Dispatchers.Main) {
+                Toast.makeText(context, "Удаляется пакет: $packageName", Toast.LENGTH_SHORT).show()
+            }
+            try {
+                val process = Runtime.getRuntime().exec("su -c pm uninstall --user 0 $packageName")
+                val exitCode = process.waitFor()
+                // Можно проверить exitCode, чтобы убедиться, что команда завершилась успешно
+                if (exitCode == 0) {
+                    // Успешно
+                } else {
+                    // Ошибка
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+
+    fun deletepkg() {
         CoroutineScope(Dispatchers.Main).launch {
-            Toast.makeText(context, "Начинается удаление пакетов...", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Начинается удаление пакетов ...", Toast.LENGTH_SHORT).show()
+
             val packagesToDelete = listOf(
                 "com.miui.analytics.go",
                 "ru.ivi.client",
@@ -248,36 +272,23 @@ class SecondFragment : Fragment() {
                 "com.yandex.searchapp",
                 "com.silead.factorytest"
             )
+
             for (packageName in packagesToDelete) {
                 deletePackage(packageName)
-                delay(500)
-            }
+                // Можно добавить задержку, если нужно
+                delay(500) }
+            // После завершения удаления показываем диалог
             showCompletionDialog(requireContext())
             Toast.makeText(context, "Удаление завершено!", Toast.LENGTH_SHORT).show()
         }
     }
-
-    private suspend fun deletePackage(packageName: String) {
-        withContext(Dispatchers.IO) {
-            try {
-                val process = Runtime.getRuntime().exec("su - root -c  pm uninstall --user 0 $packageName")
-                val exitCode = process.waitFor()
-                if (exitCode != 0) {
-                    println("Ошибка удаления пакета $packageName")
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
-
-    private fun withContext(io: CoroutineDispatcher, function: () -> Unit) {}
-
-    private fun showCompletionDialog(context: Context) {
+    fun showCompletionDialog(context: Context) {
         val builder = AlertDialog.Builder(context)
         builder.setTitle("Удаление завершено")
         builder.setMessage("Все выбранные пакеты успешно удалены.")
-        builder.setPositiveButton("Продолжить") { dialog, _ -> dialog.dismiss() }
+        builder.setPositiveButton("Продолжить") { dialog, _ ->
+            dialog.dismiss()
+        }
         builder.show()
     }
 }
