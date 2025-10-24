@@ -21,23 +21,39 @@ class ThirdFragment : Fragment() {
 
     private lateinit var downloadHelper: DownloadHelper
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         val view = inflater.inflate(R.layout.fragment_third, container, false)
         downloadHelper = DownloadHelper(requireContext())
 
+        setupInstallButton(view)
+        setupDownloadNoteButton(view)
+        setupGitCloneButton(view)
+        setupCopyCloneButton(view)
+
+        return view
+    }
+
+    private fun setupInstallButton(view: View) {
         val installButton = view.findViewById<Button>(R.id.downloadgnucashgpg)
         installButton.setOnClickListener {
             val apkUrl1 = "https://github.com/xinitronix/gnucash/raw/refs/heads/main/definitly.gnucash.gpg"
             downloadHelper.downloadgpg(apkUrl1)
         }
+    }
 
+    private fun setupDownloadNoteButton(view: View) {
         val downloadnote = view.findViewById<Button>(R.id.downloadnote)
         downloadnote.setOnClickListener {
             val apkUrl1 = "https://raw.githubusercontent.com/definitly486/definitly486/refs/heads/main/note"
             downloadHelper.downloadgpg(apkUrl1)
         }
+    }
 
+    private fun setupGitCloneButton(view: View) {
         val gitCloneButton = view.findViewById<Button>(R.id.gitclonedcim)
         gitCloneButton.setOnClickListener {
             lifecycleScope.launch {
@@ -52,15 +68,13 @@ class ThirdFragment : Fragment() {
                 }
             }
         }
+    }
 
-
+    private fun setupCopyCloneButton(view: View) {
         val copyCloneButton = view.findViewById<Button>(R.id.copydcim)
         copyCloneButton.setOnClickListener {
             copymain()
         }
-
-
-        return view
     }
 
     fun copymain() {
@@ -69,9 +83,7 @@ class ThirdFragment : Fragment() {
         val prepareCommands = arrayOf(
             "su - root -c chmod -R 0755 /storage/emulated/0/Android/data/com.example.app/files/Download/DCIM"
         )
-        for (command in prepareCommands) {
-            Runtime.getRuntime().exec(command).waitFor()
-        }
+        executeCommands(prepareCommands)
 
         val ownerCmd = "su - root -c ls -l /data_mirror/data_ce/null/0/com.termos | awk '{print \$3}' | head -n 2"
         val fileOwner = execShell(ownerCmd)?.trim() ?: ""
@@ -81,7 +93,12 @@ class ThirdFragment : Fragment() {
             "su - root -c chmod -R 0755 /data_mirror/data_ce/null/0/com.termos/files/home/DCIM",
             "su - root -c chown -R $fileOwner:$fileOwner /data_mirror/data_ce/null/0/com.termos/files/home/DCIM"
         )
+        executeCommands(commands)
 
+        Toast.makeText(context, "Копирование DCIM завершено", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun executeCommands(commands: Array<String>) {
         var process: Process? = null
         for (command in commands) {
             process = Runtime.getRuntime().exec(command)
@@ -91,7 +108,6 @@ class ThirdFragment : Fragment() {
                 return
             }
         }
-        Toast.makeText(context, "Копирование DCIM завершено", Toast.LENGTH_SHORT).show()
     }
 
     private fun execShell(cmd: String): String? {
