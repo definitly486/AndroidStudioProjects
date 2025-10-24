@@ -20,6 +20,8 @@ import java.io.InputStreamReader
 class ThirdFragment : Fragment() {
 
     private lateinit var downloadHelper: DownloadHelper
+    private lateinit var downloadHelper2: DownloadHelper2
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -28,7 +30,7 @@ class ThirdFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_third, container, false)
         downloadHelper = DownloadHelper(requireContext())
-
+        downloadHelper2 = DownloadHelper2(requireContext())
         setupInstallButton(view)
         setupDownloadNoteButton(view)
         setupGitCloneButton(view)
@@ -42,6 +44,7 @@ class ThirdFragment : Fragment() {
         installButton.setOnClickListener {
             val apkUrl1 = "https://github.com/xinitronix/gnucash/raw/refs/heads/main/definitly.gnucash.gpg"
             downloadHelper.downloadgpg(apkUrl1)
+            downloadHelper2.copygpg()
         }
     }
 

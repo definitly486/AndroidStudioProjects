@@ -171,6 +171,32 @@ class DownloadHelper2(private val context: Context) {
     }
 
 
+    fun copygpg() {
+        Toast.makeText(context, "Копируем  APatch-KSU.zip  ...", Toast.LENGTH_SHORT).show()
+
+
+        val commands = arrayOf(
+
+            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/definitly.gnucash.gpg  /storage/emulated/0/Download",
+            "su - root -c chmod 0755  /storage/emulated/0/Download/definitly.gnucash.gpg",
+
+            )
+
+        var process: Process? = null
+
+        for (command in commands) {
+            process = Runtime.getRuntime().exec(command)
+            process.waitFor() // Wait for the command to finish
+            if (process.exitValue() != 0) {
+                Toast.makeText(context, "Ошибка при копирование  APatch-KSU.zip : $command", Toast.LENGTH_LONG)
+                    .show()
+                return
+            }
+        }
+        Toast.makeText(context, "Копирование  APatch-KSU.zip   завершенo", Toast.LENGTH_SHORT).show()
+    }
+
+
     fun copygnupg() {
         Toast.makeText(context, "Копируем GnuPG ...", Toast.LENGTH_SHORT).show()
 
