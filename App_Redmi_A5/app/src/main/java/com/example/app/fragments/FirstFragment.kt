@@ -107,7 +107,16 @@ class FirstFragment : Fragment() {
         return try {
             val testFile = File("$path/.write_test")
             if (testFile.exists()) testFile.delete()
-            testFile.createNewFile() && testFile.canWrite().also { testFile.delete() }
+            // Используем Runtime.exec для вызова команды 'touch'
+            val command = arrayOf("su", "-c", "touch ${testFile.absolutePath}")
+            val process = Runtime.getRuntime().exec(command)
+            process.waitFor()
+
+            // Проверяем успешность операции
+            when (process.exitValue()) {
+                0 -> true // Файл успешно создан
+                else -> false // Ошибка при создании файла
+            }.also { testFile.delete() }
         } catch (e: Exception) {
             false
         }
