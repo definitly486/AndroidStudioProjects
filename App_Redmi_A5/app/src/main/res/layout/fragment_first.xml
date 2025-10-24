@@ -175,6 +175,14 @@
                 android:text="@string/installcore"
                 tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
 
+            <Button
+                android:id="@+id/installpluma"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/installpluma"
+                tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+
+
         </LinearLayout>
     </ScrollView>
 </FrameLayout>

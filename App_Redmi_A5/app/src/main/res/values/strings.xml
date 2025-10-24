@@ -36,5 +36,6 @@
     <string name="installgit">Установить GIT </string>
     <string name="installgnupg">Установить GnuPG </string>
     <string name="installcore">Уставновить Core Music Player </string>
+    <string name="installpluma">Установить Pluma </string>
 
 </resources>
