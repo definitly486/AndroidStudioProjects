@@ -146,7 +146,7 @@ class DownloadHelper2(private val context: Context) {
 
 
     fun copygnupg() {
-        Toast.makeText(context, "Копируем GIT ...", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, "Копируем GnuPG ...", Toast.LENGTH_SHORT).show()
 
         val commands = arrayOf(
             "su - root -c  mount -o rw,remount /system",
@@ -193,12 +193,12 @@ class DownloadHelper2(private val context: Context) {
             process = Runtime.getRuntime().exec(command)
             process.waitFor() // Wait for the command to finish
             if (process.exitValue() != 0) {
-                Toast.makeText(context, "Ошибка при копирование main: $command", Toast.LENGTH_LONG)
+                Toast.makeText(context, "Ошибка при копирование GnuPG: $command", Toast.LENGTH_LONG)
                     .show()
                 return
             }
         }
-        Toast.makeText(context, "Копирование  main завершенo", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, "Копирование  GnuPG завершенo", Toast.LENGTH_SHORT).show()
     }
 
     // Вспомогательная функция для выполнения shell-команд
