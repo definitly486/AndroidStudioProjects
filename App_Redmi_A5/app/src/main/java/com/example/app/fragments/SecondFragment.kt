@@ -36,6 +36,7 @@ class SecondFragment : Fragment() {
 
         // Инициализация DownloadHelper
         downloadHelper = DownloadHelper(requireContext())
+        downloadHelper2 = DownloadHelper2(requireContext())
 
         // Настройка кнопок
         setupButtons(view)
@@ -104,6 +105,7 @@ class SecondFragment : Fragment() {
 
     private fun downloadKSUZip() {
         downloadHelper.downloadgpg("https://github.com/definitly486/redmia5/releases/download/root/APatch-KSU.zip")
+        Thread.sleep(5000L)
         downloadHelper2.copyKSUZip()
     }
 
