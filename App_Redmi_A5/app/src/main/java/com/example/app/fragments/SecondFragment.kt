@@ -158,7 +158,7 @@ class SecondFragment : Fragment() {
             }
             downloadHelper2 = DownloadHelper2(requireContext())
             downloadHelper2.unpackTarXz(tarGzFile, outputDir)
-            Thread.sleep(5000L)
+            Thread.sleep(3000L)
             downloadHelper2.copygit()
 
 
