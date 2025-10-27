@@ -82,7 +82,7 @@ class DownloadHelper2(private val context: Context) {
     fun copymain() {
 
 
-        fun showCompletionDialog_install() {
+        fun showCompletionDialoginstall() {
             val builder = AlertDialog.Builder(context)
             builder.setTitle("Проверка root")
             builder.setMessage("Root доступ отсуствует,приложения не будут установлены")
@@ -98,7 +98,7 @@ class DownloadHelper2(private val context: Context) {
             Toast.makeText(context, "Устройство имеет root-доступ.", Toast.LENGTH_SHORT)
                 .show()
         } else {
-            showCompletionDialog_install()
+            showCompletionDialoginstall()
             return
         }
 
@@ -124,7 +124,7 @@ class DownloadHelper2(private val context: Context) {
             "su - root -c chown -R  $fileOwner:$fileOwner /data_mirror/data_ce/null/0/com.termos/files/home/redmia5-main"
         )
 
-        var process: Process? = null
+        var process: Process?
 
         for (command in commands) {
             process = Runtime.getRuntime().exec(command)
@@ -141,7 +141,7 @@ class DownloadHelper2(private val context: Context) {
     fun copygit() {
 
 
-        fun showCompletionDialog_install() {
+        fun showCompletionDialoginstall() {
             val builder = AlertDialog.Builder(context)
             builder.setTitle("Проверка root")
             builder.setMessage("Root доступ отсуствует,приложения не будут установлены")
@@ -157,12 +157,12 @@ class DownloadHelper2(private val context: Context) {
             Toast.makeText(context, "Устройство имеет root-доступ.", Toast.LENGTH_SHORT)
                 .show()
         } else {
-            showCompletionDialog_install()
+            showCompletionDialoginstall()
             return
         }
 
 
-        fun showCompletionDialog_system() {
+        fun showCompletionDialogsystem() {
             val builder = AlertDialog.Builder(context)
             builder.setTitle("Проверка записи в system")
             builder.setMessage("Запись в system не возможна, приложения не будут установлены")
@@ -175,7 +175,7 @@ class DownloadHelper2(private val context: Context) {
         // Проверка возможности записи в папку '/system'
         val pathToCheck = "/system"
         if (!RootChecker.checkWriteAccess(pathToCheck)) {
-            showCompletionDialog_system()
+            showCompletionDialogsystem()
             return
         }
 
@@ -198,7 +198,7 @@ class DownloadHelper2(private val context: Context) {
             "su - root -c chmod +x /system/bin/git",
         )
 
-        var process: Process? = null
+        var process: Process?
 
         for (command in commands) {
             process = Runtime.getRuntime().exec(command)
@@ -215,7 +215,7 @@ class DownloadHelper2(private val context: Context) {
     fun copyKSUZip () {
 
 
-        fun showCompletionDialog_install() {
+        fun showCompletionDialoginstall() {
             val builder = AlertDialog.Builder(context)
             builder.setTitle("Проверка root")
             builder.setMessage("Root доступ отсуствует,приложения не будут установлены")
@@ -231,7 +231,7 @@ class DownloadHelper2(private val context: Context) {
             Toast.makeText(context, "Устройство имеет root-доступ.", Toast.LENGTH_SHORT)
                 .show()
         } else {
-            showCompletionDialog_install()
+            showCompletionDialoginstall()
             return
         }
 
@@ -251,7 +251,7 @@ class DownloadHelper2(private val context: Context) {
 
             )
 
-        var process: Process? = null
+        var process: Process?
 
         for (command in commands) {
             process = Runtime.getRuntime().exec(command)
@@ -269,7 +269,7 @@ class DownloadHelper2(private val context: Context) {
     fun copygpg() {
 
 
-        fun showCompletionDialog_install() {
+        fun showCompletionDialoginstall() {
             val builder = AlertDialog.Builder(context)
             builder.setTitle("Проверка root")
             builder.setMessage("Root доступ отсуствует,приложения не будут установлены")
@@ -285,7 +285,7 @@ class DownloadHelper2(private val context: Context) {
             Toast.makeText(context, "Устройство имеет root-доступ.", Toast.LENGTH_SHORT)
                 .show()
         } else {
-            showCompletionDialog_install()
+            showCompletionDialoginstall()
             return
         }
 
@@ -301,7 +301,7 @@ class DownloadHelper2(private val context: Context) {
 
             )
 
-        var process: Process? = null
+        var process: Process?
 
         for (command in commands) {
             process = Runtime.getRuntime().exec(command)
@@ -319,7 +319,7 @@ class DownloadHelper2(private val context: Context) {
     fun copygnupg() {
 
 
-        fun showCompletionDialog_install() {
+        fun showCompletionDialoginstall() {
             val builder = AlertDialog.Builder(context)
             builder.setTitle("Проверка root")
             builder.setMessage("Root доступ отсуствует,приложения не будут установлены")
@@ -335,11 +335,11 @@ class DownloadHelper2(private val context: Context) {
             Toast.makeText(context, "Устройство имеет root-доступ.", Toast.LENGTH_SHORT)
                 .show()
         } else {
-            showCompletionDialog_install()
+            showCompletionDialoginstall()
             return
         }
 
-        fun showCompletionDialog_system() {
+        fun showCompletionDialogsystem() {
             val builder = AlertDialog.Builder(context)
             builder.setTitle("Проверка записи в system")
             builder.setMessage("Запись в system не возможна, приложения не будут установлены")
@@ -352,7 +352,7 @@ class DownloadHelper2(private val context: Context) {
         // Проверка возможности записи в папку '/system'
         val pathToCheck = "/system"
         if (!RootChecker.checkWriteAccess(pathToCheck)) {
-            showCompletionDialog_system()
+            showCompletionDialogsystem()
             return
         }
 
@@ -397,7 +397,7 @@ class DownloadHelper2(private val context: Context) {
             "su - root -c chmod  0755 /system/bin/gpg",
         )
 
-        var process: Process? = null
+        var process: Process?
 
         for (command in commands) {
             process = Runtime.getRuntime().exec(command)
