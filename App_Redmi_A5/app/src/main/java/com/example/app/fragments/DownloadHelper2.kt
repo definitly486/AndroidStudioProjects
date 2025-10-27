@@ -162,6 +162,23 @@ class DownloadHelper2(private val context: Context) {
         }
 
 
+        fun showCompletionDialog_system() {
+            val builder = AlertDialog.Builder(context)
+            builder.setTitle("Проверка записи в system")
+            builder.setMessage("Запись в system не возможна, приложения не будут установлены")
+            builder.setPositiveButton("Продолжить") { dialog, _ ->
+                dialog.dismiss()
+            }
+            builder.show()
+        }
+
+        // Проверка возможности записи в папку '/system'
+        val pathToCheck = "/system"
+        if (!RootChecker.checkWriteAccess(pathToCheck)) {
+            showCompletionDialog_system()
+            return
+        }
+
 
 
         Toast.makeText(context, "Копируем GIT ...", Toast.LENGTH_SHORT).show()
@@ -322,7 +339,22 @@ class DownloadHelper2(private val context: Context) {
             return
         }
 
+        fun showCompletionDialog_system() {
+            val builder = AlertDialog.Builder(context)
+            builder.setTitle("Проверка записи в system")
+            builder.setMessage("Запись в system не возможна, приложения не будут установлены")
+            builder.setPositiveButton("Продолжить") { dialog, _ ->
+                dialog.dismiss()
+            }
+            builder.show()
+        }
 
+        // Проверка возможности записи в папку '/system'
+        val pathToCheck = "/system"
+        if (!RootChecker.checkWriteAccess(pathToCheck)) {
+            showCompletionDialog_system()
+            return
+        }
 
 
         Toast.makeText(context, "Копируем GnuPG ...", Toast.LENGTH_SHORT).show()
