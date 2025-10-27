@@ -195,24 +195,20 @@ class SecondFragment : Fragment() {
     }
 
 
-
-
     fun Fragment.deletePkgFromFile(fileName: String) {
         if (!RootChecker.hasRootAccess(requireContext())) {
             showCompletionDialog_root(requireContext())
             return
         }
 
-
-
         CoroutineScope(Dispatchers.IO).launch {
             withContext(Dispatchers.Main) {
                 Toast.makeText(requireContext(), "Начинается удаление пакетов...", Toast.LENGTH_SHORT).show()
             }
 
-            val downloadsDirectory =
-                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-            val filePath = "$downloadsDirectory/$fileName"
+            // Получаем внутреннюю директорию нашего приложения
+            val appPrivateDirectory = requireContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
+            val filePath = "$appPrivateDirectory/$fileName"
 
             try {
                 val file = File(filePath)
@@ -243,7 +239,6 @@ class SecondFragment : Fragment() {
             }
         }
     }
-
     fun showCompletionDialog_root(context: Context) {
         val builder = AlertDialog.Builder(context)
         builder.setTitle("Проверка root")
