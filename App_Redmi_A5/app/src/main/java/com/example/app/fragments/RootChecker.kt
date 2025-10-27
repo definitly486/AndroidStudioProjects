@@ -7,6 +7,8 @@ object RootChecker {
         return checkSuBinary() || checkSuperUserApps(context)
     }
 
+
+
     private fun checkSuBinary(): Boolean {
         return try {
             val process = Runtime.getRuntime().exec(arrayOf("/system/bin/sh", "-c", "su -c id"))
@@ -32,4 +34,7 @@ object RootChecker {
         }
         return false
     }
+
+
+
 }

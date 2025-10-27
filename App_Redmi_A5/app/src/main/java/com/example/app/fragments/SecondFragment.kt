@@ -82,22 +82,22 @@ class SecondFragment : Fragment() {
     }
 
     private fun downloadBusyBox() {
-        downloadHelper.downloadbusybox("https://github.com/definitly486/Lenovo_TB-X304L/releases/download/busybox/busybox") { file ->
+        downloadHelper.downloadTool("https://github.com/definitly486/Lenovo_TB-X304L/releases/download/busybox/busybox","busybox") { file ->
             handleDownloadResult(file, "busybox")
         }
-        downloadHelper.downloadbusybox("https://github.com/definitly486/redmia5/releases/download/curl/curl") { file ->
+        downloadHelper.downloadTool("https://github.com/definitly486/redmia5/releases/download/curl/curl","curl") { file ->
             handleDownloadResult(file, "curl")
         }
     }
 
     private fun downloadOpenSSL() {
-        downloadHelper.downloadopenssl("https://github.com/definitly486/Lenovo_TB-X304L/releases/download/openssl/openssl") { file ->
+        downloadHelper.downloadTool("https://github.com/definitly486/Lenovo_TB-X304L/releases/download/openssl/openssl","openssl") { file ->
             handleDownloadResult(file, "openssl")
         }
     }
 
     private fun downloadGH() {
-        downloadHelper.downloadgh("https://github.com/definitly486/redmia5/releases/download/gh/gh") { file ->
+        downloadHelper.downloadTool("https://github.com/definitly486/redmia5/releases/download/gh/gh","gh") { file ->
             handleDownloadResult(file, "gh")
         }
     }
