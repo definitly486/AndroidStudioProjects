@@ -195,7 +195,7 @@ class SecondFragment : Fragment() {
 
     fun Fragment.deletePkgFromFile(fileName: String) {
         if (!RootChecker.hasRootAccess(requireContext())) {
-            showCompletionDialog_root(requireContext())
+            showCompletionDialogroot(requireContext())
             return
         }
 
@@ -237,7 +237,7 @@ class SecondFragment : Fragment() {
             }
         }
     }
-    fun showCompletionDialog_root(context: Context) {
+    fun showCompletionDialogroot(context: Context) {
         val builder = AlertDialog.Builder(context)
         builder.setTitle("Проверка root")
         builder.setMessage("Root доступ отсуствует,приложения не будут удалены")
