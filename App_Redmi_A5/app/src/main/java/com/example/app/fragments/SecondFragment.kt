@@ -3,8 +3,7 @@ package com.example.app.fragments
 import DownloadHelper
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.pm.PackageManager
-import android.os.Build
+
 import android.os.Bundle
 import android.os.Environment
 import android.view.LayoutInflater
@@ -15,7 +14,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.app.R
 import androidx.appcompat.app.AlertDialog
-import androidx.core.content.ContextCompat
+
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -25,8 +24,7 @@ import java.io.BufferedReader
 import java.io.File
 import java.io.FileReader
 import java.io.IOException
-import java.io.InputStreamReader
-import java.util.jar.Manifest
+
 
 class SecondFragment : Fragment() {
 
