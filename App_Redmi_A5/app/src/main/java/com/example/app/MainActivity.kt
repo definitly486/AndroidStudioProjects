@@ -1,6 +1,7 @@
 package com.example.app
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
 import com.example.app.adapters.SectionsPagerAdapter
@@ -12,6 +13,16 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+
+        if (this.savePackagesToFile("packages.txt")) {
+            Toast.makeText(this, "Файл успешно создан.", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(this, "Ошибка при создании файла.", Toast.LENGTH_SHORT).show()
+        }
+
+
+
 
         // Найти ViewPager2 по его ID
         val viewPager = findViewById<ViewPager2>(R.id.viewPager)
