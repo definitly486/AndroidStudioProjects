@@ -80,6 +80,30 @@ class DownloadHelper2(private val context: Context) {
 
 
     fun copymain() {
+
+
+        fun showCompletionDialog_install() {
+            val builder = AlertDialog.Builder(context)
+            builder.setTitle("Проверка root")
+            builder.setMessage("Root доступ отсуствует,приложения не будут установлены")
+            builder.setPositiveButton("Продолжить") { dialog, _ ->
+                dialog.dismiss()
+            }
+            builder.show()
+        }
+
+
+        if (RootChecker.hasRootAccess(context)) {
+
+            Toast.makeText(context, "Устройство имеет root-доступ.", Toast.LENGTH_SHORT)
+                .show()
+        } else {
+            showCompletionDialog_install()
+            return
+        }
+
+
+
         Toast.makeText(context, "Копируем redmia5-main ...", Toast.LENGTH_SHORT).show()
 
 
@@ -127,6 +151,31 @@ class DownloadHelper2(private val context: Context) {
     }
 
     fun copygit() {
+
+
+        fun showCompletionDialog_install() {
+            val builder = AlertDialog.Builder(context)
+            builder.setTitle("Проверка root")
+            builder.setMessage("Root доступ отсуствует,приложения не будут установлены")
+            builder.setPositiveButton("Продолжить") { dialog, _ ->
+                dialog.dismiss()
+            }
+            builder.show()
+        }
+
+
+        if (RootChecker.hasRootAccess(context)) {
+
+            Toast.makeText(context, "Устройство имеет root-доступ.", Toast.LENGTH_SHORT)
+                .show()
+        } else {
+            showCompletionDialog_install()
+            return
+        }
+
+
+
+
         Toast.makeText(context, "Копируем GIT ...", Toast.LENGTH_SHORT).show()
 
 
@@ -159,6 +208,30 @@ class DownloadHelper2(private val context: Context) {
     }
 
     fun copyKSUZip () {
+
+
+        fun showCompletionDialog_install() {
+            val builder = AlertDialog.Builder(context)
+            builder.setTitle("Проверка root")
+            builder.setMessage("Root доступ отсуствует,приложения не будут установлены")
+            builder.setPositiveButton("Продолжить") { dialog, _ ->
+                dialog.dismiss()
+            }
+            builder.show()
+        }
+
+
+        if (RootChecker.hasRootAccess(context)) {
+
+            Toast.makeText(context, "Устройство имеет root-доступ.", Toast.LENGTH_SHORT)
+                .show()
+        } else {
+            showCompletionDialog_install()
+            return
+        }
+
+
+
         Toast.makeText(context, "Копируем  APatch-KSU.zip  ...", Toast.LENGTH_SHORT).show()
 
         val ownerCmd =
@@ -189,6 +262,30 @@ class DownloadHelper2(private val context: Context) {
 
 
     fun copygpg() {
+
+
+        fun showCompletionDialog_install() {
+            val builder = AlertDialog.Builder(context)
+            builder.setTitle("Проверка root")
+            builder.setMessage("Root доступ отсуствует,приложения не будут установлены")
+            builder.setPositiveButton("Продолжить") { dialog, _ ->
+                dialog.dismiss()
+            }
+            builder.show()
+        }
+
+
+        if (RootChecker.hasRootAccess(context)) {
+
+            Toast.makeText(context, "Устройство имеет root-доступ.", Toast.LENGTH_SHORT)
+                .show()
+        } else {
+            showCompletionDialog_install()
+            return
+        }
+
+
+
         Toast.makeText(context, "Копируем  definitly.gnucash.gpg  ...", Toast.LENGTH_SHORT).show()
 
 
@@ -215,6 +312,31 @@ class DownloadHelper2(private val context: Context) {
 
 
     fun copygnupg() {
+
+
+        fun showCompletionDialog_install() {
+            val builder = AlertDialog.Builder(context)
+            builder.setTitle("Проверка root")
+            builder.setMessage("Root доступ отсуствует,приложения не будут установлены")
+            builder.setPositiveButton("Продолжить") { dialog, _ ->
+                dialog.dismiss()
+            }
+            builder.show()
+        }
+
+
+        if (RootChecker.hasRootAccess(context)) {
+
+            Toast.makeText(context, "Устройство имеет root-доступ.", Toast.LENGTH_SHORT)
+                .show()
+        } else {
+            showCompletionDialog_install()
+            return
+        }
+
+
+
+
         Toast.makeText(context, "Копируем GnuPG ...", Toast.LENGTH_SHORT).show()
 
         val commands = arrayOf(
