@@ -241,7 +241,6 @@ class SecondFragment : Fragment() {
                 "com.android.stk",
                 "com.facebook.system",
                 "com.google.android.feedback",
-                "com.google.android.go.documentsui",
                 "android.autoinstalls.config.Xiaomi.model",
                 "com.google.android.apps.wellbeing",
                 "com.android.vending",
@@ -273,7 +272,8 @@ class SecondFragment : Fragment() {
                 "com.google.android.apps.assistant",
                 "com.yandex.searchapp",
                 "com.silead.factorytest",
-                "com.android.chrome"
+                "com.android.chrome",
+                "com.mi.globallayout"
             )
 
             for (packageName in packagesToDelete) {
