@@ -33,7 +33,7 @@ class FirstFragment : Fragment() {
 
         // Проверка возможности записи в папку '/system'
         val pathToCheck = "/system"
-        if (checkWriteAccess(pathToCheck)) {
+        if (RootChecker.checkWriteAccess(pathToCheck)) {
             Toast.makeText(
                 requireContext(),
                 "Запись в '$pathToCheck' возможна!",
@@ -106,22 +106,5 @@ class FirstFragment : Fragment() {
         downloadHelper.cleanup()
     }
 
-    private fun checkWriteAccess(path: String): Boolean {
-        return try {
-            val testFile = File("$path/.write_test")
-            if (testFile.exists()) testFile.delete()
-            // Используем Runtime.exec для вызова команды 'touch'
-            val command = arrayOf("su", "-c", "touch ${testFile.absolutePath}")
-            val process = Runtime.getRuntime().exec(command)
-            process.waitFor()
 
-            // Проверяем успешность операции
-            when (process.exitValue()) {
-                0 -> true // Файл успешно создан
-                else -> false // Ошибка при создании файла
-            }.also { testFile.delete() }
-        } catch (e: Exception) {
-            false
-        }
-    }
 }
