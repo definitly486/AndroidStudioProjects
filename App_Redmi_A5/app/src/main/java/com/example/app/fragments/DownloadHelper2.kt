@@ -117,18 +117,6 @@ class DownloadHelper2(private val context: Context) {
             "su - root -c   ls -l   /data_mirror/data_ce/null/0/com.termos | awk '{print $3}' | head -n 2"
         val fileOwner = execShell(ownerCmd)?.trim() ?: ""
 
-        fun showCompletionDialog() {
-            val builder = AlertDialog.Builder(context)
-            builder.setTitle("Удаление завершено")
-            builder.setMessage("Все выбранные пакеты успешно удалены.")
-            builder.setPositiveButton("Продолжить") { dialog, _ ->
-                dialog.dismiss()
-            }
-            builder.show()
-        }
-
-
-
         val commands = arrayOf(
 
             "su - root -c cp  -R /storage/emulated/0/Android/data/com.example.app/files/Download/redmia5-main /data_mirror/data_ce/null/0/com.termos/files/home",

@@ -2,6 +2,8 @@ package com.example.app.fragments
 
 import android.content.Context
 import android.content.pm.PackageManager
+import java.io.File
+
 object RootChecker {
     fun hasRootAccess(context: Context): Boolean {
         return checkSuBinary() || checkSuperUserApps(context)
@@ -35,6 +37,23 @@ object RootChecker {
         return false
     }
 
+     fun checkWriteAccess(path: String): Boolean {
+        return try {
+            val testFile = File("$path/.write_test")
+            if (testFile.exists()) testFile.delete()
+            // Используем Runtime.exec для вызова команды 'touch'
+            val command = arrayOf("su", "-c", "touch ${testFile.absolutePath}")
+            val process = Runtime.getRuntime().exec(command)
+            process.waitFor()
 
+            // Проверяем успешность операции
+            when (process.exitValue()) {
+                0 -> true // Файл успешно создан
+                else -> false // Ошибка при создании файла
+            }.also { testFile.delete() }
+        } catch (e: Exception) {
+            false
+        }
+    }
 
 }
