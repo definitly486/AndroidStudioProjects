@@ -3,6 +3,7 @@ package com.example.app.fragments
 import android.content.Context
 
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream
@@ -91,6 +92,18 @@ class DownloadHelper2(private val context: Context) {
         val ownerCmd =
             "su - root -c   ls -l   /data_mirror/data_ce/null/0/com.termos | awk '{print $3}' | head -n 2"
         val fileOwner = execShell(ownerCmd)?.trim() ?: ""
+
+        fun showCompletionDialog() {
+            val builder = AlertDialog.Builder(context)
+            builder.setTitle("Удаление завершено")
+            builder.setMessage("Все выбранные пакеты успешно удалены.")
+            builder.setPositiveButton("Продолжить") { dialog, _ ->
+                dialog.dismiss()
+            }
+            builder.show()
+        }
+
+
 
         val commands = arrayOf(
 

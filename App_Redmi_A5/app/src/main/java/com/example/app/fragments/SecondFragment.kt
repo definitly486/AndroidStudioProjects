@@ -165,6 +165,7 @@ class SecondFragment : Fragment() {
     }
 
     suspend fun deletePackage(packageName: String) {
+
         withContext(Dispatchers.IO) {
             // Показываем сообщение о текущем процессе
             withContext(Dispatchers.Main) {
@@ -187,6 +188,16 @@ class SecondFragment : Fragment() {
 
 
     fun deletepkg() {
+
+
+        if (RootChecker.hasRootAccess(requireContext())) {
+            Toast.makeText(requireContext(), "Устройство имеет root-доступ.", Toast.LENGTH_SHORT)
+                .show()
+        } else {
+            showCompletionDialog_root(requireContext())
+            return
+        }
+
         CoroutineScope(Dispatchers.Main).launch {
             Toast.makeText(context, "Начинается удаление пакетов ...", Toast.LENGTH_SHORT).show()
 
@@ -285,6 +296,19 @@ class SecondFragment : Fragment() {
             Toast.makeText(context, "Удаление завершено!", Toast.LENGTH_SHORT).show()
         }
     }
+
+
+
+    fun showCompletionDialog_root(context: Context) {
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle("Проверка root")
+        builder.setMessage("Root доступ отсуствует,приложения не будут удалены")
+        builder.setPositiveButton("Продолжить") { dialog, _ ->
+            dialog.dismiss()
+        }
+        builder.show()
+    }
+
     fun showCompletionDialog(context: Context) {
         val builder = AlertDialog.Builder(context)
         builder.setTitle("Удаление завершено")
