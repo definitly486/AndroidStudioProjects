@@ -3,6 +3,8 @@ package com.example.app.fragments
 import DownloadHelper
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.view.LayoutInflater
@@ -13,12 +15,18 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.app.R
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.BufferedReader
 import java.io.File
+import java.io.FileReader
+import java.io.IOException
+import java.io.InputStreamReader
+import java.util.jar.Manifest
 
 class SecondFragment : Fragment() {
 
@@ -46,7 +54,7 @@ class SecondFragment : Fragment() {
     private fun setupButtons(view: View) {
         // Кнопка удаления пакета
         val installButton = view.findViewById<Button>(R.id.deletepkg)
-        installButton.setOnClickListener { deletepkg() }
+        installButton.setOnClickListener { deletePkgFromFile("packages.txt") }
 
         // Кнопка скачивания busybox
         val downloadbusybox = view.findViewById<Button>(R.id.downloadbusybox)
@@ -187,117 +195,54 @@ class SecondFragment : Fragment() {
     }
 
 
-    fun deletepkg() {
 
 
-        if (RootChecker.hasRootAccess(requireContext())) {
-            Toast.makeText(requireContext(), "Устройство имеет root-доступ.", Toast.LENGTH_SHORT)
-                .show()
-        } else {
+    fun Fragment.deletePkgFromFile(fileName: String) {
+        if (!RootChecker.hasRootAccess(requireContext())) {
             showCompletionDialog_root(requireContext())
             return
         }
 
-        CoroutineScope(Dispatchers.Main).launch {
-            Toast.makeText(context, "Начинается удаление пакетов ...", Toast.LENGTH_SHORT).show()
 
-            val packagesToDelete = listOf(
-                "com.miui.analytics.go",
-                "ru.ivi.client",
-                "ru.vk.store",
-                "com.vk.vkvideo",
-                "ru.beru.android",
-                "ru.more.play",
-                "ru.oneme.app",
-                "com.miui.player",
-                "com.miui.videoplayer",
-                "com.miui.theme.lite",
-                "com.miui.gameCenter.overlay",
-                "com.miui.videoplayer.overlay",
-                "com.miui.bugreport",
-                "com.miui.cleaner.go",
-                "com.miui.player.overlay",
-                "com.miui.msa.global",
-                "com.yandex.searchapp",
-                "com.yandex.browser",
-                "com.google.android.youtube",
-                "com.google.android.apps.youtube.music",
-                "com.android.shareMe.overlay",
-                "com.vitastudio.mahjong",
-                "com.oakever.tiletrip",
-                "com.ordinaryjoy.woodblast",
-                "com.go.browser",
-                "com.facebook.appmanager",
-                "com.google.android.apps.tachyon",
-                "com.xiaomi.midrop",
-                "com.miui.global.packageinstaller",
-                "com.xiaomi.discover",
-                "com.xiaomi.mipicks",
-                "com.google.android.videos",
-                "com.miui.android.fashiongallery",
-                "com.google.android.apps.safetyhub",
-                "com.google.android.overlay.gmsconfig.searchgo",
-                "com.google.android.apps.searchlite",
-                "com.google.android.appsearch.apk",
-                "com.google.android.apps.docs",
-                "com.xiaomi.glgm",
-                "com.google.android.gm",
-                "com.yandex.preinstallsatellite",
-                "com.tencent.soter.soterserver " ,
-                "com.android.bookmarkprovider",
-                "com.xiaomi.mipicks",
-                "com.xiaomi.discover",
-                "com.facebook.services",
-                "com.android.bips",
-                "com.android.stk",
-                "com.facebook.system",
-                "com.google.android.feedback",
-                "android.autoinstalls.config.Xiaomi.model",
-                "com.google.android.apps.wellbeing",
-                "com.android.vending",
-                "com.android.musicfx",
-                "com.google.android.tts",
-                "com.mi.globalminusscreen",
-                "com.android.printspooler",
-                "com.google.android.printservice.recommendation",
-                "com.google.android.setupwizard",
-                "com.android.ons",
-                "com.google.android.partnersetup",
-                "com.android.providers.partnerbookmarks",
-                "com.mi.android.globalFileexplorer.overlay",
-                "com.android.backupconfirm",
-                "android.overlay.multiuser",
-                "com.android.calllogbackup",
-                "com.android.cameraextensions",
-                "com.google.android.marvin.talkback",
-                "org.ifaa.aidl.manager",
-                "com.android.wallpaperbackup",
-                "com.android.avatarpicker",
-                "com.google.android.apps.subscriptions.red",
-                "com.google.android.ext.shared",
-                "com.android.sharedstoragebackup",
-                "com.google.android.googlequicksearchbox",
-                "com.google.android.apps.walletnfcrel",
-                "com.kms.free",
-                "com.google.android.apps.magazines",
-                "com.google.android.apps.assistant",
-                "com.yandex.searchapp",
-                "com.silead.factorytest",
-                "com.android.chrome",
-                "com.mi.globallayout"
-            )
 
-            for (packageName in packagesToDelete) {
-                deletePackage(packageName)
-                // Можно добавить задержку, если нужно
-                delay(500) }
-            // После завершения удаления показываем диалог
-            showCompletionDialog(requireContext())
-            Toast.makeText(context, "Удаление завершено!", Toast.LENGTH_SHORT).show()
+        CoroutineScope(Dispatchers.IO).launch {
+            withContext(Dispatchers.Main) {
+                Toast.makeText(requireContext(), "Начинается удаление пакетов...", Toast.LENGTH_SHORT).show()
+            }
+
+            val downloadsDirectory =
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+            val filePath = "$downloadsDirectory/$fileName"
+
+            try {
+                val file = File(filePath)
+                if (!file.exists()) {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(requireContext(), "Файл не найден!", Toast.LENGTH_SHORT).show()
+                    }
+                    return@launch
+                }
+
+                val reader = BufferedReader(FileReader(file))
+                var line: String?
+                while (reader.readLine().also { line = it } != null) {
+                    if (line.isNullOrBlank()) continue
+                    deletePackage(line.trim())
+                    delay(500) // Пауза между командами
+                }
+                reader.close()
+
+                withContext(Dispatchers.Main) {
+                    showCompletionDialog(requireContext())
+                    Toast.makeText(requireContext(), "Удаление завершено!", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: IOException) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(requireContext(), "Ошибка чтения файла: ${e.message}", Toast.LENGTH_LONG).show()
+                }
+            }
         }
     }
-
-
 
     fun showCompletionDialog_root(context: Context) {
         val builder = AlertDialog.Builder(context)
