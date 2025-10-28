@@ -36,7 +36,6 @@ class FifthFragment : Fragment() {
         override fun doInBackground(vararg params: Void): Boolean {
             val password = "639639"
             downloadplumaprofile(requireContext(),"https://github.com/definitly486/redmia5/releases/download/shared/com.qflair.browserq.tar.enc") // Возможно тоже убрать suspend!
-            decryptAndExtractArchive(requireContext(),password)
             return true
         }
 
