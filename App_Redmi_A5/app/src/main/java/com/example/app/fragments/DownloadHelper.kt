@@ -2,6 +2,7 @@ import android.app.DownloadManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
@@ -319,6 +320,13 @@ class DownloadHelper(private val context: Context) {
                     }
                 }
             }
+
+            // 🔥 РЕГИСТРАЦИЯ!
+            context.registerReceiver(
+                downloadReceiver,
+                IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
+            )
+
         }
 
         try {
