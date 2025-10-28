@@ -1,10 +1,17 @@
 package com.example.app
 
+import android.Manifest
 import android.app.DownloadManager
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Environment
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import kotlinx.coroutines.*
 import java.io.File
 import java.lang.ProcessBuilder
@@ -12,9 +19,16 @@ import java.lang.RuntimeException
 import java.nio.file.Files
 import java.nio.file.Paths
 
+const val DOWNLOAD_COMPLETE_ACTION = "android.intent.action.DOWNLOAD_COMPLETE"
+
+// Функция для получения папки загрузки
+fun getDownloadFolder(context: Context): File? {
+    return context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
+}
+
 // Функция для загрузки профиля
 fun downloadplumaprofile(context: Context, url: String) {
-    val folder = context.getExternalFilesDir(null) ?: return
+    val folder = getDownloadFolder(context) ?: return
     if (!folder.exists()) folder.mkdirs()
 
     val lastPart = url.split("/").last()
@@ -43,10 +57,26 @@ fun downloadplumaprofile(context: Context, url: String) {
                 lastPart
             )
 
-            val downloadID =
-                (context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager).enqueue(
-                    request
-                )
+            // Создаем Broadcast Receiver для отслеживания завершения загрузки
+            val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+            val downloadID = downloadManager.enqueue(request)
+
+            val receiver = object : BroadcastReceiver() {
+                override fun onReceive(context: Context, intent: Intent) {
+                    val receivedDownloadID = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1L)
+                    if (receivedDownloadID == downloadID) {
+                        CoroutineScope(Dispatchers.IO).launch {
+                            decryptAndExtractArchive(context, "639639")
+                        }
+
+                        // ОТМЕНА РЕГИСТРАЦИИ ПОСЛЕ ЗАГРУЗКИ ФАЙЛА
+                        context.unregisterReceiver(this)
+                    }
+                }
+            }
+
+            // Регистрация Broadcast Receiver с указанием флага RECEIVER_NOT_EXPORTED
+            context.registerReceiver(receiver, IntentFilter(DOWNLOAD_COMPLETE_ACTION), Context.RECEIVER_NOT_EXPORTED)
         } catch (ex: Exception) {
             ex.printStackTrace()
             withContext(Dispatchers.Main) {
@@ -62,15 +92,6 @@ fun decryptAndExtractArchive(context: Context, password: String) {
     val decryptedFilePath = "/storage/emulated/0/Android/data/com.example.app/files/com.qflair.browserq.tar"
     val appDirectoryPath = "/storage/emulated/0/Android/data/com.example.app/files/browserq_data"
 
-    // Загружаем файл, если его нет
-    if (!File(encryptedFilePath).exists()) {
-        downloadplumaprofile(
-            context,
-            "https://github.com/definitly486/redmia5/releases/download/shared/com.qflair.browserq.tar.enc"
-        )
-    }
-
-    // Реализуем процесс расшифровки и распаковки здесь
     CoroutineScope(Dispatchers.IO).launch {
         try {
             // Расшифровка файла
