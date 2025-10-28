@@ -27,13 +27,7 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <!-- Приемник для обработки широковещательного события завершения загрузки -->
-        <receiver android:name=".DownloadCompleteReceiver"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.DOWNLOAD_COMPLETE"/>
-            </intent-filter>
-        </receiver>
+     
 
         <activity
             android:name=".MainActivity"
