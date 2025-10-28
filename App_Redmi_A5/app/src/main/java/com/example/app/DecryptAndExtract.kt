@@ -24,14 +24,26 @@ import java.lang.RuntimeException
 const val DOWNLOAD_COMPLETE_ACTION = "android.intent.action.DOWNLOAD_COMPLETE"
 
 // Основной класс для приема широковещательного события
-class DownloadCompleteReceiver(private val downloadID: Long, private val context: Context) : BroadcastReceiver() {
+class DownloadCompleteReceiver(
+    private val downloadID: Long,
+    private val onDownloadComplete: () -> Unit
+) : BroadcastReceiver() {
+
     override fun onReceive(context: Context, intent: Intent) {
         val receivedDownloadID = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1L)
         if (receivedDownloadID == downloadID) {
+            // Unregister using the context provided by the system
+            try {
+                context.unregisterReceiver(this)
+            } catch (e: IllegalArgumentException) {
+                // Already unregistered or invalid — safe to ignore
+                Log.w("DownloadReceiver", "Receiver already unregistered", e)
+            }
+
+            // Do work off main thread
             CoroutineScope(Dispatchers.IO).launch {
                 decryptAndExtractArchive(context, "639639")
             }
-            this.context.unregisterReceiver(this)
         }
     }
 }
@@ -78,8 +90,16 @@ fun downloadplumaprofile(context: Context, url: String) {
             val downloadID = downloadManager.enqueue(request)
 
             // Регистрация приемника
-            val receiver = DownloadCompleteReceiver(downloadID, context)
-            context.registerReceiver(receiver, IntentFilter(DOWNLOAD_COMPLETE_ACTION), Context.RECEIVER_EXPORTED)        } catch (ex: Exception) {
+            val receiver = DownloadCompleteReceiver(downloadID) {
+                // Optional callback if needed
+            }
+            ContextCompat.registerReceiver(
+                context,
+                receiver,
+                IntentFilter(DOWNLOAD_COMPLETE_ACTION),
+                ContextCompat.RECEIVER_NOT_EXPORTED
+            )
+        } catch (ex: Exception) {
             ex.printStackTrace()
             withContext(Dispatchers.Main) {
                 showToastOnMainThread(context, "Ошибка при загрузке: ${ex.message}")
