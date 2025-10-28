@@ -10,23 +10,40 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
+import android.util.Log
 import android.widget.Toast
 import androidx.core.content.ContextCompat
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.lang.ProcessBuilder
 import java.lang.RuntimeException
-import java.nio.file.Files
-import java.nio.file.Paths
 
 const val DOWNLOAD_COMPLETE_ACTION = "android.intent.action.DOWNLOAD_COMPLETE"
 
-// Функция для получения папки загрузки
+// Основной класс для приема широковещательного события
+class DownloadCompleteReceiver(private val downloadID: Long, private val context: Context) : BroadcastReceiver() {
+    override fun onReceive(context: Context, intent: Intent) {
+        val receivedDownloadID = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1L)
+        if (receivedDownloadID == downloadID) {
+            CoroutineScope(Dispatchers.IO).launch {
+                decryptAndExtractArchive(context, "639639")
+            }
+            this.context.unregisterReceiver(this)
+        }
+    }
+}
+
+// Вспомогательные функции
+
+// Получение директории загрузки
 fun getDownloadFolder(context: Context): File? {
     return context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
 }
 
-// Функция для загрузки профиля
+// Загрузка профиля
 fun downloadplumaprofile(context: Context, url: String) {
     val folder = getDownloadFolder(context) ?: return
     if (!folder.exists()) folder.mkdirs()
@@ -44,8 +61,8 @@ fun downloadplumaprofile(context: Context, url: String) {
             withContext(Dispatchers.Main) {
                 showToastOnMainThread(context, "Начинается загрузка...")
             }
+            showToastOnMainThread(context, "Идет загрузка")
 
-            // Логика загрузки файла
             val request = DownloadManager.Request(Uri.parse(url))
             request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
             request.setTitle(lastPart)
@@ -57,27 +74,12 @@ fun downloadplumaprofile(context: Context, url: String) {
                 lastPart
             )
 
-            // Создаем Broadcast Receiver для отслеживания завершения загрузки
             val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
             val downloadID = downloadManager.enqueue(request)
 
-            val receiver = object : BroadcastReceiver() {
-                override fun onReceive(context: Context, intent: Intent) {
-                    val receivedDownloadID = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1L)
-                    if (receivedDownloadID == downloadID) {
-                        CoroutineScope(Dispatchers.IO).launch {
-                            decryptAndExtractArchive(context, "639639")
-                        }
-
-                        // ОТМЕНА РЕГИСТРАЦИИ ПОСЛЕ ЗАГРУЗКИ ФАЙЛА
-                        context.unregisterReceiver(this)
-                    }
-                }
-            }
-
-            // Регистрация Broadcast Receiver с указанием флага RECEIVER_NOT_EXPORTED
-            context.registerReceiver(receiver, IntentFilter(DOWNLOAD_COMPLETE_ACTION), Context.RECEIVER_NOT_EXPORTED)
-        } catch (ex: Exception) {
+            // Регистрация приемника
+            val receiver = DownloadCompleteReceiver(downloadID, context)
+            context.registerReceiver(receiver, IntentFilter(DOWNLOAD_COMPLETE_ACTION), Context.RECEIVER_EXPORTED)        } catch (ex: Exception) {
             ex.printStackTrace()
             withContext(Dispatchers.Main) {
                 showToastOnMainThread(context, "Ошибка при загрузке: ${ex.message}")
@@ -86,61 +88,59 @@ fun downloadplumaprofile(context: Context, url: String) {
     }
 }
 
-// Основная функция расшифровки и установки
-fun decryptAndExtractArchive(context: Context, password: String) {
-    val encryptedFilePath = "/storage/emulated/0/Android/data/com.example.app/files/com.qflair.browserq.tar.enc"
-    val decryptedFilePath = "/storage/emulated/0/Android/data/com.example.app/files/com.qflair.browserq.tar"
-    val appDirectoryPath = "/storage/emulated/0/Android/data/com.example.app/files/browserq_data"
+// Функция расшифровки и распаковки архива
+suspend fun decryptAndExtractArchive(context: Context, password: String) {
+    val encryptedFilePath = "/storage/emulated/0/Android/data/files/com.qflair.browserq.tar.enc"
+    val decryptedFilePath = "/storage/emulated/0/Android/data/files/com.qflair.browserq.tar"
+    val appDirectoryPath = "/storage/emulated/0/Android/data/files/browserq_data"
 
-    CoroutineScope(Dispatchers.IO).launch {
-        try {
-            // Расшифровка файла
-            val processDecrypt = ProcessBuilder(
-                "openssl",
-                "enc",
-                "-aes-256-cbc",
-                "-pbkdf2",
-                "-iter",
-                "100000",
-                "-d",
-                "-in",
-                encryptedFilePath,
-                "-out",
-                decryptedFilePath,
-                "-pass",
-                "pass:$password"
-            ).start()
+    try {
+        // Расшифровка файла
+        val processDecrypt = ProcessBuilder(
+            "openssl",
+            "enc",
+            "-aes-256-cbc",
+            "-pbkdf2",
+            "-iter",
+            "100000",
+            "-d",
+            "-in",
+            encryptedFilePath,
+            "-out",
+            decryptedFilePath,
+            "-pass",
+            "pass:$password"
+        ).start()
 
-            processDecrypt.waitFor()
+        processDecrypt.waitFor()
 
-            if (!File(decryptedFilePath).exists()) {
-                throw RuntimeException("Расшифровка прошла неудачно.")
-            }
+        if (!File(decryptedFilePath).exists()) {
+            throw RuntimeException("Расшифровка прошла неудачно.")
+        }
 
-            // Распаковка архива
-            val processUnpack = ProcessBuilder(
-                "tar",
-                "xf",
-                decryptedFilePath,
-                "-C",
-                appDirectoryPath
-            ).start()
+        // Распаковка архива
+        val processUnpack = ProcessBuilder(
+            "tar",
+            "xf",
+            decryptedFilePath,
+            "-C",
+            appDirectoryPath
+        ).start()
 
-            processUnpack.waitFor()
+        processUnpack.waitFor()
 
-            withContext(Dispatchers.Main) {
-                showToastOnMainThread(context, "Архив успешно установлен!")
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            withContext(Dispatchers.Main) {
-                showToastOnMainThread(context, "Ошибка при установке: ${e.message}")
-            }
+        withContext(Dispatchers.Main) {
+            showToastOnMainThread(context, "Архив успешно установлен!")
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+        withContext(Dispatchers.Main) {
+            showToastOnMainThread(context, "Ошибка при установке: ${e.message}")
         }
     }
 }
 
-// Вспомогательная функция для вывода Toast в Main Thread
+// Вспомогательная функция для показа Toast на главном потоке
 fun showToastOnMainThread(context: Context, message: String) {
     CoroutineScope(Dispatchers.Main).launch {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
