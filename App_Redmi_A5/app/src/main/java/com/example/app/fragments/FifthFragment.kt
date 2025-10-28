@@ -1,47 +1,92 @@
-@file:Suppress("DEPRECATION")
-
 package com.example.app.fragments
 
-import android.annotation.SuppressLint
-import android.os.AsyncTask
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
+import android.widget.EditText
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.app.R
 import com.example.app.decryptAndExtractArchive
-import com.example.app.downloadplumaprofile
+import com.example.app.downloadPlumaProfile
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class FifthFragment : Fragment() {
 
-    private lateinit var downloadPlumaProfileButton: Button
+    private lateinit var downloadPlumaProfileButton: View
+    private lateinit var installPlumaProfileButton: View
+    private lateinit var editTextPassword: EditText
 
-    @SuppressLint("MissingInflatedId")
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         val view = inflater.inflate(R.layout.fragment_fifth, container, false)
 
-        // Ищем кнопку и добавляем ей слушатель
-        downloadPlumaProfileButton = view.findViewById(R.id.installplumaprofile)
+        // Получить доступ к полям ввода и кнопкам
+        editTextPassword = view.findViewById(R.id.editTextPassword)
+        downloadPlumaProfileButton = view.findViewById(R.id.downloadplumaprofile)
+        installPlumaProfileButton = view.findViewById(R.id.installplumaprofile)
+
+        // Настроить действия кнопок
         downloadPlumaProfileButton.setOnClickListener {
-            DecryptionTask().execute()
+            CoroutineScope(Dispatchers.Main).launch {
+                downloadProfile()
+            }
+        }
+
+        installPlumaProfileButton.setOnClickListener {
+            CoroutineScope(Dispatchers.Main).launch {
+                installProfile()
+            }
         }
 
         return view
     }
 
-    // Асинхронная задача
-    inner class DecryptionTask : AsyncTask<Void, Void, Boolean>() {
-        override fun doInBackground(vararg params: Void): Boolean {
-            val password = params
-            downloadplumaprofile(requireContext(),"https://github.com/definitly486/redmia5/releases/download/shared/com.qflair.browserq.tar.enc") // Возможно тоже убрать suspend!
-            return true
+    /**
+     * Скачивание профиля в отдельном фоне
+     */
+    private suspend fun downloadProfile() {
+        withContext(Dispatchers.IO) {
+            try {
+                downloadPlumaProfile(requireContext(), "https://github.com/definitly486/redmia5/releases/download/shared/com.qflair.browserq.tar.enc")
+                showToast("Профиль успешно скачался!")
+            } catch (e: Exception) {
+                showToast("Ошибка при скачивании профиля: ${e.message}")
+            }
         }
+    }
 
-        override fun onPostExecute(result: Boolean?) {
-            super.onPostExecute(result)
-            // Обновление UI или вывод сообщений пользователю
+    /**
+     * Установка и декодирование профиля в отдельном фоне
+     */
+    private suspend fun installProfile() {
+        withContext(Dispatchers.IO) {
+            try {
+                // Получаем введённый пароль из TextView
+                val enteredPassword = editTextPassword.text.toString()
+
+                // Передаём пароль в функцию decryption
+                decryptAndExtractArchive(requireContext(), password = enteredPassword)
+                showToast("Архив успешно установлен и извлечён!")
+            } catch (e: Exception) {
+                showToast("Ошибка при установке и извлечении архива: ${e.message}")
+            }
+        }
+    }
+
+    /**
+     * Вспомогательная функция для отображения уведомлений
+     */
+    private fun showToast(message: String) {
+        activity?.runOnUiThread {
+            Toast.makeText(activity, message, Toast.LENGTH_SHORT).show()
         }
     }
 }
