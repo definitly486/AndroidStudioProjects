@@ -16,15 +16,15 @@ import com.example.app.downloadplumaprofile
 
 class FifthFragment : Fragment() {
 
-    private lateinit var installopensslButton: Button
+    private lateinit var downloadPlumaProfileButton: Button
 
     @SuppressLint("MissingInflatedId")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_fifth, container, false)
 
         // Ищем кнопку и добавляем ей слушатель
-        installopensslButton = view.findViewById(R.id.installplumaprofile)
-        installopensslButton.setOnClickListener {
+        downloadPlumaProfileButton = view.findViewById(R.id.installplumaprofile)
+        downloadPlumaProfileButton.setOnClickListener {
             DecryptionTask().execute()
         }
 
@@ -34,7 +34,7 @@ class FifthFragment : Fragment() {
     // Асинхронная задача
     inner class DecryptionTask : AsyncTask<Void, Void, Boolean>() {
         override fun doInBackground(vararg params: Void): Boolean {
-            val password = "639639"
+            val password = params
             downloadplumaprofile(requireContext(),"https://github.com/definitly486/redmia5/releases/download/shared/com.qflair.browserq.tar.enc") // Возможно тоже убрать suspend!
             return true
         }
