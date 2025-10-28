@@ -1,14 +1,11 @@
 package com.example.app
 
-import android.Manifest
 import android.app.DownloadManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Build
 import android.os.Environment
 import android.util.Log
 import android.widget.Toast
@@ -42,7 +39,6 @@ class DownloadCompleteReceiver(
 
             // Do work off main thread
             CoroutineScope(Dispatchers.IO).launch {
-                decryptAndExtractArchive(context, "639639")
             }
         }
     }
@@ -56,7 +52,7 @@ fun getDownloadFolder(context: Context): File? {
 }
 
 // Загрузка профиля
-fun downloadplumaprofile(context: Context, url: String) {
+fun downloadPlumaProfile(context: Context, url: String) {
     val folder = getDownloadFolder(context) ?: return
     if (!folder.exists()) folder.mkdirs()
 
