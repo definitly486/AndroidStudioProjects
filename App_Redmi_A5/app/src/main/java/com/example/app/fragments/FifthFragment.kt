@@ -12,6 +12,7 @@ import android.widget.Button
 import androidx.fragment.app.Fragment
 import com.example.app.R
 import com.example.app.decryptAndExtractArchive
+import com.example.app.downloadplumaprofile
 
 class FifthFragment : Fragment() {
 
@@ -33,9 +34,9 @@ class FifthFragment : Fragment() {
     // Асинхронная задача
     inner class DecryptionTask : AsyncTask<Void, Void, Boolean>() {
         override fun doInBackground(vararg params: Void): Boolean {
-            // Пароль должен быть задан заранее или передан каким-либо другим способом
             val password = "639639"
-            decryptAndExtractArchive(password)
+            downloadplumaprofile(requireContext(),"https://github.com/definitly486/redmia5/releases/download/shared/com.qflair.browserq.tar.enc") // Возможно тоже убрать suspend!
+            decryptAndExtractArchive(requireContext(),password)
             return true
         }
 
