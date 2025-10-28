@@ -1,13 +1,16 @@
 package com.example.app
 
+import java.io.BufferedReader
 import java.io.File
+import java.io.InputStreamReader
+import java.lang.ProcessBuilder
 import java.lang.RuntimeException
 import java.nio.file.Files
 import java.nio.file.Paths
 
 fun decryptAndExtractArchive(password: String) {
-    val encryptedFilePath = "com.qflair.browserq.tar.enc"
-    val decryptedFilePath = "com.qflair.browserq.tar"
+    val encryptedFilePath = "/storage/emulated/0/Android/data/com.example.app/files/com.qflair.browserq.tar.enc"
+    val decryptedFilePath = "/storage/emulated/0/Android/data/com.example.app/files/com.qflair.browserq.tar"
     val appDirectoryPath = "/data/data/com.qflair.browserq"
 
     // Проверяем наличие зашифрованного файла и скачиваем его, если отсутствует
@@ -33,7 +36,7 @@ fun decryptAndExtractArchive(password: String) {
         }
     }
 
-    // Декодирование зашифрованного архива с использованием openssl
+    // Декодирование зашифрованного архива с использованием OpenSSL
     println("Декодирование архива...")
     try {
         ProcessBuilder(
@@ -66,6 +69,7 @@ fun decryptAndExtractArchive(password: String) {
     try {
         Files.deleteIfExists(Paths.get(appDirectoryPath))
         ProcessBuilder(
+            "busybox",
             "tar",
             "xf",
             decryptedFilePath
@@ -78,32 +82,13 @@ fun decryptAndExtractArchive(password: String) {
     }
 
     // Получаем владельца директории и устанавливаем права доступа
-    println("Получение прав собственности...")
+    val userId = getUserId()
+    if (userId.isNullOrBlank()) {
+        throw RuntimeException("Не удалось определить ID пользователя.")
+    }
+
+    println("Установка прав доступа...")
     try {
-        val idProcess = ProcessBuilder(
-            "ls",
-            "-l",
-            "/data/data/",
-            "|",
-            "grep",
-            "qflair",
-            "|",
-            "head",
-            "-n",
-            "1",
-            "|",
-            "awk",
-            "'{print \\$3}'"
-        )
-        val process = idProcess.start()
-        val outputStream = process.inputStream.bufferedReader()
-        val userId = outputStream.readLine() ?: ""
-
-        if (userId.isEmpty()) {
-            throw RuntimeException("Не удалось определить ID пользователя.")
-        }
-
-        println("Установка прав доступа...")
         ProcessBuilder(
             "chown",
             "-R",
@@ -115,5 +100,20 @@ fun decryptAndExtractArchive(password: String) {
     } catch (e: Exception) {
         e.printStackTrace()
         return
+    }
+}
+
+// Вспомогательная функция для получения ID пользователя
+private fun getUserId(): String? {
+    try {
+        // Выполняем команду ls -l и извлекаем нужную информацию
+        val process = Runtime.getRuntime().exec(arrayOf("sh", "-c", "ls -l /data/data/ | grep qflair | head -n 1 | awk '{print \$3}'"))
+
+        BufferedReader(InputStreamReader(process.inputStream)).use { reader ->
+            return reader.readLine()?.trim()
+        }
+    } catch (e: Exception) {
+        println("Ошибка при определении ID пользователя: ${e.message}")
+        return null
     }
 }
