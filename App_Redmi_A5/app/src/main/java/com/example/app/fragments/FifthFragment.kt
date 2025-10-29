@@ -18,9 +18,10 @@ import kotlinx.coroutines.withContext
 
 class FifthFragment : Fragment() {
 
-    private lateinit var downloadHelper: View
     private lateinit var downloadPlumaProfileButton: View
-    private lateinit var installPlumaProfileButton: View
+    private lateinit var   installPlumaProfileButton: View
+    private lateinit var downloadTelegramProfileButton: View
+    private lateinit var  installTelegramProfileButton: View
     private lateinit var editTextPassword: EditText
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -29,6 +30,8 @@ class FifthFragment : Fragment() {
         editTextPassword = view.findViewById(R.id.editTextPassword)
         downloadPlumaProfileButton = view.findViewById(R.id.downloadplumaprofile)
         installPlumaProfileButton = view.findViewById(R.id.installplumaprofile)
+        downloadTelegramProfileButton = view.findViewById(R.id.downloadtelegramprofile)
+        installTelegramProfileButton = view.findViewById(R.id.installtelegramprofile)
 
         downloadPlumaProfileButton.setOnClickListener {
             CoroutineScope(Dispatchers.Main).launch {
@@ -40,9 +43,31 @@ class FifthFragment : Fragment() {
             CoroutineScope(Dispatchers.Main).launch {
                 installProfile()
             }
+
+            downloadTelegramProfileButton.setOnClickListener {
+                CoroutineScope(Dispatchers.Main).launch {
+                    downloadtelegramProfile()
+                }
+            }
+
+            installTelegramProfileButton.setOnClickListener {
+                CoroutineScope(Dispatchers.Main).launch {
+                    installtelegramProfile()
+                }
+            }
+
         }
 
         return view
+    }
+
+    private fun installtelegramProfile() {
+        TODO("Not yet implemented")
+    }
+
+    private fun downloadtelegramProfile() {
+        download(requireContext(),"https://github.com/definitly486/redmia5/releases/download/shared/org.thunderdog.challegram.tar.enc")
+
     }
 
     private suspend fun downloadProfile() {

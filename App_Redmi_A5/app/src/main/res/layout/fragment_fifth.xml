@@ -39,5 +39,29 @@
         app:layout_constraintTop_toBottomOf="@+id/downloadplumaprofile"
         app:layout_constraintVertical_bias="0.104" />
 
+    <Button
+        android:id="@+id/downloadtelegramprofile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Скачать org.thunderdog.challegram"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.526"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/installplumaprofile"
+        app:layout_constraintVertical_bias="0.255" />
+
+    <Button
+        android:id="@+id/installtelegramprofile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Установить org.thunderdog.challegram"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.526"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.71" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
