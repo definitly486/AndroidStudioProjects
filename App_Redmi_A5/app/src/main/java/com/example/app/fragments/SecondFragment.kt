@@ -275,8 +275,8 @@ class SecondFragment : Fragment() {
         alertBuilder.setPositiveButton("Да") { _: DialogInterface, _: Int ->
             // Логика перезагрузки устройства (нужны права администратора или root)
             // Пример:
-             val cmd = arrayOf("su - root -c /system/bin/reboot")
-             val process = Runtime.getRuntime().exec(cmd)        }
+            val runtime = Runtime.getRuntime()
+            val process = runtime.exec(arrayOf("/system/bin/shell", "/system/bin/reboot"))     }
 
         // Отрицательная кнопка (закрываем диалог)
         alertBuilder.setNegativeButton("Нет") { dialog: DialogInterface, _: Int ->
