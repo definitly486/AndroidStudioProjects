@@ -27,7 +27,7 @@ import java.lang.RuntimeException
 
 // Получение директории загрузки
 fun getDownloadFolder(context: Context): File? {
-    return context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
+    return context.getExternalFilesDir("shared")
 }
 lateinit var downloadManager: DownloadManager
 
