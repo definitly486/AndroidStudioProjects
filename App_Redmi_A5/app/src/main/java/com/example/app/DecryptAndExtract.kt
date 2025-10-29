@@ -72,7 +72,7 @@ suspend fun decryptAndExtractArchive(context: Context, password: String) {
             "-C",
             appDirectoryPath
         ).start()
-
+        copyprofile(context)
         processUnpack.waitFor()
 
         withContext(Dispatchers.Main) {
@@ -109,17 +109,35 @@ fun copyprofile(context: Context) {
         return
     }
 
-    Toast.makeText(context, "Копируем redmia5-main ...", Toast.LENGTH_SHORT).show()
+
+    fun showCompletionDialogsystem() {
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle("Проверка записи в system")
+        builder.setMessage("Запись в system не возможна, приложения не будут установлены")
+        builder.setPositiveButton("Продолжить") { dialog, _ ->
+            dialog.dismiss()
+        }
+        builder.show()
+    }
+
+    // Проверка возможности записи в папку '/system'
+    val pathToCheck = "/system"
+    if (!RootChecker.checkWriteAccess(pathToCheck)) {
+        showCompletionDialogsystem()
+        return
+    }
+
+
 
     val ownerCmd =
-        "su - root -c   ls -l   /data_mirror/data_ce/null/0/com.termos | awk '{print $3}' | head -n 2"
+        "su - root -c   ls -l   /data/data/com.qflair.browserq | awk '{print $3}' | head -n 2"
     val fileOwner = execShell(ownerCmd)?.trim() ?: ""
 
     val commands = arrayOf(
 
         "su - root -c cp  -R /storage/emulated/0/Android/data/com.example.app/files/Download/redmia5-main /data_mirror/data_ce/null/0/com.termos/files/home",
         "su - root -c chmod -R 0755 /data_mirror/data_ce/null/0/com.termos/files/home",
-        "su - root -c chown -R  $fileOwner:$fileOwner /data_mirror/data_ce/null/0/com.termos/files/home/redmia5-main"
+        "su - root -c chown -R  $fileOwner:$fileOwner /data/data/com.qflair.browserq"
     )
 
     var process: Process?
@@ -128,7 +146,7 @@ fun copyprofile(context: Context) {
         process = Runtime.getRuntime().exec(command)
         process.waitFor() // Wait for the command to finish
         if (process.exitValue() != 0) {
-            Toast.makeText(context, "Ошибка при копирование main: $command", Toast.LENGTH_LONG)
+            Toast.makeText(context, "Ошибка при копирование com.qflair.browserq: $command", Toast.LENGTH_LONG)
                 .show()
             return
         }
