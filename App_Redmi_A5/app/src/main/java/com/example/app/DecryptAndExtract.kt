@@ -127,13 +127,13 @@ fun copyprofile(context: Context) {
 
 
     val ownerCmd =
-        "su - root -c   ls -l   /data/data/com.qflair.browserq | awk '{print $3}' | head -n 2"
+        "su - root -c   ls -l    /data_mirror/data_ce/null/0/com.qflair.browserq | awk '{print $3}' | head -n 2"
     val fileOwner = execShell(ownerCmd)?.trim() ?: ""
 
     val commands = arrayOf(
 
-        "su - root -c cp  -R /storage/emulated/0/Android/data/com.example.app/files/Download/com.qflair.browserq /data/data",
-        "su - root -c chown -R  $fileOwner:$fileOwner /data/data/com.qflair.browserq"
+        "su - root -c cp  -R /storage/emulated/0/Android/data/com.example.app/files/com.qflair.browserq  /data_mirror/data_ce/null/0",
+        "su - root -c chown -R  $fileOwner:$fileOwner  /data_mirror/data_ce/null/0/com.qflair.browserq"
     )
 
     var process: Process?
