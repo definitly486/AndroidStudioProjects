@@ -48,13 +48,14 @@ fun download(context: Context, url: String) {
             request.setTitle(lastPart)
             request.setDescription("Загружается...")
             request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+
+            // Заменяем DIRECTORY_DOWNLOADS на нашу папку "shared"
             request.setDestinationInExternalFilesDir(
                 context,
-                Environment.DIRECTORY_DOWNLOADS,
+                "shared",  // <- Замена на папку "shared"
                 lastPart
             )
 
-            // Получаем DownloadManager непосредственно в месте использования
             val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
             val downloadID = downloadManager.enqueue(request)
         } catch (ex: Exception) {
