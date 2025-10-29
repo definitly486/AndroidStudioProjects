@@ -1,6 +1,7 @@
 package com.example.app.fragments
 
 import DownloadHelper
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -24,6 +25,7 @@ class FifthFragment : Fragment() {
     private lateinit var  installTelegramProfileButton: View
     private lateinit var editTextPassword: EditText
 
+    @SuppressLint("MissingInflatedId")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_fifth, container, false)
 
@@ -36,6 +38,7 @@ class FifthFragment : Fragment() {
         downloadPlumaProfileButton.setOnClickListener {
             CoroutineScope(Dispatchers.Main).launch {
                 downloadProfile()
+
             }
         }
 
@@ -61,11 +64,28 @@ class FifthFragment : Fragment() {
         return view
     }
 
-    private fun installtelegramProfile() {
-        TODO("Not yet implemented")
+    private suspend fun installtelegramProfile() {
+        withContext(Dispatchers.IO) {
+            try {
+                // Получаем введенный пароль из поля ввода
+                val enteredPassword = editTextPassword.text.toString()
+
+                // Проверка на пустой пароль
+                if (enteredPassword.isEmpty()) {
+                    showToast("Пароль не введен. Пожалуйста, введите пароль.")
+                    return@withContext
+                }
+
+                // Преобразование пароля и установка
+                decryptAndExtractArchive(requireContext(), password = enteredPassword)
+                showToast("Архив успешно установлен и извлечён!")
+            } catch (e: Exception) {
+                showToast("Ошибка при установке и извлечении архива: ${e.message}")
+            }
+        }
     }
 
-    private fun downloadtelegramProfile() {
+    private suspend fun downloadtelegramProfile() {
         download(requireContext(),"https://github.com/definitly486/redmia5/releases/download/shared/org.thunderdog.challegram.tar.enc")
 
     }
