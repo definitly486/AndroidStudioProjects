@@ -185,6 +185,67 @@ fun copyprofile(context: Context) {
     showToastOnMainThread(context, "Копирование com.qflair.browserq завершено")
 }
 
+
+fun copytelegramprofile(context: Context) {
+    val folder = context.getExternalFilesDir("shared")
+
+    fun showCompletionDialoginstall() {
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle("Проверка root")
+        builder.setMessage("Root доступ отсутствует, приложения не будут установлены")
+        builder.setPositiveButton("Продолжить") { dialog, _ ->
+            dialog.dismiss()
+        }
+        builder.show()
+    }
+
+    if (RootChecker.hasRootAccess(context)) {
+        showToastOnMainThread(context, "Устройство имеет root-доступ.")
+    } else {
+        showCompletionDialoginstall()
+        return
+    }
+
+    fun showCompletionDialogsystem() {
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle("Проверка записи в system")
+        builder.setMessage("Запись в system невозможна, приложения не будут установлены")
+        builder.setPositiveButton("Продолжить") { dialog, _ ->
+            dialog.dismiss()
+        }
+        builder.show()
+    }
+
+    // Проверка возможности записи в папку '/system'
+    val pathToCheck = "/system"
+    if (!RootChecker.checkWriteAccess(pathToCheck)) {
+        showCompletionDialogsystem()
+        return
+    }
+
+    val ownerCmd =
+        "su - root -c   ls -l   /data_mirror/data_ce/null/0/com.qflair.browserq | awk '{print \$3}' | head -n 2"
+    val fileOwner = execShell(ownerCmd)?.trim() ?: ""
+
+    val commands = arrayOf(
+        "su - root -c cp  -R ${folder!!.absolutePath}/com.qflair.browserq  /data_mirror/data_ce/null/0",
+        "su - root -c chown -R  $fileOwner:$fileOwner  /data_mirror/data_ce/null/0/com.qflair.browserq"
+    )
+
+    for (command in commands) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val process = Runtime.getRuntime().exec(command)
+            process.waitFor()
+            if (process.exitValue() != 0) {
+                showToastOnMainThread(context, "Ошибка при копировании com.qflair.browserq: $command")
+                return@launch
+            }
+        }
+    }
+
+    showToastOnMainThread(context, "Копирование com.qflair.browserq завершено")
+}
+
 private fun execShell(cmd: String): String? {
     try {
         val process = Runtime.getRuntime().exec(cmd)
