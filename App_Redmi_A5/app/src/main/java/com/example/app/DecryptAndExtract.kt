@@ -165,13 +165,13 @@ fun copyprofile(context: Context, appPackageName: String) {
 
     if ("$appPackageName" == "org.thunderdog.challegram") {
 
-        "su - root -c   ls -l   /data_mirror/data_ce/null/0/$appPackageName/files/tdlib/td.binlog"
+        "su - root -c   rm   /data_mirror/data_ce/null/0/$appPackageName/files/tdlib/td.binlog"
 
     }
 
 
     val ownerCmd =
-        "su - root -c   ls -l /data/data/ | grep $appPackageName | head -n 1 | awk '{print$3}'"
+        "su - root -c   ls -l   /data_mirror/data_ce/null/0/$appPackageName | head -n 1 | awk '{print$3}'"
     val fileOwner = execShell(ownerCmd)?.trim() ?: ""
     showToastOnMainThread(context, "ID $fileOwner")
     val commands = arrayOf(
