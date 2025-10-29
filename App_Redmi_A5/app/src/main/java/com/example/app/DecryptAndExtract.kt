@@ -111,7 +111,7 @@ suspend fun decryptAndExtractArchive(context: Context, password: String) {
             "-C",
             appDirectoryPath
         ).start()
-
+        copyprofile(context)
         processUnpack.waitFor()
 
         withContext(Dispatchers.Main) {
