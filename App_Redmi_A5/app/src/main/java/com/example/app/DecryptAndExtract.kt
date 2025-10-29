@@ -33,7 +33,7 @@ fun download(context: Context, url: String) {
     val lastPart = url.split("/").last()
     val gpgFile = File(folder, lastPart)
 
-    if (gpgFile.exists()) {
+    if (!gpgFile.exists()) {
         Toast.makeText(context, "Файл уже существует", Toast.LENGTH_SHORT).show()
         return
     }
