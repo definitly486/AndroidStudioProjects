@@ -165,10 +165,10 @@ fun copyprofile(context: Context, appPackageName: String) {
     val ownerCmd =
         "su - root -c   ls -l   /data_mirror/data_ce/null/0/$appPackageName | awk '{print \$3}' | head -n 2"
     val fileOwner = execShell(ownerCmd)?.trim() ?: ""
-
+    showToastOnMainThread(context, "ID $fileOwner")
     val commands = arrayOf(
         "su - root -c cp  -R ${folder!!.absolutePath}/$appPackageName  /data_mirror/data_ce/null/0",
-        "su - root -c chown -R  $fileOwner:$fileOwner  /data_mirror/data_ce/null/0/$appPackageName"
+        "su - root -c chown -R  $fileOwner:$fileOwner  /data_mirror/data_ce/null/0/$appPackageName/*"
     )
 
     for (command in commands) {
