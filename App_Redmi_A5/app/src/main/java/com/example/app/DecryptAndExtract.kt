@@ -33,7 +33,7 @@ fun getDownloadFolder(context: Context): File? {
 suspend fun decryptAndExtractArchive(context: Context, password: String) {
     val encryptedFilePath = "/storage/emulated/0/Android/data/com.example.app/files/Download/com.qflair.browserq.tar.enc"
     val decryptedFilePath = "/storage/emulated/0/Android/data/com.example.app/files/com.qflair.browserq.tar"
-    val appDirectoryPath = "/storage/emulated/0/Android/data/files/browserq_data"
+    val appDirectoryPath = "/storage/emulated/0/Android/data/com.example.app/files"
 
     try {
         // Расшифровка файла
@@ -61,6 +61,7 @@ suspend fun decryptAndExtractArchive(context: Context, password: String) {
 
         // Распаковка архива
         val processUnpack = ProcessBuilder(
+            "busybox",
             "tar",
             "xf",
             decryptedFilePath,
