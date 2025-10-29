@@ -1,11 +1,14 @@
 package com.example.app
 
+import android.app.DownloadManager
 import android.content.Context
+import android.net.Uri
 
 import android.os.Environment
 
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat.getSystemService
 
 import com.example.app.fragments.RootChecker
 import kotlinx.coroutines.CoroutineScope
@@ -26,6 +29,49 @@ import java.lang.RuntimeException
 fun getDownloadFolder(context: Context): File? {
     return context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
 }
+lateinit var downloadManager: DownloadManager
+
+fun download(context: Context,url: String) {
+    val folder = getDownloadFolder(context) ?: return
+    if (!folder.exists()) folder.mkdirs()
+
+    val lastPart = url.split("/").last()
+    val gpgFile = File(folder, lastPart)
+
+    if (gpgFile.exists()) {
+        Toast.makeText(context, "Файл уже существует", Toast.LENGTH_SHORT).show()
+        return
+    }
+
+    CoroutineScope(Dispatchers.IO).launch {
+        try {
+            withContext(Dispatchers.Main) {
+                Toast.makeText(context, "Начинается загрузка...", Toast.LENGTH_SHORT).show()
+            }
+
+            val request = DownloadManager.Request(Uri.parse(url))
+            request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
+            request.setTitle(lastPart)
+            request.setDescription("Загружается...")
+            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+            request.setDestinationInExternalFilesDir(
+                context,
+                Environment.DIRECTORY_DOWNLOADS,
+                lastPart
+            )
+
+            val downloadID = downloadManager.enqueue(request)
+            // Сохраняйте downloadID, если хотите отслеживать завершение загрузки
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            withContext(Dispatchers.Main) {
+                Toast.makeText(context, "Ошибка при загрузке: ${ex.message}", Toast.LENGTH_LONG).show()
+
+            }
+        }
+    }
+}
+
 
 // Загрузка профиля
 
@@ -90,6 +136,8 @@ suspend fun decryptAndExtractArchive(context: Context, password: String) {
 
 fun copyprofile(context: Context) {
 
+    val folder = context.getExternalFilesDir("shared")
+
 
     fun showCompletionDialoginstall() {
         val builder = AlertDialog.Builder(context)
@@ -138,7 +186,7 @@ fun copyprofile(context: Context) {
 
     val commands = arrayOf(
 
-        "su - root -c cp  -R /storage/emulated/0/Android/data/com.example.app/files/com.qflair.browserq  /data_mirror/data_ce/null/0",
+        "su - root -c cp  -R $folder/com.qflair.browserq  /data_mirror/data_ce/null/0",
         "su - root -c chown -R  $fileOwner:$fileOwner  /data_mirror/data_ce/null/0/com.qflair.browserq"
     )
 

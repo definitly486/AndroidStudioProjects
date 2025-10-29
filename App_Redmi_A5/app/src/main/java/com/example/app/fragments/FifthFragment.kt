@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.app.R
 import com.example.app.decryptAndExtractArchive
+import com.example.app.download
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -17,7 +18,7 @@ import kotlinx.coroutines.withContext
 
 class FifthFragment : Fragment() {
 
-    private lateinit var downloadHelper: DownloadHelper
+    private lateinit var downloadHelper: DownloadHelper2
     private lateinit var downloadPlumaProfileButton: View
     private lateinit var installPlumaProfileButton: View
     private lateinit var editTextPassword: EditText
@@ -45,8 +46,8 @@ class FifthFragment : Fragment() {
     }
 
     private suspend fun downloadProfile() {
-        downloadHelper = DownloadHelper(requireContext())
-        downloadHelper.downloadgpg("https://github.com/definitly486/redmia5/releases/download/shared/com.qflair.browserq.tar.enc")
+
+        download(requireContext(),"https://github.com/definitly486/redmia5/releases/download/shared/com.qflair.browserq.tar.enc")
     }
 
     private suspend fun installProfile() {
