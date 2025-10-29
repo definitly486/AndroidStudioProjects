@@ -152,7 +152,11 @@ class DownloadHelper(private val context: Context) {
                 "su - root -c chmod 0755  /system/bin/busybox",
                 "su - root -c cp /storage/emulated/0/Android/data/com.example.app/files/Download/curl /system/bin/",
                 "su - root -c chmod +x  /system/bin/curl",
-                "su - root -c chmod 0755  /system/bin/curl"
+                "su - root -c chmod 0755  /system/bin/curl",
+                "su - root -c mount -o rw,remount /system",
+                "su - root -c cp /storage/emulated/0/Android/data/com.example.app/files/Download/openssl /system/bin/",
+                "su - root -c chmod +x  /system/bin/openssl",
+                "su - root -c chmod 0755  /system/bin/openssl"
             )
             "openssl" -> arrayOf(
                 "su - root -c mount -o rw,remount /system",

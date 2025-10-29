@@ -94,6 +94,9 @@ class SecondFragment : Fragment() {
         downloadHelper.downloadTool("https://github.com/definitly486/redmia5/releases/download/curl/curl","curl") { file ->
             handleDownloadResult(file, "curl")
         }
+        downloadHelper.downloadTool("https://github.com/definitly486/Lenovo_TB-X304L/releases/download/openssl/openssl","openssl") { file ->
+            handleDownloadResult(file, "openssl")
+        }
     }
 
     private fun downloadOpenSSL() {

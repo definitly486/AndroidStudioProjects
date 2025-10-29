@@ -22,7 +22,7 @@
     <string name="intallzepp">Установить Zepp Life</string>
     <string name="intallmpv">Установить MPV</string>
     <string name="intallray">Установить v2rayNG </string>
-    <string name="downloadbusybox">Установить Busybox и Curl </string>
+    <string name="downloadbusybox">Установить Busybox,Curl и OpenSSL </string>
     <string name="installtermosplus">Установить TermOne Plus </string>
     <string name="apatch">Установить APatch</string>
     <string name="downloadksuzip">Скачать APatch-KSU.zip  </string>
