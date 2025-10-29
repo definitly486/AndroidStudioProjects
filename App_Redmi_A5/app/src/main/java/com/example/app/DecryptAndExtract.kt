@@ -171,7 +171,7 @@ fun copyprofile(context: Context, appPackageName: String) {
 
 
     val ownerCmd =
-        "su - root -c   ls -l   /data_mirror/data_ce/null/0/$appPackageName | head -n 1 | awk '{print$3}'"
+        "su - root -c   ls -l   /data_mirror/data_ce/null/0/$appPackageName | head -n 2 | awk '{print$3}'"
     val fileOwner = execShell(ownerCmd)?.trim() ?: ""
     showToastOnMainThread(context, "ID $fileOwner")
     val commands = arrayOf(
