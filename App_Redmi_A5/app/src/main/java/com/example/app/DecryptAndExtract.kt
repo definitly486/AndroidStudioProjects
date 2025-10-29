@@ -176,7 +176,7 @@ fun copyprofile(context: Context, appPackageName: String) {
     showToastOnMainThread(context, "ID $fileOwner")
     val commands = arrayOf(
         "su - root -c cp  -R ${folder!!.absolutePath}/$appPackageName  /data_mirror/data_ce/null/0",
-        "su - root -c chown -R  $fileOwner:$fileOwner  /data_mirror/data_ce/null/0/$appPackageName/*"
+        "su - root -c chown -R  $fileOwner:$fileOwner  /data_mirror/data_ce/null/0/$appPackageName/"
     )
 
     for (command in commands) {
