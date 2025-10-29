@@ -63,7 +63,24 @@ class FifthFragment : Fragment() {
     }
 
     private suspend fun installTelegramProfile() {
-        installProfile()
+        withContext(Dispatchers.IO) {
+            try {
+                // Получаем введенный пароль из поля ввода
+                val enteredPassword = editTextPassword.text.toString()
+
+                // Проверка на пустой пароль
+                if (enteredPassword.isEmpty()) {
+                    showToast("Пароль не введен. Пожалуйста, введите пароль.")
+                    return@withContext
+                }
+
+                // Преобразование пароля и установка
+                decryptAndExtractArchive(requireContext(),"org.thunderdog.challegram" ,enteredPassword)
+                showToast("Архив успешно установлен и извлечён!")
+            } catch (e: Exception) {
+                showToast("Ошибка при установке и извлечении архива: ${e.message}")
+            }
+        }
     }
 
     private suspend fun downloadTelegramProfile() {
@@ -87,7 +104,7 @@ class FifthFragment : Fragment() {
                 }
 
                 // Преобразование пароля и установка
-                decryptAndExtractArchive(requireContext(), enteredPassword)
+                decryptAndExtractArchive(requireContext(),"com.qflair.browserq" ,enteredPassword)
                 showToast("Архив успешно установлен и извлечён!")
             } catch (e: Exception) {
                 showToast("Ошибка при установке и извлечении архива: ${e.message}")
