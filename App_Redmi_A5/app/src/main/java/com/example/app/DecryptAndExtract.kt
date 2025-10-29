@@ -98,8 +98,9 @@ fun copyprofile(context: Context) {
 
     if (RootChecker.hasRootAccess(context)) {
 
-        Toast.makeText(context, "Устройство имеет root-доступ.", Toast.LENGTH_SHORT)
-            .show()
+   //     Toast.makeText(context, "Устройство имеет root-доступ.", Toast.LENGTH_SHORT)
+    //        .show()
+        showToastOnMainThread(context, "Устройство имеет root-доступ.")
     } else {
         showCompletionDialoginstall()
         return
@@ -141,12 +142,14 @@ fun copyprofile(context: Context) {
         process = Runtime.getRuntime().exec(command)
         process.waitFor() // Wait for the command to finish
         if (process.exitValue() != 0) {
-            Toast.makeText(context, "Ошибка при копирование com.qflair.browserq: $command", Toast.LENGTH_LONG)
-                .show()
+          //  Toast.makeText(context, "Ошибка при копирование com.qflair.browserq: $command", Toast.LENGTH_LONG)
+           //     .show()
+            showToastOnMainThread(context, "Ошибка при копирование com.qflair.browserq: $command")
             return
         }
     }
-    Toast.makeText(context, "Копирование  com.qflair.browserq завершенo", Toast.LENGTH_SHORT).show()
+   // Toast.makeText(context, "Копирование  com.qflair.browserq завершенo", Toast.LENGTH_SHORT).show()
+    showToastOnMainThread(context, "Ошибка при установке Копирование  com.qflair.browserq завершенo")
 }
 
 private fun execShell(cmd: String): String? {
