@@ -20,9 +20,9 @@ import kotlinx.coroutines.withContext
 class FifthFragment : Fragment() {
 
     private lateinit var downloadPlumaProfileButton: View
-    private lateinit var   installPlumaProfileButton: View
+    private lateinit var installPlumaProfileButton: View
     private lateinit var downloadTelegramProfileButton: View
-    private lateinit var  installTelegramProfileButton: View
+    private lateinit var installTelegramProfileButton: View
     private lateinit var editTextPassword: EditText
 
     @SuppressLint("MissingInflatedId")
@@ -38,7 +38,6 @@ class FifthFragment : Fragment() {
         downloadPlumaProfileButton.setOnClickListener {
             CoroutineScope(Dispatchers.Main).launch {
                 downloadProfile()
-
             }
         }
 
@@ -46,52 +45,33 @@ class FifthFragment : Fragment() {
             CoroutineScope(Dispatchers.Main).launch {
                 installProfile()
             }
+        }
 
-            downloadTelegramProfileButton.setOnClickListener {
-                CoroutineScope(Dispatchers.Main).launch {
-                    downloadtelegramProfile()
-                }
+        downloadTelegramProfileButton.setOnClickListener {
+            CoroutineScope(Dispatchers.Main).launch {
+                downloadTelegramProfile()
             }
+        }
 
-            installTelegramProfileButton.setOnClickListener {
-                CoroutineScope(Dispatchers.Main).launch {
-                    installtelegramProfile()
-                }
+        installTelegramProfileButton.setOnClickListener {
+            CoroutineScope(Dispatchers.Main).launch {
+                installTelegramProfile()
             }
-
         }
 
         return view
     }
 
-    private suspend fun installtelegramProfile() {
-        withContext(Dispatchers.IO) {
-            try {
-                // Получаем введенный пароль из поля ввода
-                val enteredPassword = editTextPassword.text.toString()
-
-                // Проверка на пустой пароль
-                if (enteredPassword.isEmpty()) {
-                    showToast("Пароль не введен. Пожалуйста, введите пароль.")
-                    return@withContext
-                }
-
-                // Преобразование пароля и установка
-                decryptAndExtractArchive(requireContext(), password = enteredPassword)
-                showToast("Архив успешно установлен и извлечён!")
-            } catch (e: Exception) {
-                showToast("Ошибка при установке и извлечении архива: ${e.message}")
-            }
-        }
+    private suspend fun installTelegramProfile() {
+        installProfile()
     }
 
-    private suspend fun downloadtelegramProfile() {
-        download(requireContext(),"https://github.com/definitly486/redmia5/releases/download/shared/org.thunderdog.challegram.tar.enc")
-
+    private suspend fun downloadTelegramProfile() {
+        download(requireContext(), "https://github.com/definitly486/redmia5/releases/download/shared/org.thunderdog.challegram.tar.enc")
     }
 
     private suspend fun downloadProfile() {
-        download(requireContext(),"https://github.com/definitly486/redmia5/releases/download/shared/com.qflair.browserq.tar.enc")
+        download(requireContext(), "https://github.com/definitly486/redmia5/releases/download/shared/com.qflair.browserq.tar.enc")
     }
 
     private suspend fun installProfile() {
@@ -107,7 +87,7 @@ class FifthFragment : Fragment() {
                 }
 
                 // Преобразование пароля и установка
-                decryptAndExtractArchive(requireContext(), password = enteredPassword)
+                decryptAndExtractArchive(requireContext(), enteredPassword)
                 showToast("Архив успешно установлен и извлечён!")
             } catch (e: Exception) {
                 showToast("Ошибка при установке и извлечении архива: ${e.message}")
