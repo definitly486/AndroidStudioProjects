@@ -24,8 +24,7 @@ fun getDownloadFolder(context: Context): File? {
     return context.getExternalFilesDir("shared")
 }
 
-var downloadManager: DownloadManager? = null
-
+// Скачивание файла
 fun download(context: Context, url: String) {
     val folder = getDownloadFolder(context) ?: return
     if (!folder.exists()) folder.mkdirs()
@@ -33,7 +32,7 @@ fun download(context: Context, url: String) {
     val lastPart = url.split("/").last()
     val gpgFile = File(folder, lastPart)
 
-    if (!gpgFile.exists()) {
+    if (gpgFile.exists()) {
         Toast.makeText(context, "Файл уже существует", Toast.LENGTH_SHORT).show()
         return
     }
@@ -55,8 +54,9 @@ fun download(context: Context, url: String) {
                 lastPart
             )
 
-            downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-            val downloadID = downloadManager!!.enqueue(request)
+            // Получаем DownloadManager непосредственно в месте использования
+            val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+            val downloadID = downloadManager.enqueue(request)
         } catch (ex: Exception) {
             ex.printStackTrace()
             withContext(Dispatchers.Main) {
