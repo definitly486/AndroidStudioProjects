@@ -31,9 +31,15 @@ fun getDownloadFolder(context: Context): File? {
 
 // Функция расшифровки и распаковки архива
 suspend fun decryptAndExtractArchive(context: Context, password: String) {
-    val encryptedFilePath = "/storage/emulated/0/Android/data/com.example.app/files/Download/com.qflair.browserq.tar.enc"
-    val decryptedFilePath = "/storage/emulated/0/Android/data/com.example.app/files/com.qflair.browserq.tar"
-    val appDirectoryPath = "/storage/emulated/0/Android/data/com.example.app/files"
+    val folder = context.getExternalFilesDir("shared")
+    val encryptedFilePath = "$folder/com.qflair.browserq.tar.enc"
+    val decryptedFilePath = "$folder/com.qflair.browserq.tar"
+    val appDirectoryPath = "$folder"
+
+
+    if (folder != null && !folder.exists()) {
+        folder.mkdirs()
+    }
 
     try {
         // Расшифровка файла
