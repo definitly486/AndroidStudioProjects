@@ -9,6 +9,7 @@ import androidx.appcompat.app.AlertDialog
 import com.example.app.fragments.RootChecker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.BufferedReader
@@ -16,6 +17,7 @@ import java.io.File
 import java.io.InputStreamReader
 import java.lang.ProcessBuilder
 import java.lang.RuntimeException
+import kotlin.time.Duration.Companion.seconds
 
 // Вспомогательные функции
 
@@ -171,16 +173,33 @@ fun copyprofile(context: Context, appPackageName: String) {
 
 
     val ownerCmd =
-        "su - root -c   ls -l   /data_mirror/data_ce/null/0/$appPackageName | head -n 2 | awk '{print$3}'"
+        "su - root -c   ls -l   /data_mirror/data_ce/null/0/ | grep org.thunderdog.challegram |  awk '{print$3}'"
     val fileOwner = execShell(ownerCmd)?.trim() ?: ""
     showToastOnMainThread(context, "ID $fileOwner")
+
+
+    if ("$appPackageName" == "org.thunderdog.challegram") {
+
+        val commands = arrayOf(
+            "su - root -c cp  -R ${folder!!.absolutePath}/$appPackageName/files/tdlib/td.binlog  /data_mirror/data_ce/null/0/$appPackageName/files/tdlib/ ",
+            "su - root -c cp  -R ${folder!!.absolutePath}/$appPackageName/files/tdlib1/  /data_mirror/data_ce/null/0/$appPackageName/files/",
+            "su - root -c cp  -R ${folder!!.absolutePath}/$appPackageName/files/tdlib_accounts.bin  /data_mirror/data_ce/null/0/$appPackageName/files/ ",
+            "su - root -c chown -R  $fileOwner:$fileOwner  /data_mirror/data_ce/null/0/$appPackageName/files/",
+            "su - root -c chown -R  $fileOwner:$fileOwner  /data_mirror/data_ce/null/0/$appPackageName/",
+            "su - root -c chown -R  $fileOwner:$fileOwner  /data_mirror/data_ce/null/0/$appPackageName/files/tdlib1",
+            "su - root -c chown -R   $fileOwner:$fileOwner   /data_mirror/data_ce/null/0/$appPackageName/"
+        )
+    }
+
+
     val commands = arrayOf(
-        "su - root -c cp  -R ${folder!!.absolutePath}/$appPackageName  /data_mirror/data_ce/null/0",
+        "su - root -c cp  -R ${folder!!.absolutePath}/$appPackageName/  /data_mirror/data_ce/null/0/ ",
         "su - root -c chown -R  $fileOwner:$fileOwner  /data_mirror/data_ce/null/0/$appPackageName/"
     )
 
     for (command in commands) {
         CoroutineScope(Dispatchers.IO).launch {
+
             val process = Runtime.getRuntime().exec(command)
             process.waitFor()
             if (process.exitValue() != 0) {
