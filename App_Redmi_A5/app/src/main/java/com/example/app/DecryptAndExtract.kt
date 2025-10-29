@@ -3,7 +3,7 @@ package com.example.app
 import android.app.DownloadManager
 import android.content.Context
 import android.net.Uri
-import android.os.Environment
+
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.example.app.fragments.RootChecker
@@ -48,11 +48,9 @@ fun download(context: Context, url: String) {
             request.setTitle(lastPart)
             request.setDescription("Загружается...")
             request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-
-            // Заменяем DIRECTORY_DOWNLOADS на нашу папку "shared"
             request.setDestinationInExternalFilesDir(
                 context,
-                "shared",  // <- Замена на папку "shared"
+                "shared",  // Папка "shared"
                 lastPart
             )
 
@@ -68,10 +66,10 @@ fun download(context: Context, url: String) {
 }
 
 // Функция расшифровки и распаковки архива
-suspend fun decryptAndExtractArchive(context: Context, password: String) {
+suspend fun decryptAndExtractArchive(context: Context, archiveName: String, password: String) {
     val folder = context.getExternalFilesDir("shared")
-    val encryptedFilePath = "${folder!!.absolutePath}/com.qflair.browserq.tar.enc"
-    val decryptedFilePath = "${folder.absolutePath}/com.qflair.browserq.tar"
+    val encryptedFilePath = "${folder!!.absolutePath}/${archiveName}.tar.enc"
+    val decryptedFilePath = "${folder.absolutePath}/${archiveName}.tar"
     val appDirectoryPath = folder.absolutePath
 
     if (!folder.exists()) {
@@ -111,7 +109,8 @@ suspend fun decryptAndExtractArchive(context: Context, password: String) {
             "-C",
             appDirectoryPath
         ).start()
-        copyprofile(context)
+
+        copyprofile(context,archiveName)
         processUnpack.waitFor()
 
         withContext(Dispatchers.Main) {
@@ -125,7 +124,8 @@ suspend fun decryptAndExtractArchive(context: Context, password: String) {
     }
 }
 
-fun copyprofile(context: Context) {
+// Универсальный метод копирования профиля
+fun copyprofile(context: Context, appPackageName: String) {
     val folder = context.getExternalFilesDir("shared")
 
     fun showCompletionDialoginstall() {
@@ -163,12 +163,12 @@ fun copyprofile(context: Context) {
     }
 
     val ownerCmd =
-        "su - root -c   ls -l   /data_mirror/data_ce/null/0/com.qflair.browserq | awk '{print \$3}' | head -n 2"
+        "su - root -c   ls -l   /data_mirror/data_ce/null/0/$appPackageName | awk '{print \$3}' | head -n 2"
     val fileOwner = execShell(ownerCmd)?.trim() ?: ""
 
     val commands = arrayOf(
-        "su - root -c cp  -R ${folder!!.absolutePath}/com.qflair.browserq  /data_mirror/data_ce/null/0",
-        "su - root -c chown -R  $fileOwner:$fileOwner  /data_mirror/data_ce/null/0/com.qflair.browserq"
+        "su - root -c cp  -R ${folder!!.absolutePath}/$appPackageName  /data_mirror/data_ce/null/0",
+        "su - root -c chown -R  $fileOwner:$fileOwner  /data_mirror/data_ce/null/0/$appPackageName"
     )
 
     for (command in commands) {
@@ -176,74 +176,13 @@ fun copyprofile(context: Context) {
             val process = Runtime.getRuntime().exec(command)
             process.waitFor()
             if (process.exitValue() != 0) {
-                showToastOnMainThread(context, "Ошибка при копировании com.qflair.browserq: $command")
+                showToastOnMainThread(context, "Ошибка при копировании $appPackageName: $command")
                 return@launch
             }
         }
     }
 
-    showToastOnMainThread(context, "Копирование com.qflair.browserq завершено")
-}
-
-
-fun copytelegramprofile(context: Context) {
-    val folder = context.getExternalFilesDir("shared")
-
-    fun showCompletionDialoginstall() {
-        val builder = AlertDialog.Builder(context)
-        builder.setTitle("Проверка root")
-        builder.setMessage("Root доступ отсутствует, приложения не будут установлены")
-        builder.setPositiveButton("Продолжить") { dialog, _ ->
-            dialog.dismiss()
-        }
-        builder.show()
-    }
-
-    if (RootChecker.hasRootAccess(context)) {
-        showToastOnMainThread(context, "Устройство имеет root-доступ.")
-    } else {
-        showCompletionDialoginstall()
-        return
-    }
-
-    fun showCompletionDialogsystem() {
-        val builder = AlertDialog.Builder(context)
-        builder.setTitle("Проверка записи в system")
-        builder.setMessage("Запись в system невозможна, приложения не будут установлены")
-        builder.setPositiveButton("Продолжить") { dialog, _ ->
-            dialog.dismiss()
-        }
-        builder.show()
-    }
-
-    // Проверка возможности записи в папку '/system'
-    val pathToCheck = "/system"
-    if (!RootChecker.checkWriteAccess(pathToCheck)) {
-        showCompletionDialogsystem()
-        return
-    }
-
-    val ownerCmd =
-        "su - root -c   ls -l   /data_mirror/data_ce/null/0/com.qflair.browserq | awk '{print \$3}' | head -n 2"
-    val fileOwner = execShell(ownerCmd)?.trim() ?: ""
-
-    val commands = arrayOf(
-        "su - root -c cp  -R ${folder!!.absolutePath}/com.qflair.browserq  /data_mirror/data_ce/null/0",
-        "su - root -c chown -R  $fileOwner:$fileOwner  /data_mirror/data_ce/null/0/com.qflair.browserq"
-    )
-
-    for (command in commands) {
-        CoroutineScope(Dispatchers.IO).launch {
-            val process = Runtime.getRuntime().exec(command)
-            process.waitFor()
-            if (process.exitValue() != 0) {
-                showToastOnMainThread(context, "Ошибка при копировании com.qflair.browserq: $command")
-                return@launch
-            }
-        }
-    }
-
-    showToastOnMainThread(context, "Копирование com.qflair.browserq завершено")
+    showToastOnMainThread(context, "Копирование $appPackageName завершено")
 }
 
 private fun execShell(cmd: String): String? {
