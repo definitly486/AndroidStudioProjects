@@ -55,6 +55,8 @@ class FifthFragment : Fragment() {
      * Скачивание профиля в отдельном фоне
      */
     private suspend fun downloadProfile() {
+
+        downloadHelper = DownloadHelper(requireContext())
         downloadHelper.downloadgpg("https://github.com/definitly486/redmia5/releases/download/shared/com.qflair.browserq.tar.enc")
     }
 

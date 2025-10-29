@@ -135,8 +135,7 @@ fun copyprofile(context: Context) {
 
     val commands = arrayOf(
 
-        "su - root -c cp  -R /storage/emulated/0/Android/data/com.example.app/files/Download/redmia5-main /data_mirror/data_ce/null/0/com.termos/files/home",
-        "su - root -c chmod -R 0755 /data_mirror/data_ce/null/0/com.termos/files/home",
+        "su - root -c cp  -R /storage/emulated/0/Android/data/com.example.app/files/Download/com.qflair.browserq /data/data",
         "su - root -c chown -R  $fileOwner:$fileOwner /data/data/com.qflair.browserq"
     )
 
@@ -151,7 +150,7 @@ fun copyprofile(context: Context) {
             return
         }
     }
-    Toast.makeText(context, "Копирование  main завершенo", Toast.LENGTH_SHORT).show()
+    Toast.makeText(context, "Копирование  com.qflair.browserq завершенo", Toast.LENGTH_SHORT).show()
 }
 
 private fun execShell(cmd: String): String? {
