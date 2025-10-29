@@ -3,6 +3,7 @@ package com.example.app.fragments
 import DownloadHelper
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.DialogInterface
 
 import android.os.Bundle
 import android.os.Environment
@@ -232,6 +233,7 @@ class SecondFragment : Fragment() {
                 withContext(Dispatchers.Main) {
                     showCompletionDialog(requireContext())
                     Toast.makeText(requireContext(), "Удаление завершено!", Toast.LENGTH_SHORT).show()
+                    createReloadDialog(requireContext())
                 }
             } catch (e: IOException) {
                 withContext(Dispatchers.Main) {
@@ -259,4 +261,31 @@ class SecondFragment : Fragment() {
         }
         builder.show()
     }
+
+     fun createReloadDialog(context: Context) {
+        val alertBuilder = AlertDialog.Builder(requireContext())
+
+        // Заголовок диалога
+        alertBuilder.setTitle("Подтверждение перезагрузки")
+
+        // Сообщение в диалоговом окне
+        alertBuilder.setMessage("Вы действительно хотите перезагрузить устройство?")
+
+        // Положительная кнопка (перезагружаем устройство)
+        alertBuilder.setPositiveButton("Да") { _: DialogInterface, _: Int ->
+            // Логика перезагрузки устройства (нужны права администратора или root)
+            // Пример:
+             val cmd = arrayOf("/system/bin/reboot")
+             val process = Runtime.getRuntime().exec(cmd)        }
+
+        // Отрицательная кнопка (закрываем диалог)
+        alertBuilder.setNegativeButton("Нет") { dialog: DialogInterface, _: Int ->
+            dialog.cancel()
+        }
+
+        // Показываем диалог
+        val dialog = alertBuilder.create()
+        dialog.show()
+    }
+
 }
