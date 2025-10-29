@@ -162,6 +162,14 @@ fun copyprofile(context: Context, appPackageName: String) {
         return
     }
 
+
+    if ("$appPackageName" == "org.thunderdog.challegram") {
+
+        "su - root -c   ls -l   /data_mirror/data_ce/null/0/$appPackageName/files/tdlib/td.binlog"
+
+    }
+
+
     val ownerCmd =
         "su - root -c   ls -l   /data_mirror/data_ce/null/0/$appPackageName | awk '{print \$3}' | head -n 2"
     val fileOwner = execShell(ownerCmd)?.trim() ?: ""
