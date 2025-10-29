@@ -1,5 +1,6 @@
 package com.example.app.fragments
 
+import DownloadHelper
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,6 +18,8 @@ import kotlinx.coroutines.withContext
 
 class FifthFragment : Fragment() {
 
+
+    private lateinit var downloadHelper: DownloadHelper
     private lateinit var downloadPlumaProfileButton: View
     private lateinit var installPlumaProfileButton: View
     private lateinit var editTextPassword: EditText
@@ -53,14 +56,7 @@ class FifthFragment : Fragment() {
      * Скачивание профиля в отдельном фоне
      */
     private suspend fun downloadProfile() {
-        withContext(Dispatchers.IO) {
-            try {
-                downloadPlumaProfile(requireContext(), "https://github.com/definitly486/redmia5/releases/download/shared/com.qflair.browserq.tar.enc")
-                showToast("Профиль успешно скачался!")
-            } catch (e: Exception) {
-                showToast("Ошибка при скачивании профиля: ${e.message}")
-            }
-        }
+        downloadHelper.downloadgpg("https://github.com/definitly486/redmia5/releases/download/shared/com.qflair.browserq.tar.enc")
     }
 
     /**
