@@ -18,7 +18,7 @@ import kotlinx.coroutines.withContext
 
 class FifthFragment : Fragment() {
 
-    private lateinit var downloadHelper: DownloadHelper
+    private lateinit var downloadHelper: View
     private lateinit var downloadPlumaProfileButton: View
     private lateinit var installPlumaProfileButton: View
     private lateinit var editTextPassword: EditText
@@ -46,10 +46,6 @@ class FifthFragment : Fragment() {
     }
 
     private suspend fun downloadProfile() {
-
-        if (!::downloadHelper.isInitialized) {
-            downloadHelper = DownloadHelper(requireContext()) // или downloadHelper = createDownloadHelper()
-        }
         download(requireContext(),"https://github.com/definitly486/redmia5/releases/download/shared/com.qflair.browserq.tar.enc")
     }
 
