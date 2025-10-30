@@ -24,9 +24,8 @@ class DownloadHelper(private val context: Context) {
     private var downloadReceiver: BroadcastReceiver? = null
 
     fun getDownloadFolder(): File? {
-        return context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
+        return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
     }
-
     fun downloadTool(url: String, toolName: String, onDownloadComplete: (File?) -> Unit) {
         val folder = getDownloadFolder() ?: run {
             Toast.makeText(context, "Невозможно получить папку загрузки", Toast.LENGTH_SHORT).show()
@@ -244,14 +243,12 @@ class DownloadHelper(private val context: Context) {
                 request.setTitle(lastPart)
                 request.setDescription("Загружается...")
                 request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-                request.setDestinationInExternalFilesDir(
-                    context,
-                    Environment.DIRECTORY_DOWNLOADS,
-                    lastPart
-                )
+
+                // Изменяем путь сохранения на общедоступную папку Download
+                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, lastPart)
 
                 val downloadID = downloadManager.enqueue(request)
-                // Сохраняйте downloadID, если хотите отслеживать завершение загрузки
+                // Сохраните downloadID, если нужно отслеживать статус загрузки
             } catch (ex: Exception) {
                 ex.printStackTrace()
                 withContext(Dispatchers.Main) {
@@ -260,7 +257,6 @@ class DownloadHelper(private val context: Context) {
             }
         }
     }
-
     fun download(url: String, onDownloadComplete: (File?) -> Unit) {
         val folder = getDownloadFolder() ?: run {
             Toast.makeText(context, "Невозможно получить папку загрузки", Toast.LENGTH_SHORT).show()
