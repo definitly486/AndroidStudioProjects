@@ -312,13 +312,16 @@ class DownloadHelper(private val context: Context) {
                                     Toast.makeText(context, "Загрузка не удалась", Toast.LENGTH_SHORT).show()
                                     onDownloadComplete(null)
                                 }
+                            } else {
+                                Toast.makeText(context, "Не удалось получить статус загрузки", Toast.LENGTH_SHORT).show()
+                                onDownloadComplete(null)
                             }
                         }
                     }
                 }
             }
 
-            // Регистрация приемника с флагом RECEIVER_NOT_EXPORTED
+            // 🔥 РЕГИСТРАЦИЯ с флагом RECEIVER_NOT_EXPORTED
             context.registerReceiver(
                 downloadReceiver,
                 IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE),
@@ -332,8 +335,9 @@ class DownloadHelper(private val context: Context) {
                 setTitle(lastPart)
                 setDescription("Загружается...")
                 setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-                // Здесь задаём общедоступную папку Download
-                setDestinationInExternalPublicDir(
+                allowScanningByMediaScanner()
+                setDestinationInExternalFilesDir(
+                    context,
                     Environment.DIRECTORY_DOWNLOADS,
                     lastPart
                 )
@@ -344,7 +348,6 @@ class DownloadHelper(private val context: Context) {
             Toast.makeText(context, "Ошибка при скачивании: ${ex.message}", Toast.LENGTH_LONG).show()
         }
     }
-
     fun cleanup() {
         try {
             if (downloadReceiver != null) {
