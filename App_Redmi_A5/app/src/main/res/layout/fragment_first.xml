@@ -11,10 +11,10 @@
         android:layout_margin="16dp">
 
         <LinearLayout
+            android:id="@+id/main"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:id="@+id/main"
             tools:context=".MainActivity"
             tools:ignore="UselessParent">
 
@@ -188,6 +188,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/installpluma"
+                tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+
+            <Button
+                android:id="@+id/install3с"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/install3с"
                 tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
 
 
