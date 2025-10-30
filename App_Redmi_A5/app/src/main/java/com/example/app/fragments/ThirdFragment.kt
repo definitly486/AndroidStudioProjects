@@ -52,7 +52,7 @@ class ThirdFragment : Fragment() {
         val downloadnote = view.findViewById<Button>(R.id.downloadnote)
         downloadnote.setOnClickListener {
             val apkUrl1 = "https://raw.githubusercontent.com/definitly486/definitly486/refs/heads/main/note"
-            downloadHelper.downloadgpg(apkUrl1)
+            downloadHelper.download2(apkUrl1)
         }
     }
 
