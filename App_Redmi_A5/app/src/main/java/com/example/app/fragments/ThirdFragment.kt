@@ -44,6 +44,7 @@ class ThirdFragment : Fragment() {
         installButton.setOnClickListener {
             val apkUrl1 = "https://github.com/xinitronix/gnucash/raw/refs/heads/main/definitly.gnucash.gpg"
             downloadHelper.downloadgpg(apkUrl1)
+            downloadHelper2.copygpg()
         }
     }
 
