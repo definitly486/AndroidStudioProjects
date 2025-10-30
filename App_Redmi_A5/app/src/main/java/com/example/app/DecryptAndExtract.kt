@@ -9,7 +9,7 @@ import androidx.appcompat.app.AlertDialog
 import com.example.app.fragments.RootChecker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
+
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.BufferedReader
@@ -17,7 +17,7 @@ import java.io.File
 import java.io.InputStreamReader
 import java.lang.ProcessBuilder
 import java.lang.RuntimeException
-import kotlin.time.Duration.Companion.seconds
+
 
 // Вспомогательные функции
 
@@ -116,12 +116,12 @@ suspend fun decryptAndExtractArchive(context: Context, archiveName: String, pass
         processUnpack.waitFor()
 
         withContext(Dispatchers.Main) {
-            showToastOnMainThread(context, "Архив успешно установлен!")
+            showToastOnMainThread(context, "Архив успешно распакован!")
         }
     } catch (e: Exception) {
         e.printStackTrace()
         withContext(Dispatchers.Main) {
-            showToastOnMainThread(context, "Ошибка при установке: ${e.message}")
+            showToastOnMainThread(context, "Ошибка при распаковке: ${e.message}")
         }
     }
 }
