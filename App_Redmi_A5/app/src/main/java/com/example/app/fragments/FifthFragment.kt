@@ -23,6 +23,9 @@ class FifthFragment : Fragment() {
     private lateinit var installPlumaProfileButton: View
     private lateinit var downloadTelegramProfileButton: View
     private lateinit var installTelegramProfileButton: View
+
+    private lateinit var downloadk9mailProfileButton : View
+    private lateinit var installk9mailProfileButton: View
     private lateinit var editTextPassword: EditText
 
     @SuppressLint("MissingInflatedId")
@@ -34,6 +37,9 @@ class FifthFragment : Fragment() {
         installPlumaProfileButton = view.findViewById(R.id.installplumaprofile)
         downloadTelegramProfileButton = view.findViewById(R.id.downloadtelegramprofile)
         installTelegramProfileButton = view.findViewById(R.id.installtelegramprofile)
+
+        downloadk9mailProfileButton = view.findViewById(R.id.downloadk9mailprofile)
+        installk9mailProfileButton = view.findViewById(R.id.installk9mailprofile)
 
         downloadPlumaProfileButton.setOnClickListener {
             CoroutineScope(Dispatchers.Main).launch {
@@ -58,6 +64,20 @@ class FifthFragment : Fragment() {
                 installTelegramProfile()
             }
         }
+
+
+        downloadk9mailProfileButton.setOnClickListener {
+            CoroutineScope(Dispatchers.Main).launch {
+                downloadTelegramProfile()
+            }
+        }
+
+        installk9mailProfileButton.setOnClickListener {
+            CoroutineScope(Dispatchers.Main).launch {
+                installTelegramProfile()
+            }
+        }
+
 
         return view
     }
