@@ -21,6 +21,15 @@
             tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
 
         <Button
+            android:id="@+id/decryptgnucashgpg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/decryptgnucashgpg"
+            tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+
+
+
+        <Button
             android:id="@+id/downloadnote"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -40,5 +40,6 @@
     <string name="installtelegramx">Установить Telegram X  </string>
     <string name="install3c">Установить 3C Task Manager </string>
     <string name="install3с"> Установить 3C Task Manager </string>
+    <string name="decryptgnucashgpg">Расшифровать gnucashpgp </string>
 
 </resources>

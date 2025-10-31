@@ -3,13 +3,9 @@ plugins {
     alias(libs.plugins.kotlin.android)
 }
 
+
+
 android {
-
-
-    buildFeatures {
-        viewBinding=true
-    }
-
     namespace = "com.example.app"
     compileSdk = 36
 
@@ -26,36 +22,45 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
     kotlinOptions {
         jvmTarget = "11"
+    }
+
+    buildFeatures {
+        viewBinding = true
     }
 }
 
 
+
 dependencies {
-    implementation (libs.material)
-    implementation("org.eclipse.jgit:org.eclipse.jgit:6.8.0.202311291450-r")
-    implementation("org.bouncycastle:bcprov-jdk15on:1.70")
-    implementation ("androidx.viewpager2:viewpager2:1.1.0")
-    implementation("org.apache.commons:commons-compress:1.28.0")
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation("androidx.fragment:fragment-ktx:1.8.9")
-    implementation("org.bouncycastle:bcprov-jdk15on:1.70")
-    implementation("org.tukaani:xz:1.10")
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
+
+    implementation("org.bouncycastle:bcprov-jdk18on:1.78.1")
+// Use jdk18on for modern Android (API 24+)
+// Bouncy Castle OpenPGP (for bcpg)
+    implementation("org.bouncycastle:bcpg-jdk18on:1.78.1")
+// If you need the full PGP suite (includes openpgp)
+    implementation("org.bouncycastle:bcpkix-jdk18on:1.78.1")
+
+
     implementation(libs.material)
+
+    implementation(libs.org.eclipse.jgit)
+    implementation(libs.androidx.viewpager2)
+    implementation(libs.commons.compress)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.fragment.ktx)
+    implementation(libs.xz)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     testImplementation(libs.junit)
