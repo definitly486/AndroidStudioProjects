@@ -23,10 +23,11 @@ class DownloadHelper(private val context: Context) {
     private var lastDownloadId: Long = -1L
     private var downloadReceiver: BroadcastReceiver? = null
 
+    //получение папки загрузки приложения
     fun getDownloadFolder(): File? {
         return context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
     }
-
+//получение общей папки загрузки
     fun getDownloadFolder2(): File? {
         return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
     }
