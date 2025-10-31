@@ -197,6 +197,14 @@
                 android:text="@string/install3с"
                 tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
 
+            <Button
+                android:id="@+id/installk9mail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/installk9mail"
+                tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+
+
 
         </LinearLayout>
     </ScrollView>

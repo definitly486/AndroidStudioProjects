@@ -78,7 +78,8 @@ class FirstFragment : Fragment() {
             R.id.installcore to "https://github.com/definitly486/redmia5/releases/download/apk/Core+Music+Player_1.0.apk",
             R.id.installpluma to "https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/apk/Pluma_.private_fast.browser_1.80_APKPure.apk",
             R.id.installtelegramx to "https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/apk/Telegram+X+0.27.5.1747-arm64-v8a.apk" ,
-            R.id.install3с to "https://github.com/definitly486/redmia5/releases/download/apk/3C+Task+Manager+v3.9.4+.33127.+arm64-v8a.apk"
+            R.id.install3с to "https://github.com/definitly486/redmia5/releases/download/apk/3C+Task+Manager+v3.9.4+.33127.+arm64-v8a.apk",
+             R.id.installk9mail to "https://github.com/definitly486/redmia5/releases/download/apk/k9mail-13.0.apk"
         )
 
         // Назначаем обработчик события каждому элементу карты
