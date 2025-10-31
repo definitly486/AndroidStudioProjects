@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.app.R
+import decryptPGPFileWithPassword
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -35,7 +36,7 @@ class ThirdFragment : Fragment() {
         setupDownloadNoteButton(view)
         setupGitCloneButton(view)
         setupCopyCloneButton(view)
-
+        decryptGnucasgpgpButton(view)
         return view
     }
 
@@ -47,6 +48,16 @@ class ThirdFragment : Fragment() {
 
         }
     }
+
+    private fun decryptGnucasgpgpButton(view: View) {
+        val installButton = view.findViewById<Button>(R.id.decryptgnucashgpg)
+        installButton.setOnClickListener {
+
+            decryptPGPFileWithPassword(context = requireContext())
+
+        }
+    }
+
 
     private fun setupDownloadNoteButton(view: View) {
         val downloadnote = view.findViewById<Button>(R.id.downloadnote)
