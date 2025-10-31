@@ -68,13 +68,13 @@ class FifthFragment : Fragment() {
 
         downloadk9mailProfileButton.setOnClickListener {
             CoroutineScope(Dispatchers.Main).launch {
-                downloadTelegramProfile()
+                downloadk9mailProfile()
             }
         }
 
         installk9mailProfileButton.setOnClickListener {
             CoroutineScope(Dispatchers.Main).launch {
-                installTelegramProfile()
+                installk9mailProfile()
             }
         }
 
@@ -111,6 +111,12 @@ class FifthFragment : Fragment() {
         download(requireContext(), "https://github.com/definitly486/redmia5/releases/download/shared/com.qflair.browserq.tar.enc")
     }
 
+
+    private suspend fun downloadk9mailProfile() {
+        download(requireContext(), "https://github.com/definitly486/redmia5/releases/download/shared/com.fsck.k9.tar.enc")
+    }
+
+
     private suspend fun installProfile() {
         withContext(Dispatchers.IO) {
             try {
@@ -125,6 +131,28 @@ class FifthFragment : Fragment() {
 
                 // Преобразование пароля и установка
                 decryptAndExtractArchive(requireContext(),"com.qflair.browserq" ,enteredPassword)
+                showToast("Архив успешно установлен и извлечён!")
+            } catch (e: Exception) {
+                showToast("Ошибка при установке и извлечении архива: ${e.message}")
+            }
+        }
+    }
+
+
+    private suspend fun installk9mailProfile() {
+        withContext(Dispatchers.IO) {
+            try {
+                // Получаем введенный пароль из поля ввода
+                val enteredPassword = editTextPassword.text.toString()
+
+                // Проверка на пустой пароль
+                if (enteredPassword.isEmpty()) {
+                    showToast("Пароль не введен. Пожалуйста, введите пароль.")
+                    return@withContext
+                }
+
+                // Преобразование пароля и установка
+                decryptAndExtractArchive(requireContext(),"com.fsck.k9" ,enteredPassword)
                 showToast("Архив успешно установлен и извлечён!")
             } catch (e: Exception) {
                 showToast("Ошибка при установке и извлечении архива: ${e.message}")
