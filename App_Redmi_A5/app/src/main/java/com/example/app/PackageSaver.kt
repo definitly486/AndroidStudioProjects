@@ -61,7 +61,6 @@ fun Context.savePackagesToFile(filename: String): Boolean {
         "com.xiaomi.discover",
         "com.facebook.services",
         "com.android.bips",
-        "com.android.stk",
         "com.facebook.system",
         "com.google.android.feedback",
         "android.autoinstalls.config.Xiaomi.model",
