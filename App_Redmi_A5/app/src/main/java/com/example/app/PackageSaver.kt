@@ -99,7 +99,8 @@ fun Context.savePackagesToFile(filename: String): Boolean {
         "com.google.android.apps.nbu.files",
         "com.google.android.apps.maps",
         "com.android.DeviceAsWebcam",
-        "com.android.dynsystem"
+        "com.android.dynsystem",
+        "com.huaqin.sarcontroller"
     ).joinToString("\n")
 
     val downloadFolder = this.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
