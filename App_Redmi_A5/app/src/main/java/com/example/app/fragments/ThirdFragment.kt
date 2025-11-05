@@ -53,7 +53,11 @@ class ThirdFragment : Fragment() {
         val installButton = view.findViewById<Button>(R.id.decryptgnucashgpg)
         installButton.setOnClickListener {
 
-            decryptPGPFileWithPassword(context = requireContext())
+         //   decryptPGPFileWithPassword(context = requireContext())
+
+            val helper = GPGHelper()
+            val result = helper.decryptFile("/storage/emulated/0/Download/definitly.gnucash.gpg", "/storage/emulated/0/Download/definitly.gnucash", "639639")
+            println(if (result) "Файл успешно расшифрован." else "Ошибка при расшифровке файла.")
 
         }
     }
