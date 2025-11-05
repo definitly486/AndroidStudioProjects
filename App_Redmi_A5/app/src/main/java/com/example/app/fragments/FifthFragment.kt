@@ -24,6 +24,9 @@ class FifthFragment : Fragment() {
     private lateinit var downloadTelegramProfileButton: View
     private lateinit var installTelegramProfileButton: View
 
+    private lateinit var downloadauthProfileButton: View
+    private lateinit var installauthProfileButton: View
+
     private lateinit var downloadk9mailProfileButton : View
     private lateinit var installk9mailProfileButton: View
     private lateinit var editTextPassword: EditText
@@ -40,6 +43,10 @@ class FifthFragment : Fragment() {
 
         downloadk9mailProfileButton = view.findViewById(R.id.downloadk9mailprofile)
         installk9mailProfileButton = view.findViewById(R.id.installk9mailprofile)
+
+        downloadauthProfileButton = view.findViewById(R.id.downloadgoogleauth)
+        installauthProfileButton = view.findViewById(R.id.installgoogleauth)
+
 
         downloadPlumaProfileButton.setOnClickListener {
             CoroutineScope(Dispatchers.Main).launch {
@@ -75,6 +82,19 @@ class FifthFragment : Fragment() {
         installk9mailProfileButton.setOnClickListener {
             CoroutineScope(Dispatchers.Main).launch {
                 installk9mailProfile()
+            }
+        }
+
+
+        downloadauthProfileButton.setOnClickListener {
+            CoroutineScope(Dispatchers.Main).launch {
+                downloadauthProfile()
+            }
+        }
+
+        installauthProfileButton.setOnClickListener {
+            CoroutineScope(Dispatchers.Main).launch {
+                installauthProfile()
             }
         }
 
@@ -117,6 +137,11 @@ class FifthFragment : Fragment() {
     }
 
 
+    private suspend fun downloadauthProfile() {
+        download(requireContext(), "https://github.com/definitly486/redmia5/releases/download/shared/com.google.android.apps.authenticator2.tar.enc")
+    }
+
+
     private suspend fun installProfile() {
         withContext(Dispatchers.IO) {
             try {
@@ -131,6 +156,28 @@ class FifthFragment : Fragment() {
 
                 // Преобразование пароля и установка
                 decryptAndExtractArchive(requireContext(),"com.qflair.browserq" ,enteredPassword)
+                showToast("Архив успешно установлен и извлечён!")
+            } catch (e: Exception) {
+                showToast("Ошибка при установке и извлечении архива: ${e.message}")
+            }
+        }
+    }
+
+
+    private suspend fun installauthProfile() {
+        withContext(Dispatchers.IO) {
+            try {
+                // Получаем введенный пароль из поля ввода
+                val enteredPassword = editTextPassword.text.toString()
+
+                // Проверка на пустой пароль
+                if (enteredPassword.isEmpty()) {
+                    showToast("Пароль не введен. Пожалуйста, введите пароль.")
+                    return@withContext
+                }
+
+                // Преобразование пароля и установка
+                decryptAndExtractArchive(requireContext(),"com.google.android.apps.authenticator2" ,enteredPassword)
                 showToast("Архив успешно установлен и извлечён!")
             } catch (e: Exception) {
                 showToast("Ошибка при установке и извлечении архива: ${e.message}")

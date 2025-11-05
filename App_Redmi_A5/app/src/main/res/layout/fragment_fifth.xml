@@ -101,6 +101,30 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.71" />
 
+            <Button
+                android:id="@+id/downloadgoogleauth"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Скачать com.google.android.apps.authenticator2"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.496"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/installplumaprofile"
+                app:layout_constraintVertical_bias="0.154" />
+
+            <Button
+                android:id="@+id/installgoogleauth"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Установить com.google.android.apps.authenticator2"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.526"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.71" />
+
         </LinearLayout>
     </ScrollView>
 </FrameLayout>
