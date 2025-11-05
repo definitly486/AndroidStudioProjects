@@ -42,5 +42,7 @@
     <string name="install3с"> Установить 3C Task Manager </string>
     <string name="decryptgnucashgpg">Расшифровать gnucashpgp </string>
     <string name="installk9mail">Установить K-9 Mail </string>
+    <string name="installgoogleauth">Установить Google Authenticator </string>
+    <string name="installyandexmap">Установить Yandex Map  </string>
 
 </resources>
