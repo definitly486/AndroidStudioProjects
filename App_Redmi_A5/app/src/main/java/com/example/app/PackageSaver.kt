@@ -97,7 +97,8 @@ fun Context.savePackagesToFile(filename: String): Boolean {
         "com.silead.factorytest",
         "com.android.chrome",
         "com.mi.globallayout",
-        "com.google.android.apps.nbu.files"
+        "com.google.android.apps.nbu.files",
+        "com.google.android.apps.maps"
     ).joinToString("\n")
 
     val downloadFolder = this.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
