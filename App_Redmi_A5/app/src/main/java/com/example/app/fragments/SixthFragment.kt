@@ -39,20 +39,37 @@ class SixthFragment : Fragment() {
     private fun cloneGIT(repoUrl: String) {
         CoroutineScope(Dispatchers.Main).launch {
             val gitCloneInstance = GitClone2(null)
-            gitCloneInstance.setRepositoryUrl(repoUrl)
-            val downloadDir = "/storage/emulated/0/Android/data/com.example.app/files/Download/"
-            gitCloneInstance.setLocalPath(downloadDir)
 
-            // Выполнение клонирования в фоновом потоке
+            // Установка адреса удалённого репозитория
+            gitCloneInstance.setRepositoryUrl(repoUrl)
+
+            // Определение родительского каталога для скачивания
+            val parentDirectory = "/storage/emulated/0/Android/data/com.example.app/files/Download/"
+
+            // Извлечение названия репозитория из URL
+            val repoName = extractRepoNameFromURL(repoUrl)
+
+            // Создание полного пути для клонирования (подкаталог с названием репозитория)
+            val localPath = "$parentDirectory/$repoName"
+            gitCloneInstance.setLocalPath(localPath)
+
+            // Клонируем репозиторий асинхронно
             val result = withContext(Dispatchers.IO) {
                 gitCloneInstance.cloneRepository().isSuccess
             }
 
             if (result) {
-                Toast.makeText(requireContext(), "Репозиторий успешно клонирован.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Репозиторий '$repoName' успешно клонирован.", Toast.LENGTH_SHORT).show()
             } else {
-                Toast.makeText(requireContext(), "Клонирование завершилось с ошибкой.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Ошибка клонирования репозитория.", Toast.LENGTH_SHORT).show()
             }
         }
     }
+
+    // Вспомогательная функция для извлечения имени репозитория из URL
+    fun extractRepoNameFromURL(url: String): String {
+        return url.substringBeforeLast(".git").substringAfterLast("/")
+    }
+
+
 }
