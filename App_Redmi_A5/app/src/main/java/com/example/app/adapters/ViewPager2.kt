@@ -6,6 +6,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.example.app.fragments.FifthFragment
 import com.example.app.fragments.FirstFragment
 import com.example.app.fragments.SecondFragment
+import com.example.app.fragments.SixthFragment
 import com.example.app.fragments.ThirdFragment
 
 class SectionsPagerAdapter(activity: AppCompatActivity) : FragmentStateAdapter(activity) {
@@ -16,9 +17,10 @@ class SectionsPagerAdapter(activity: AppCompatActivity) : FragmentStateAdapter(a
             1 -> SecondFragment()
             2 -> ThirdFragment()
             3 -> FifthFragment()
+            4 -> SixthFragment()
             else -> throw IllegalArgumentException("Invalid position")
         }
     }
 
-    override fun getItemCount(): Int = 4
+    override fun getItemCount(): Int = 5
 }

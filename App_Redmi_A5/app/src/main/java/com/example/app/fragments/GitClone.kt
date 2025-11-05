@@ -35,3 +35,53 @@ class GitClone {
         }
     }
 }
+
+class GitClone2(private var repositoryUrl: String?) {
+    private lateinit var localDirectory: File
+
+    /**
+     * Устанавливает адрес удалённого репозитория
+     *
+     * @param url Адрес репозитория
+     */
+    fun setRepositoryUrl(url: String) {
+        this.repositoryUrl = url
+    }
+
+    /**
+     * Устанавливает локальный путь для клонируемых файлов
+     *
+     * @param path Локальная папка назначения
+     */
+    fun setLocalPath(path: String) {
+        this.localDirectory = File(path)
+    }
+
+    /**
+     * Клонирует указанный репозиторий
+     *
+     * @return true в случае успешного завершения, иначе ложь
+     */
+    suspend fun cloneRepository(): Result<Boolean> = withContext(Dispatchers.IO) {
+        requireNotNull(repositoryUrl) { "Адрес репозитория не указан." }
+        require(::localDirectory.isInitialized) { "Локальный путь не установлен." }
+
+        try {
+            // Проверяем наличие локальной директории и создаем её, если отсутствует
+            if (!localDirectory.exists()) {
+                localDirectory.mkdirs()
+            }
+
+            // Осуществляем клонирование
+            Git.cloneRepository()
+                .setURI(repositoryUrl!!)
+                .setDirectory(localDirectory)
+                .call()
+
+            Result.success(true) // Успех!
+        } catch (e: Exception) {
+            println("Ошибка клонирования репозитория: ${e.message}")
+            Result.failure(e) // Ошибка
+        }
+    }
+}
