@@ -336,57 +336,85 @@ class DownloadHelper(private val context: Context) {
     }
 
     // === ПРОЧИЕ МЕТОДЫ ===
-    fun downloadgpg(url: String) = downloadGeneric(url, true)
-    fun download2(url: String) = downloadGeneric(url, false)
 
-    private fun downloadGeneric(url: String, useAppFolder: Boolean) {
+    fun download2(url: String) {
+        val folder = getDownloadFolder2() ?: return
+        if (!folder.exists()) folder.mkdirs()
 
-        val folder = getDownloadFolder() ?: run {
-            Toast.makeText(context, "Невозможно получить папку загрузки", Toast.LENGTH_SHORT).show()
-            return
-        }
+        val lastPart = url.split("/").last()
+        val gpgFile = File(folder, lastPart)
 
-        val lastPart = url.substringAfterLast("/").substringBefore("?").substringBefore("#")
-        val extension = lastPart.substringAfterLast('.', "").lowercase()
-        if (extension != "apk") {
-            Toast.makeText(context, "Это не файл формата APK", Toast.LENGTH_SHORT).show()
-            onDownloadComplete(null)
-            return
-        }
-
-        val apkFile = File(folder, lastPart)
-        if (apkFile.exists()) {
+        if (gpgFile.exists()) {
             Toast.makeText(context, "Файл уже существует", Toast.LENGTH_SHORT).show()
-            onDownloadComplete(apkFile)
-            installApk(lastPart)
             return
         }
-
-
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 withContext(Dispatchers.Main) {
                     Toast.makeText(context, "Начинается загрузка...", Toast.LENGTH_SHORT).show()
                 }
-                val lastPart = url.substringAfterLast("/").substringBefore("?").substringBefore("#")
-                val request = DownloadManager.Request(Uri.parse(url)).apply {
-                    setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
-                    setTitle(lastPart)
-                    setDescription("Загружается...")
-                    setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-                    if (useAppFolder) {
-                        setDestinationInExternalFilesDir(context, Environment.DIRECTORY_DOWNLOADS, lastPart)
-                    } else {
-                        setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, lastPart)
-                    }
-                }
-                downloadManager.enqueue(request)
+
+                val request = DownloadManager.Request(Uri.parse(url))
+                request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
+                request.setTitle(lastPart)
+                request.setDescription("Загружается...")
+                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                request.setDestinationInExternalPublicDir(
+                    Environment.DIRECTORY_DOWNLOADS,
+                    lastPart
+                )
+
+                val downloadID = downloadManager.enqueue(request)
+                // Сохраняйте downloadID, если хотите отслеживать завершение загрузки
             } catch (ex: Exception) {
+                ex.printStackTrace()
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(context, "Ошибка: ${ex.message}", Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, "Ошибка при загрузке: ${ex.message}", Toast.LENGTH_LONG).show()
                 }
             }
         }
     }
+
+    fun downloadgpg(url: String) {
+        val folder = getDownloadFolder() ?: return
+        if (!folder.exists()) folder.mkdirs()
+
+        val lastPart = url.split("/").last()
+        val gpgFile = File(folder, lastPart)
+
+        if (gpgFile.exists()) {
+            Toast.makeText(context, "Файл уже существует", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(context, "Начинается загрузка...", Toast.LENGTH_SHORT).show()
+                }
+
+                val request = DownloadManager.Request(Uri.parse(url))
+                request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
+                request.setTitle(lastPart)
+                request.setDescription("Загружается...")
+                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                request.setDestinationInExternalFilesDir(
+                    context,
+                    Environment.DIRECTORY_DOWNLOADS,
+                    lastPart
+                )
+
+                val downloadID = downloadManager.enqueue(request)
+                // Сохраняйте downloadID, если хотите отслеживать завершение загрузки
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(context, "Ошибка при загрузке: ${ex.message}", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+    }
+
+
 }
