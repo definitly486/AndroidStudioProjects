@@ -181,12 +181,7 @@ fun copyprofile(context: Context, appPackageName: String) {
     if ("$appPackageName" == "com.google.android.apps.authenticator2") {
 
         val commands = arrayOf(
-            "su - root -c cp  -R ${folder!!.absolutePath}/$appPackageName/files/tdlib/td.binlog  /data_mirror/data_ce/null/0/$appPackageName/files/tdlib/ ",
-            "su - root -c cp  -R ${folder!!.absolutePath}/$appPackageName/files/tdlib1/  /data_mirror/data_ce/null/0/$appPackageName/files/",
-            "su - root -c cp  -R ${folder!!.absolutePath}/$appPackageName/files/tdlib_accounts.bin  /data_mirror/data_ce/null/0/$appPackageName/files/ ",
-            "su - root -c chown -R  $fileOwner:$fileOwner  /data_mirror/data_ce/null/0/$appPackageName/files/",
-            "su - root -c chown -R  $fileOwner:$fileOwner  /data_mirror/data_ce/null/0/$appPackageName/",
-            "su - root -c chown -R  $fileOwner:$fileOwner  /data_mirror/data_ce/null/0/$appPackageName/files/tdlib1",
+            "su - root -c cp  -R ${folder!!.absolutePath}/$appPackageName/files/accounts  /data_mirror/data_ce/null/0/$appPackageName/files/",
             "su - root -c chown -R   $fileOwner:$fileOwner   /data_mirror/data_ce/null/0/$appPackageName/"
         )
     }
