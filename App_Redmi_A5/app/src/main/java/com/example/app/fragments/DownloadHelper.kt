@@ -6,7 +6,10 @@ import android.content.IntentFilter
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
+import android.os.Handler
+import android.os.Looper
 import android.provider.Settings
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.FileProvider
@@ -18,27 +21,82 @@ import kotlinx.coroutines.withContext
 import java.io.File
 
 class DownloadHelper(private val context: Context) {
-
     private val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
     private var lastDownloadId: Long = -1L
     private var downloadReceiver: BroadcastReceiver? = null
 
-    //получение папки загрузки приложения
+    // Папка приложения: /Android/data/com.example.app/files/Download/
     fun getDownloadFolder(): File? {
-        return context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
+        val dir = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
+        if (dir?.exists() == false) dir.mkdirs()
+        return dir
     }
-//получение общей папки загрузки
+
     fun getDownloadFolder2(): File? {
-        return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+        val dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+        if (dir?.exists() == false) dir.mkdirs()
+        return dir
     }
+
+    // === ЗАГРУЗКА APK ===
+    fun download(url: String, onDownloadComplete: (File?) -> Unit) {
+        val folder = getDownloadFolder() ?: run {
+            Toast.makeText(context, "Невозможно получить папку загрузки", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val lastPart = url.substringAfterLast("/").substringBefore("?").substringBefore("#")
+        val extension = lastPart.substringAfterLast('.', "").lowercase()
+        if (extension != "apk") {
+            Toast.makeText(context, "Это не файл формата APK", Toast.LENGTH_SHORT).show()
+            onDownloadComplete(null)
+            return
+        }
+
+        val apkFile = File(folder, lastPart)
+        if (apkFile.exists()) {
+            Toast.makeText(context, "Файл уже существует", Toast.LENGTH_SHORT).show()
+            onDownloadComplete(apkFile)
+            installApk(lastPart)
+            return
+        }
+
+        if (downloadReceiver == null) {
+            downloadReceiver = createDownloadReceiver(lastPart, onDownloadComplete)
+            context.registerReceiver(
+                downloadReceiver,
+                IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE),
+                Context.RECEIVER_EXPORTED  // ОТКРЫТ ДЛЯ DownloadManager
+            )
+            Log.d("DOWNLOAD", "Receiver зарегистрирован (EXPORTED)")
+        }
+
+        try {
+            val request = DownloadManager.Request(Uri.parse(url)).apply {
+                setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
+                setTitle(lastPart)
+                setDescription("Загружается...")
+                setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                allowScanningByMediaScanner()
+                setDestinationInExternalFilesDir(context, Environment.DIRECTORY_DOWNLOADS, lastPart)
+            }
+            lastDownloadId = downloadManager.enqueue(request)
+            Toast.makeText(context, "Начало загрузки: $lastPart", Toast.LENGTH_SHORT).show()
+            Log.d("DOWNLOAD", "Started: $lastPart, ID: $lastDownloadId")
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            Toast.makeText(context, "Ошибка: ${ex.message}", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    // === ЗАГРУЗКА ИНСТРУМЕНТОВ (busybox, openssl, gh) ===
     fun downloadTool(url: String, toolName: String, onDownloadComplete: (File?) -> Unit) {
         val folder = getDownloadFolder() ?: run {
             Toast.makeText(context, "Невозможно получить папку загрузки", Toast.LENGTH_SHORT).show()
             return
         }
-        if (!folder.exists()) folder.mkdirs()
 
-        val lastPart = url.substringAfterLast("/")
+        val lastPart = url.substringAfterLast("/").substringBefore("?").substringBefore("#")
         val toolFile = File(folder, lastPart)
 
         if (toolFile.exists()) {
@@ -49,45 +107,12 @@ class DownloadHelper(private val context: Context) {
         }
 
         if (downloadReceiver == null) {
-            downloadReceiver = object : BroadcastReceiver() {
-                override fun onReceive(context: Context?, intent: Intent?) {
-                    val id = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1) ?: return
-                    if (id != lastDownloadId) return
-
-                    context?.unregisterReceiver(this)
-                    downloadReceiver = null
-
-                    val query = DownloadManager.Query().setFilterById(id)
-                    val cursor = downloadManager.query(query)
-                    cursor?.use {
-                        if (it.moveToFirst()) {
-                            val statusColumnIndex = it.getColumnIndex(DownloadManager.COLUMN_STATUS)
-                            if (statusColumnIndex != -1) {
-                                val status = it.getInt(statusColumnIndex)
-                                if (status == DownloadManager.STATUS_SUCCESSFUL) {
-                                    val localUriColumnIndex = it.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI)
-                                    if (localUriColumnIndex != -1) {
-                                        val uriString = it.getString(localUriColumnIndex)
-                                        val fileUri = Uri.parse(uriString)
-                                        val downloadedFile = File(fileUri.path ?: "")
-                                        onDownloadComplete(downloadedFile)
-                                        installTool(toolName)
-                                    } else {
-                                        Toast.makeText(context, "Не удалось получить путь к файлу", Toast.LENGTH_SHORT).show()
-                                        onDownloadComplete(null)
-                                    }
-                                } else {
-                                    Toast.makeText(context, "Загрузка не удалась", Toast.LENGTH_SHORT).show()
-                                    onDownloadComplete(null)
-                                }
-                            } else {
-                                Toast.makeText(context, "Не удалось получить статус загрузки", Toast.LENGTH_SHORT).show()
-                                onDownloadComplete(null)
-                            }
-                        }
-                    }
-                }
-            }
+            downloadReceiver = createToolDownloadReceiver(lastPart, toolName, onDownloadComplete)
+            context.registerReceiver(
+                downloadReceiver,
+                IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE),
+                Context.RECEIVER_EXPORTED
+            )
         }
 
         try {
@@ -97,93 +122,202 @@ class DownloadHelper(private val context: Context) {
                 setDescription("$toolName Загружается...")
                 setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
                 allowScanningByMediaScanner()
-                setDestinationInExternalFilesDir(
-                    context,
-                    Environment.DIRECTORY_DOWNLOADS,
-                    lastPart
-                )
+                setDestinationInExternalFilesDir(context, Environment.DIRECTORY_DOWNLOADS, lastPart)
             }
             lastDownloadId = downloadManager.enqueue(request)
+            Toast.makeText(context, "Загрузка $toolName...", Toast.LENGTH_SHORT).show()
         } catch (ex: Exception) {
             ex.printStackTrace()
-            Toast.makeText(context, "Ошибка при скачивании: ${ex.message}", Toast.LENGTH_LONG).show()
+            Toast.makeText(context, "Ошибка: ${ex.message}", Toast.LENGTH_LONG).show()
         }
     }
 
+    // === RECEIVER ДЛЯ APK ===
+    private fun createDownloadReceiver(fileName: String, onComplete: (File?) -> Unit): BroadcastReceiver {
+        return object : BroadcastReceiver() {
+            override fun onReceive(ctx: Context?, intent: Intent?) {
+                val id = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1) ?: return
+                if (id != lastDownloadId) return
+
+                Log.d("DOWNLOAD", "onReceive: ID=$id")
+
+                val query = DownloadManager.Query().setFilterById(id)
+                val cursor = downloadManager.query(query)
+                var downloadedFile: File? = null
+                var success = false
+
+                cursor?.use {
+                    if (it.moveToFirst()) {
+                        val status = it.getInt(it.getColumnIndexOrThrow(DownloadManager.COLUMN_STATUS))
+                        if (status == DownloadManager.STATUS_SUCCESSFUL) {
+                            val uriString = it.getString(it.getColumnIndexOrThrow(DownloadManager.COLUMN_LOCAL_URI))
+                            val fileUri = Uri.parse(uriString)
+                            downloadedFile = File(fileUri.path ?: "")
+                            success = downloadedFile?.exists() == true && downloadedFile?.name == fileName
+                            Log.d("DOWNLOAD", "Файл: ${downloadedFile?.absolutePath}, exists: ${downloadedFile?.exists()}")
+                        }
+                    }
+                }
+
+                // ОТПИСКА ПОСЛЕ ОБРАБОТКИ
+                try { ctx?.unregisterReceiver(this) } catch (e: Exception) { e.printStackTrace() }
+                downloadReceiver = null
+                lastDownloadId = -1
+
+                if (success && downloadedFile != null) {
+                    Handler(Looper.getMainLooper()).post {
+                        Toast.makeText(ctx, "Загрузка завершена: $fileName", Toast.LENGTH_LONG).show()
+                        installApk(fileName)
+                    }
+                    onComplete(downloadedFile)
+                } else {
+                    Handler(Looper.getMainLooper()).post {
+                        Toast.makeText(ctx, "Ошибка загрузки", Toast.LENGTH_SHORT).show()
+                    }
+                    onComplete(null)
+                }
+            }
+        }
+    }
+
+    // === RECEIVER ДЛЯ ИНСТРУМЕНТОВ ===
+    private fun createToolDownloadReceiver(fileName: String, toolName: String, onComplete: (File?) -> Unit): BroadcastReceiver {
+        return object : BroadcastReceiver() {
+            override fun onReceive(ctx: Context?, intent: Intent?) {
+                val id = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1) ?: return
+                if (id != lastDownloadId) return
+
+                val query = DownloadManager.Query().setFilterById(id)
+                val cursor = downloadManager.query(query)
+                var downloadedFile: File? = null
+                var success = false
+
+                cursor?.use {
+                    if (it.moveToFirst()) {
+                        val status = it.getInt(it.getColumnIndexOrThrow(DownloadManager.COLUMN_STATUS))
+                        if (status == DownloadManager.STATUS_SUCCESSFUL) {
+                            val uriString = it.getString(it.getColumnIndexOrThrow(DownloadManager.COLUMN_LOCAL_URI))
+                            val fileUri = Uri.parse(uriString)
+                            downloadedFile = File(fileUri.path ?: "")
+                            success = downloadedFile?.exists() == true && downloadedFile?.name == fileName
+                        }
+                    }
+                }
+
+                try { ctx?.unregisterReceiver(this) } catch (e: Exception) {}
+                downloadReceiver = null
+                lastDownloadId = -1
+
+                if (success && downloadedFile != null) {
+                    Handler(Looper.getMainLooper()).post {
+                        Toast.makeText(ctx, "Загрузка $toolName завершена", Toast.LENGTH_LONG).show()
+                        installTool(toolName)
+                    }
+                    onComplete(downloadedFile)
+                } else {
+                    Handler(Looper.getMainLooper()).post {
+                        Toast.makeText(ctx, "Ошибка загрузки $toolName", Toast.LENGTH_SHORT).show()
+                    }
+                    onComplete(null)
+                }
+            }
+        }
+    }
+
+    // === УСТАНОВКА APK ===
+    fun installApk(filename: String) {
+        val folder = getDownloadFolder() ?: return
+        val apkFile = File(folder, filename)
+
+        if (!apkFile.exists()) {
+            Toast.makeText(context, "Файл не найден: $filename", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val apkUri = FileProvider.getUriForFile(
+            context,
+            "${context.packageName}.fileprovider",
+            apkFile
+        )
+
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            setDataAndType(apkUri, "application/vnd.android.package-archive")
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val canInstall = context.packageManager.canRequestPackageInstalls()
+            if (!canInstall) {
+                val installIntent = Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES).apply {
+                    data = Uri.parse("package:${context.packageName}")
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                }
+                context.startActivity(installIntent)
+                Toast.makeText(context, "Разрешите установку из неизвестных источников", Toast.LENGTH_LONG).show()
+                return
+            }
+        }
+
+        try {
+            context.startActivity(intent)
+        } catch (e: Exception) {
+            Toast.makeText(context, "Не удалось открыть установщик", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    // === УСТАНОВКА ИНСТРУМЕНТОВ (через root) ===
     fun installTool(toolName: String) {
-        fun showCompletionDialog() {
-            val builder = AlertDialog.Builder(context)
-            builder.setTitle("Проверка root")
-            builder.setMessage("Root доступ отсутствует, приложения не будут установлены")
-            builder.setPositiveButton("Продолжить") { dialog, _ ->
-                dialog.dismiss()
-            }
-            builder.show()
-        }
-
         if (!RootChecker.hasRootAccess(context)) {
-            showCompletionDialog()
+            AlertDialog.Builder(context)
+                .setTitle("Root")
+                .setMessage("Root-доступ отсутствует")
+                .setPositiveButton("OK") { d, _ -> d.dismiss() }
+                .show()
             return
         }
 
-
-        fun showCompletionDialog_system() {
-            val builder = AlertDialog.Builder(context)
-            builder.setTitle("Проверка записи в system")
-            builder.setMessage("Запись в system не возможна, приложения не будут установлены")
-            builder.setPositiveButton("Продолжить") { dialog, _ ->
-                dialog.dismiss()
-            }
-            builder.show()
-        }
-
-        // Проверка возможности записи в папку '/system'
-        val pathToCheck = "/system"
-        if (!RootChecker.checkWriteAccess(pathToCheck)) {
-            showCompletionDialog_system()
+        if (!RootChecker.checkWriteAccess("/system")) {
+            AlertDialog.Builder(context)
+                .setTitle("Запись")
+                .setMessage("Нет прав на запись в /system")
+                .setPositiveButton("OK") { d, _ -> d.dismiss() }
+                .show()
             return
         }
 
+        Toast.makeText(context, "Установка $toolName...", Toast.LENGTH_SHORT).show()
 
-
-        Toast.makeText(context, "Начинается установка $toolName...", Toast.LENGTH_SHORT).show()
-
+        val basePath = getDownloadFolder()?.absolutePath ?: return
         val commands = when (toolName) {
             "busybox" -> arrayOf(
-                "su - root -c mount -o rw,remount /system",
-                "su - root -c cp /storage/emulated/0/Android/data/com.example.app/files/Download/busybox /system/bin/",
-                "su - root -c chmod +x  /system/bin/busybox",
-                "su - root -c chmod 0755  /system/bin/busybox",
-                "su - root -c cp /storage/emulated/0/Android/data/com.example.app/files/Download/curl /system/bin/",
-                "su - root -c chmod +x  /system/bin/curl",
-                "su - root -c chmod 0755  /system/bin/curl",
-                "su - root -c mount -o rw,remount /system",
-                "su - root -c cp /storage/emulated/0/Android/data/com.example.app/files/Download/openssl /system/bin/",
-                "su - root -c chmod +x  /system/bin/openssl",
-                "su - root -c chmod 0755  /system/bin/openssl"
+                "su -c mount -o rw,remount /system",
+                "su -c cp $basePath/busybox /system/bin/",
+                "su -c chmod 0755 /system/bin/busybox",
+                "su -c cp $basePath/curl /system/bin/",
+                "su -c chmod 0755 /system/bin/curl",
+                "su -c cp $basePath/openssl /system/bin/",
+                "su -c chmod 0755 /system/bin/openssl"
             )
             "openssl" -> arrayOf(
-                "su - root -c mount -o rw,remount /system",
-                "su - root -c cp /storage/emulated/0/Android/data/com.example.app/files/Download/openssl /system/bin/",
-                "su - root -c chmod +x  /system/bin/openssl",
-                "su - root -c chmod 0755  /system/bin/openssl"
+                "su -c mount -o rw,remount /system",
+                "su -c cp $basePath/openssl /system/bin/",
+                "su -c chmod 0755 /system/bin/openssl"
             )
             "gh" -> arrayOf(
-                "su - root -c mount -o rw,remount /system",
-                "su - root -c cp /storage/emulated/0/Android/data/com.example.app/files/Download/gh /system/bin/",
-                "su - root -c chmod +x  /system/bin/gh",
-                "su - root -c chmod 0755  /system/bin/gh"
+                "su -c mount -o rw,remount /system",
+                "su -c cp $basePath/gh /system/bin/",
+                "su -c chmod 0755 /system/bin/gh"
             )
             else -> emptyArray()
         }
 
-        var process: Process? = null
-
-        for (command in commands) {
-            process = Runtime.getRuntime().exec(command)
-            process.waitFor() // Ждем завершения команды
+        var process: Process?
+        for (cmd in commands) {
+            process = Runtime.getRuntime().exec(cmd)
+            process.waitFor()
             if (process.exitValue() != 0) {
-                Toast.makeText(context, "Ошибка при установке $toolName: $command", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, "Ошибка: $cmd", Toast.LENGTH_LONG).show()
                 return
             }
         }
@@ -191,222 +325,44 @@ class DownloadHelper(private val context: Context) {
         Toast.makeText(context, "Установка $toolName завершена", Toast.LENGTH_SHORT).show()
     }
 
-    fun installApk(filename: String) {
-        val folder = getDownloadFolder() ?: return
-        val apkFile = File(folder, filename)
-        if (apkFile.exists()) {
-            val apkUri = FileProvider.getUriForFile(
-                context,
-                "${context.packageName}.fileprovider",
-                apkFile
-            )
-
-            val intent = Intent(Intent.ACTION_VIEW).apply {
-                setDataAndType(apkUri, "application/vnd.android.package-archive")
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            }
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                val canInstall = context.packageManager.canRequestPackageInstalls()
-                if (!canInstall) {
-                    val installIntent = Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES).apply {
-                        data = Uri.parse("package:${context.packageName}")
-                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    }
-                    context.startActivity(installIntent)
-                    Toast.makeText(context, "Разрешите установку из неизвестных источников", Toast.LENGTH_LONG).show()
-                    return
-                }
-            }
-            context.startActivity(intent)
-        } else {
-            Toast.makeText(context, "Файл не найден", Toast.LENGTH_SHORT).show()
-        }
-    }
-// Для сохранения файла в папку приложения
-    fun downloadgpg(url: String) {
-        val folder = getDownloadFolder() ?: return
-        if (!folder.exists()) folder.mkdirs()
-
-        val lastPart = url.split("/").last()
-        val gpgFile = File(folder, lastPart)
-
-        if (gpgFile.exists()) {
-            Toast.makeText(context, "Файл уже существует", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(context, "Начинается загрузка...", Toast.LENGTH_SHORT).show()
-                }
-
-                val request = DownloadManager.Request(Uri.parse(url))
-                request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
-                request.setTitle(lastPart)
-                request.setDescription("Загружается...")
-                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-                request.setDestinationInExternalFilesDir(
-                    context,
-                    Environment.DIRECTORY_DOWNLOADS,
-                    lastPart
-                )
-
-                val downloadID = downloadManager.enqueue(request)
-                // Сохраняйте downloadID, если хотите отслеживать завершение загрузки
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(context, "Ошибка при загрузке: ${ex.message}", Toast.LENGTH_LONG).show()
-                }
-            }
-        }
-    }
-    // Для сохранения файла в папку приложения
-    fun download(url: String, onDownloadComplete: (File?) -> Unit) {
-        val folder = getDownloadFolder() ?: run {
-            Toast.makeText(context, "Невозможно получить папку загрузки", Toast.LENGTH_SHORT).show()
-            return
-        }
-        if (!folder.exists()) folder.mkdirs()
-
-        val lastPart = url.substringAfterLast("/")
-        val apkFile = File(folder, lastPart)
-        val extension = lastPart.substringAfterLast('.')
-        if (extension.lowercase() != "apk") {
-            Toast.makeText(context, "Это не файл формата APK", Toast.LENGTH_SHORT).show()
-            onDownloadComplete(null)
-            return
-        }
-
-        if (apkFile.exists()) {
-            Toast.makeText(context, "Файл уже существует", Toast.LENGTH_SHORT).show()
-            onDownloadComplete(apkFile)
-            installApk(lastPart)
-            return
-        }
-
-        if (downloadReceiver == null) {
-            downloadReceiver = object : BroadcastReceiver() {
-                override fun onReceive(context: Context?, intent: Intent?) {
-                    val id = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1) ?: return
-                    if (id != lastDownloadId) return
-
-                    context?.unregisterReceiver(this)
-                    downloadReceiver = null
-
-                    val query = DownloadManager.Query().setFilterById(id)
-                    val cursor = downloadManager.query(query)
-                    cursor?.use {
-                        if (it.moveToFirst()) {
-                            val statusColumnIndex = it.getColumnIndex(DownloadManager.COLUMN_STATUS)
-                            if (statusColumnIndex != -1) {
-                                val status = it.getInt(statusColumnIndex)
-                                if (status == DownloadManager.STATUS_SUCCESSFUL) {
-                                    val localUriColumnIndex = it.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI)
-                                    if (localUriColumnIndex != -1) {
-                                        val uriString = it.getString(localUriColumnIndex)
-                                        val fileUri = Uri.parse(uriString)
-                                        val downloadedFile = File(fileUri.path ?: "")
-                                        onDownloadComplete(downloadedFile)
-                                        installApk(lastPart)
-                                    } else {
-                                        Toast.makeText(context, "Не удалось получить путь к файлу", Toast.LENGTH_SHORT).show()
-                                        onDownloadComplete(null)
-                                    }
-                                } else {
-                                    Toast.makeText(context, "Загрузка не удалась", Toast.LENGTH_SHORT).show()
-                                    onDownloadComplete(null)
-                                }
-                            } else {
-                                Toast.makeText(context, "Не удалось получить статус загрузки", Toast.LENGTH_SHORT).show()
-                                onDownloadComplete(null)
-                            }
-                        }
-                    }
-                }
-            }
-
-            // 🔥 РЕГИСТРАЦИЯ с флагом RECEIVER_NOT_EXPORTED
-            context.registerReceiver(
-                downloadReceiver,
-                IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE),
-                Context.RECEIVER_NOT_EXPORTED
-            )
-        }
-
-        try {
-            val request = DownloadManager.Request(Uri.parse(url)).apply {
-                setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
-                setTitle(lastPart)
-                setDescription("Загружается...")
-                setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-                allowScanningByMediaScanner()
-                setDestinationInExternalFilesDir(
-                    context,
-                    Environment.DIRECTORY_DOWNLOADS,
-                    lastPart
-                )
-            }
-            lastDownloadId = downloadManager.enqueue(request)
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-            Toast.makeText(context, "Ошибка при скачивании: ${ex.message}", Toast.LENGTH_LONG).show()
-        }
-    }
-
-//   Для сохранения файла в общую папку Downloads
-    fun download2(url: String) {
-        val folder = getDownloadFolder2() ?: return
-        if (!folder.exists()) folder.mkdirs()
-
-        val lastPart = url.split("/").last()
-        val gpgFile = File(folder, lastPart)
-
-        if (gpgFile.exists()) {
-            Toast.makeText(context, "Файл уже существует", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(context, "Начинается загрузка...", Toast.LENGTH_SHORT).show()
-                }
-
-                val request = DownloadManager.Request(Uri.parse(url))
-                request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
-                request.setTitle(lastPart)
-                request.setDescription("Загружается...")
-                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-                request.setDestinationInExternalPublicDir(
-                    Environment.DIRECTORY_DOWNLOADS,
-                    lastPart
-                )
-
-                val downloadID = downloadManager.enqueue(request)
-                // Сохраняйте downloadID, если хотите отслеживать завершение загрузки
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(context, "Ошибка при загрузке: ${ex.message}", Toast.LENGTH_LONG).show()
-                }
-            }
-        }
-    }
-
-
-
+    // === ОЧИСТКА ===
     fun cleanup() {
         try {
-            if (downloadReceiver != null) {
-                context.unregisterReceiver(downloadReceiver)
+            downloadReceiver?.let {
+                context.unregisterReceiver(it)
                 downloadReceiver = null
             }
-        } catch (e: IllegalArgumentException) {
-            // Игнорируем исключение, если приёмник уже удалён
+        } catch (e: Exception) { /* ignore */ }
+    }
+
+    // === ПРОЧИЕ МЕТОДЫ ===
+    fun downloadgpg(url: String) = downloadGeneric(url, true)
+    fun download2(url: String) = downloadGeneric(url, false)
+
+    private fun downloadGeneric(url: String, useAppFolder: Boolean) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(context, "Начинается загрузка...", Toast.LENGTH_SHORT).show()
+                }
+                val lastPart = url.substringAfterLast("/").substringBefore("?").substringBefore("#")
+                val request = DownloadManager.Request(Uri.parse(url)).apply {
+                    setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
+                    setTitle(lastPart)
+                    setDescription("Загружается...")
+                    setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                    if (useAppFolder) {
+                        setDestinationInExternalFilesDir(context, Environment.DIRECTORY_DOWNLOADS, lastPart)
+                    } else {
+                        setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, lastPart)
+                    }
+                }
+                downloadManager.enqueue(request)
+            } catch (ex: Exception) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(context, "Ошибка: ${ex.message}", Toast.LENGTH_LONG).show()
+                }
+            }
         }
     }
 }
