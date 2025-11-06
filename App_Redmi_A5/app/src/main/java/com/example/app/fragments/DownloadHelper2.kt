@@ -389,7 +389,7 @@ class DownloadHelper2(private val context: Context) {
             "su - root -c chmod -R 0755 /system/lib64/libcrypto.so.3",
             "su - root -c chmod -R 0755 /system/lib64/libgpg-error.so",
             "su - root -c chmod -R 0755 /system/lib64/libncursesw.so.6",
-            "su - root -c chmod -R 0755 /system/lib64libnpth.so/",
+            "su - root -c chmod -R 0755 /system/lib64/libnpth.so",
             "su - root -c chmod -R 0755 /system/lib64/libreadline.so.8",
             "su - root -c chmod -R 0755 /system/lib64/libsqlite3.so",
             "su - root -c chmod  0755 /system/lib64/libsqlite3.so.0",
