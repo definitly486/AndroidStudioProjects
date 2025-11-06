@@ -340,6 +340,30 @@ class DownloadHelper(private val context: Context) {
     fun download2(url: String) = downloadGeneric(url, false)
 
     private fun downloadGeneric(url: String, useAppFolder: Boolean) {
+
+        val folder = getDownloadFolder() ?: run {
+            Toast.makeText(context, "Невозможно получить папку загрузки", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val lastPart = url.substringAfterLast("/").substringBefore("?").substringBefore("#")
+        val extension = lastPart.substringAfterLast('.', "").lowercase()
+        if (extension != "apk") {
+            Toast.makeText(context, "Это не файл формата APK", Toast.LENGTH_SHORT).show()
+            onDownloadComplete(null)
+            return
+        }
+
+        val apkFile = File(folder, lastPart)
+        if (apkFile.exists()) {
+            Toast.makeText(context, "Файл уже существует", Toast.LENGTH_SHORT).show()
+            onDownloadComplete(apkFile)
+            installApk(lastPart)
+            return
+        }
+
+
+
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 withContext(Dispatchers.Main) {
