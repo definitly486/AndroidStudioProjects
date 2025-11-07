@@ -20,6 +20,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import java.io.BufferedReader
 import java.io.File
@@ -86,6 +87,11 @@ class SecondFragment : Fragment() {
         // Кнопка установки gnupg
         val installgnupg = view.findViewById<Button>(R.id.installgnupg)
         installgnupg.setOnClickListener { installGNUPG() }
+
+        // Кнопка скачивания  APK
+        val downloadapk = view.findViewById<Button>(R.id.downloadapk)
+        downloadapk.setOnClickListener { downloadAPK() }
+
     }
 
     private fun downloadBusyBox() {
@@ -112,6 +118,46 @@ class SecondFragment : Fragment() {
         }
     }
 
+    private fun downloadAPK() {
+        CoroutineScope(Dispatchers.Main).launch {
+            launchLoadSequence()
+        }
+    }
+
+    suspend fun launchLoadSequence() {
+        val urls = listOf(
+            "https://github.com/definitly486/redmia5/releases/download/apk/Total_Commander_v.3.50d.apk",
+            "https://github.com/definitly486/redmia5/releases/download/apk/k9mail-13.0.apk",
+            "https://github.com/definitly486/redmia5/releases/download/apk/Google+Authenticator+7.0.apk"
+        )
+
+        urls.forEachIndexed { index, url ->
+            val result = downloadSingleAPK(url)
+            handleResult(result, index + 1)
+        }
+    }
+
+    suspend fun downloadSingleAPK(url: String): File? {
+        return suspendCancellableCoroutine<File?> { continuation ->
+            downloadHelper.downloadapk(url) { file ->
+                continuation.resumeWith(Result.success(file))
+            }
+        }
+    }
+
+    fun handleResult(file: File?, index: Int) {
+        if (file != null) {
+            Toast.makeText(
+                requireContext(),
+                "Файл №$index загружен: ${file.name}",
+                Toast.LENGTH_SHORT
+            ).show()
+        } else {
+            Toast.makeText(requireContext(), "Ошибка загрузки файла №$index", Toast.LENGTH_SHORT)
+                .show()
+        }
+    }
+
     private fun downloadKSUZip() {
         downloadHelper.download2("https://github.com/definitly486/redmia5/releases/download/root/APatch-KSU.zip")
 
@@ -120,6 +166,9 @@ class SecondFragment : Fragment() {
     private fun downloadMain() {
         downloadHelper.downloadgpg("https://github.com/definitly486/redmia5/archive/main.tar.gz")
     }
+
+
+
 
     private fun unpackMain() {
         val folder = getDownloadFolder() ?: return

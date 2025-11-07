@@ -79,5 +79,13 @@
             android:text="@string/installgnupg"
             tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
 
+        <Button
+            android:id="@+id/downloadapk"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/downloadapk"
+            tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+
+
     </LinearLayout>
 </FrameLayout>
