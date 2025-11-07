@@ -20,6 +20,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 
+
+
 class DownloadHelper(private val context: Context) {
     private val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
     private var lastDownloadId: Long = -1L
@@ -30,6 +32,11 @@ class DownloadHelper(private val context: Context) {
         val dir = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
         if (dir?.exists() == false) dir.mkdirs()
         return dir
+    }
+
+    // Папка приложения APK: /Android/data/com.example.app/files/APK/
+    fun getDownloadFolderapk(): File? {
+        return context.getExternalFilesDir("APK")
     }
 
     fun getDownloadFolder2(): File? {
@@ -375,6 +382,57 @@ class DownloadHelper(private val context: Context) {
             }
         }
     }
+
+
+    fun downloadapk(url: String,onDownloadComplete: (File?) -> Unit) {
+        val folder = getDownloadFolderapk() ?: return
+        if (!folder.exists()) folder.mkdirs()
+
+        val lastPart = url.split("/").last()
+        val gpgFile = File(folder, lastPart)
+
+        if (gpgFile.exists()) {
+            Toast.makeText(context, "Файл уже существует", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+
+        if (downloadReceiver == null) {
+            downloadReceiver = createDownloadReceiver(lastPart, onDownloadComplete)
+            context.registerReceiver(
+                downloadReceiver,
+                IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE),
+                Context.RECEIVER_EXPORTED  // ОТКРЫТ ДЛЯ DownloadManager
+            )
+            Log.d("DOWNLOAD", "Receiver зарегистрирован (EXPORTED)")
+        }
+
+        try {
+            val request = DownloadManager.Request(Uri.parse(url)).apply {
+                setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
+                setTitle(lastPart)
+                setDescription("Загружается...")
+                setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                allowScanningByMediaScanner()
+            //    setDestinationInExternalFilesDir(context, Environment.DIRECTORY_DOWNLOADS, lastPart)
+                setDestinationInExternalFilesDir(
+                    context,
+                    "APK",  // Папка "APK"
+                    lastPart
+                )
+            }
+            lastDownloadId = downloadManager.enqueue(request)
+            Toast.makeText(context, "Начало загрузки: $lastPart", Toast.LENGTH_SHORT).show()
+            Log.d("DOWNLOAD", "Started: $lastPart, ID: $lastDownloadId")
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            Toast.makeText(context, "Ошибка: ${ex.message}", Toast.LENGTH_LONG).show()
+        }
+
+
+    }
+
+
 
     fun downloadgpg(url: String) {
         val folder = getDownloadFolder() ?: return
