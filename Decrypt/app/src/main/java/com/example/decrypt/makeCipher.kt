@@ -12,7 +12,7 @@ import javax.crypto.spec.PBEKeySpec
 import javax.crypto.spec.SecretKeySpec
 
 fun makeCipherver2(pass: String, decryptMode: Boolean): Cipher {
-  val passwd = "639639"
+  val passwd = ""
     val encryptedFile = File("/storage/emulated/0/Download/com.qflair.browserq.tar.xz.encrypted")
     val fileBytes = encryptedFile.readBytes()
 
