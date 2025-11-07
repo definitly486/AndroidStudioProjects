@@ -20,6 +20,15 @@
             android:text="@string/installgnucashgpg"
             tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
 
+
+        <EditText
+            android:id="@+id/editTextPasswordgnucash"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="Введите пароль" />
+
+
+
         <Button
             android:id="@+id/decryptgnucashgpg"
             android:layout_width="match_parent"
