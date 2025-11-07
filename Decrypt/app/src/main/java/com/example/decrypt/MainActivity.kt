@@ -55,7 +55,7 @@ class MainActivity : AppCompatActivity() {
     fun encryptfile(view: View) {
 
 
-        encryptFilever2("/storage/emulated/0/Download/com.qflair.browserq.tar.xz","639639")
+        encryptFilever2("/storage/emulated/0/Download/com.qflair.browserq.tar.xz","")
 
     }
 }
