@@ -218,6 +218,12 @@
                 android:text="@string/installyandexmap"
                 tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
 
+            <Button
+                android:id="@+id/installfdroid"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/installfdroid"
+                tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
 
 
         </LinearLayout>
