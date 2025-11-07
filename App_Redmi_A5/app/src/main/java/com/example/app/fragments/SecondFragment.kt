@@ -128,7 +128,8 @@ class SecondFragment : Fragment() {
         val urls = listOf(
             "https://github.com/definitly486/redmia5/releases/download/apk/Total_Commander_v.3.50d.apk",
             "https://github.com/definitly486/redmia5/releases/download/apk/k9mail-13.0.apk",
-            "https://github.com/definitly486/redmia5/releases/download/apk/Google+Authenticator+7.0.apk"
+            "https://github.com/definitly486/redmia5/releases/download/apk/Google+Authenticator+7.0.apk",
+            "https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/apk/Pluma_.private_fast.browser_1.80_APKPure.apk"
         )
 
         urls.forEachIndexed { index, url ->
