@@ -4,9 +4,12 @@ import DownloadHelper
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.DialogInterface
-
+import android.content.Intent
+import android.net.Uri
+import android.provider.Settings
 import android.os.Bundle
 import android.os.Environment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,13 +26,14 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import java.io.BufferedReader
+import java.io.DataOutputStream
 import java.io.File
 import java.io.FileReader
 import java.io.IOException
 
 
 class SecondFragment : Fragment() {
-
+private val REQUEST_CODE_WRITE_SETTINGS_PERMISSION = 1001
     private lateinit var downloadHelper: DownloadHelper
     private lateinit var downloadHelper2: DownloadHelper2
 
@@ -91,6 +95,10 @@ class SecondFragment : Fragment() {
         // Кнопка скачивания  APK
         val downloadapk = view.findViewById<Button>(R.id.downloadapk)
         downloadapk.setOnClickListener { downloadAPK() }
+
+        // Кнопка установки настроек
+        val setting = view.findViewById<Button>(R.id.setsettings)
+        setting.setOnClickListener { setSettings() }
 
     }
 
@@ -171,7 +179,77 @@ class SecondFragment : Fragment() {
         downloadHelper.downloadgpg("https://github.com/definitly486/redmia5/archive/main.tar.gz")
     }
 
+    private fun setSettings() {
 
+        if (!RootChecker.hasRootAccess(requireContext())) {
+            showCompletionDialogroot(requireContext())
+            return
+        }
+
+
+        // Анонимный объект для выполнения shell-команд
+        val shellExecutor = object {
+            fun execShellCommand(command: String): Boolean {
+                var process: Process? = null
+                var outputStream: DataOutputStream? = null
+
+                return try {
+                    process = Runtime.getRuntime().exec("su") // запускаем процесс с правами root
+                    outputStream = DataOutputStream(process.outputStream)
+                    outputStream.writeBytes("$command\nexit\n") // выполняем команду и заканчиваем сеанс
+                    outputStream.flush()
+                    outputStream.close()
+                    process.waitFor()
+                    Log.d("ShellExecutor", "Выполнено с результатом ${process.exitValue()}") // Логирование результата
+                    process.exitValue() == 0 // возвращаем успех, если выходное значение равно 0
+                } catch (e: Exception) {
+                    Log.e("ShellExecutor", "Ошибка выполнения команды:", e)
+                    false
+                } finally {
+                    outputStream?.close()
+                    process?.destroy()
+                }
+            }
+        }
+
+
+        if (!Settings.System.canWrite(requireContext())) {
+            val intent = Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS).apply {
+                data = Uri.parse("package:${requireContext().packageName}")
+            }
+            startActivityForResult(intent, REQUEST_CODE_WRITE_SETTINGS_PERMISSION)
+        } else {
+            // Если разрешение уже дано, меняем яркость сразу
+            setScreenBrightness(requireContext(), 800) // Установим нормальное значение яркости (от 0 до 255)
+            shellExecutor.execShellCommand("cmd overlay enable com.android.internal.systemui.navbar.gestural")
+            try {
+                Settings.System.putInt(
+                    requireContext().contentResolver, // Используем верный контекст
+                    Settings.System.SCREEN_BRIGHTNESS_MODE,
+                    Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL// Включаем автояркость
+                )
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+
+    fun setScreenBrightness(context: Context, brightnessValue: Int) {
+        if (brightnessValue in 0..1000) {
+            Settings.System.putInt(
+                context.contentResolver,
+                Settings.System.SCREEN_BRIGHTNESS_MODE,
+                Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL
+            )
+
+            Settings.System.putInt(
+                context.contentResolver,
+                Settings.System.SCREEN_BRIGHTNESS,
+                brightnessValue
+            )
+        }
+    }
 
 
     private fun unpackMain() {

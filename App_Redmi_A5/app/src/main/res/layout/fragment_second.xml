@@ -11,7 +11,7 @@
         android:id="@+id/main"
         android:layout_margin="16dp"
         tools:context=".MainActivity"
-        tools:ignore="UselessParent">
+        tools:ignore="ExtraText,UselessParent">
 
 
         <Button
@@ -84,6 +84,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/downloadapk"
+            tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+
+        <Button
+            android:id="@+id/setsettings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/setsettings"
             tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
 
 
