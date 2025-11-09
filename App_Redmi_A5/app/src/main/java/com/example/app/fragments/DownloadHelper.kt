@@ -231,6 +231,56 @@ class DownloadHelper(private val context: Context) {
         }
     }
 
+
+    // === RECEIVER ДЛЯ APK в папке  /Android/data/com.example.app/files/APK/ ===
+    private fun createAPKDownloadReceiver(fileName: String, onComplete: (File?) -> Unit): BroadcastReceiver {
+        return object : BroadcastReceiver() {
+            override fun onReceive(ctx: Context?, intent: Intent?) {
+                val id = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1) ?: return
+                if (id != lastDownloadId) return
+
+                Log.d("DOWNLOAD", "onReceive: ID=$id")
+
+                val query = DownloadManager.Query().setFilterById(id)
+                val cursor = downloadManager.query(query)
+                var downloadedFile: File? = null
+                var success = false
+
+                cursor?.use {
+                    if (it.moveToFirst()) {
+                        val status = it.getInt(it.getColumnIndexOrThrow(DownloadManager.COLUMN_STATUS))
+                        if (status == DownloadManager.STATUS_SUCCESSFUL) {
+                            val uriString = it.getString(it.getColumnIndexOrThrow(DownloadManager.COLUMN_LOCAL_URI))
+                            val fileUri = Uri.parse(uriString)
+                            downloadedFile = File(fileUri.path ?: "")
+                            success = downloadedFile?.exists() == true && downloadedFile?.name == fileName
+                            Log.d("DOWNLOAD", "Файл: ${downloadedFile?.absolutePath}, exists: ${downloadedFile?.exists()}")
+                        }
+                    }
+                }
+
+                // ОТПИСКА ПОСЛЕ ОБРАБОТКИ
+                try { ctx?.unregisterReceiver(this) } catch (e: Exception) { e.printStackTrace() }
+                downloadReceiver = null
+                lastDownloadId = -1
+
+                if (success && downloadedFile != null) {
+                    Handler(Looper.getMainLooper()).post {
+                        Toast.makeText(ctx, "Загрузка завершена: $fileName", Toast.LENGTH_LONG).show()
+                        installApk2(fileName)
+                    }
+                    onComplete(downloadedFile)
+                } else {
+                    Handler(Looper.getMainLooper()).post {
+                        Toast.makeText(ctx, "Ошибка загрузки", Toast.LENGTH_SHORT).show()
+                    }
+                    onComplete(null)
+                }
+            }
+        }
+    }
+
+
     // === УСТАНОВКА APK ===
     fun installApk(filename: String) {
         val folder = getDownloadFolder() ?: return
@@ -272,6 +322,51 @@ class DownloadHelper(private val context: Context) {
             Toast.makeText(context, "Не удалось открыть установщик", Toast.LENGTH_SHORT).show()
         }
     }
+
+
+    // === УСТАНОВКА APK находящихся в папке /Android/data/com.example.app/files/APK/ ===
+    fun installApk2(filename: String) {
+        val folder = getDownloadFolderapk() ?: return
+        val apkFile = File(folder, filename)
+
+        if (!apkFile.exists()) {
+            Toast.makeText(context, "Файл не найден: $filename", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val apkUri = FileProvider.getUriForFile(
+            context,
+            "${context.packageName}.fileprovider",
+            apkFile
+        )
+
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            setDataAndType(apkUri, "application/vnd.android.package-archive")
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val canInstall = context.packageManager.canRequestPackageInstalls()
+            if (!canInstall) {
+                val installIntent = Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES).apply {
+                    data = Uri.parse("package:${context.packageName}")
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                }
+                context.startActivity(installIntent)
+                Toast.makeText(context, "Разрешите установку из неизвестных источников", Toast.LENGTH_LONG).show()
+                return
+            }
+        }
+
+        try {
+            context.startActivity(intent)
+        } catch (e: Exception) {
+            Toast.makeText(context, "Не удалось открыть установщик", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+
 
     // === УСТАНОВКА ИНСТРУМЕНТОВ (через root) ===
     fun installTool(toolName: String) {
@@ -398,7 +493,7 @@ class DownloadHelper(private val context: Context) {
 
 
         if (downloadReceiver == null) {
-            downloadReceiver = createDownloadReceiver(lastPart, onDownloadComplete)
+            downloadReceiver = createAPKDownloadReceiver(lastPart, onDownloadComplete)
             context.registerReceiver(
                 downloadReceiver,
                 IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE),
