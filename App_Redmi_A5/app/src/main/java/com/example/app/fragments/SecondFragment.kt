@@ -254,7 +254,7 @@ private val REQUEST_CODE_WRITE_SETTINGS_PERMISSION = 1001
 
             //Установка wifi соеденения
 
-            shellExecutor.execShellCommand("cmd -w wifi connect-network HUAWEI-B315-AFCA wpa2  HR63B1DMTJ4 ")
+            shellExecutor.execShellCommand("cmd -w wifi connect-network HUAWEI-B315-AFCA wpa2  HR63B1DMTJ4")
 
             //Выключение автояркости
             try {
