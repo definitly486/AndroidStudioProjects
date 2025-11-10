@@ -205,10 +205,10 @@ private val REQUEST_CODE_WRITE_SETTINGS_PERMISSION = 1001
 
     private fun setSettings() {
 
-        if (!RootChecker.hasRootAccess(requireContext())) {
-            showCompletionDialogroot(requireContext())
-            return
-        }
+   //     if (!RootChecker.hasRootAccess(requireContext())) {
+   //         showCompletionDialogroot(requireContext())
+   //         return
+   //     }
 
 
         // Анонимный объект для выполнения shell-команд
@@ -256,6 +256,9 @@ private val REQUEST_CODE_WRITE_SETTINGS_PERMISSION = 1001
 
             shellExecutor.execShellCommand("cmd -w wifi connect-network HUAWEI-B315-AFCA wpa2  HR63B1DMTJ4")
 
+            //выключение bluetooth
+
+            shellExecutor.execShellCommand( "cmd bluetooth_manager disable")
             //Выключение автояркости
             try {
                 Settings.System.putInt(
