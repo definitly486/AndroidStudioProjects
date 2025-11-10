@@ -427,6 +427,15 @@ private val REQUEST_CODE_WRITE_SETTINGS_PERMISSION = 1001
         builder.show()
     }
 
+    fun rebootDevice() {
+        try {
+            val runtime = Runtime.getRuntime()
+            val process = runtime.exec("su -c reboot")
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
      fun createReloadDialog(context: Context) {
         val alertBuilder = AlertDialog.Builder(requireContext())
 
@@ -439,9 +448,8 @@ private val REQUEST_CODE_WRITE_SETTINGS_PERMISSION = 1001
         // Положительная кнопка (перезагружаем устройство)
         alertBuilder.setPositiveButton("Да") { _: DialogInterface, _: Int ->
             // Логика перезагрузки устройства (нужны права администратора или root)
-            // Пример:
-            val runtime = Runtime.getRuntime()
-            val process = runtime.exec(arrayOf("su - root -c reboot", "/system/bin/reboot"))     }
+
+            rebootDevice() }
 
         // Отрицательная кнопка (закрываем диалог)
         alertBuilder.setNegativeButton("Нет") { dialog: DialogInterface, _: Int ->
