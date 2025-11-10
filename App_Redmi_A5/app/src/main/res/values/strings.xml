@@ -50,5 +50,6 @@
     <string name="insstallapk">Установить APK </string>
     <string name="download_gate">Скачать Gate </string>
     <string name="install_gate">Установить Gate </string>
+    <string name="reboot">Перегрузить  </string>
 
 </resources>
