@@ -49,14 +49,14 @@ class SeventhFragment  : Fragment()  {
     }
 
     private fun downloadGATE(){
-        downloadHelper.downloadTool("https://github.com/definitly486/Lenovo_TB-X304L/releases/download/apk/gate.base.zip","gate") { file ->
+        downloadHelper.downloadTool("https://github.com/definitly486/redmia5/releases/download/apk/gate.base.zip","gate") { file ->
             handleDownloadResult(file, "gate")
         }
     }
 
     private fun installGATE(){
         unzip_gate("gate.base.zip")
-        downloadHelper.installApk("gate.base.apk")
+        downloadHelper.installApk("gate.apk")
     }
 
     private fun handleDownloadResult(file: File?, name: String) {
