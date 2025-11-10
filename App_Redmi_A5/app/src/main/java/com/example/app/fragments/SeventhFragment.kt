@@ -45,7 +45,9 @@ class SeventhFragment  : Fragment()  {
         val installgate = view.findViewById<Button>(R.id.installgate)
         installgate.setOnClickListener { installGATE() }
 
-
+        // Кнопка установки gate
+        val installbinance = view.findViewById<Button>(R.id.installbinance)
+        installbinance.setOnClickListener { installBINANCE() }
     }
 
     private fun downloadGATE(){
@@ -58,6 +60,22 @@ class SeventhFragment  : Fragment()  {
         unzipgate("gate.base.zip")
         downloadHelper.installApk("gate.apk")
     }
+
+    private fun installBINANCE(){
+        downloadHelper.download("https://github.com/definitly486/redmia5/releases/download/apk/com.binance.dev-100300004.apk") { file ->
+            if (file != null) {
+                Toast.makeText(
+                    requireContext(),
+                    "Файл загружен: ${file.name}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                Toast.makeText(requireContext(), "Ошибка загрузки", Toast.LENGTH_SHORT)
+                    .show()
+            }
+        }
+    }
+
 
     private fun handleDownloadResult(file: File?, name: String) {
         if (file != null) {
