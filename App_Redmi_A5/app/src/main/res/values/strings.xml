@@ -48,5 +48,7 @@
     <string name="downloadapk">Скачать APK </string>
     <string name="setsettings">Установить настройки</string>
     <string name="insstallapk">Установить APK </string>
+    <string name="download_gate">Скачать Gate </string>
+    <string name="install_gate">Установить Gate </string>
 
 </resources>
