@@ -187,15 +187,15 @@ private val REQUEST_CODE_WRITE_SETTINGS_PERMISSION = 1001
 
     private fun installAPK() {
         val urls = listOf(
-            "https://github.com/definitly486/redmia5/releases/download/apk/Total_Commander_v.3.50d.apk",
-            "https://github.com/definitly486/redmia5/releases/download/apk/k9mail-13.0.apk",
-            "https://github.com/definitly486/redmia5/releases/download/apk/Google+Authenticator+7.0.apk",
-            "https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/apk/Pluma_.private_fast.browser_1.80_APKPure.apk",
-            "https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/apk/com.aurora.store_70.apk",
-            "https://github.com/definitly486/redmia5/releases/download/apk/KernelSU_v1.0.5_12081-release.apk",
-            "https://github.com/definitly486/Lenovo_TB-X304L/releases/download/apk/ByeByeDPI-arm64-v8a-release.apk",
-            "https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/apk/Telegram+X+0.27.5.1747-arm64-v8a.apk",
-            "https://github.com/definitly486/redmia5/releases/download/apk/Core+Music+Player_1.0.apk"
+            "Total_Commander_v.3.50d.apk",
+            "k9mail-13.0.apk",
+            "Google+Authenticator+7.0.apk",
+            "Pluma_.private_fast.browser_1.80_APKPure.apk",
+            "com.aurora.store_70.apk",
+            "KernelSU_v1.0.5_12081-release.apk",
+            "ByeByeDPI-arm64-v8a-release.apk",
+            "Telegram+X+0.27.5.1747-arm64-v8a.apk",
+            "Core+Music+Player_1.0.apk"
         )
 
         for (url in urls) {
