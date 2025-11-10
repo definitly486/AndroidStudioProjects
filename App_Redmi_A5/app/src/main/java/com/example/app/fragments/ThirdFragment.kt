@@ -153,7 +153,7 @@ class ThirdFragment : Fragment() {
     }
 
     private fun executeCommands(commands: Array<String>) {
-        var process: Process? = null
+        var process: Process?
         for (command in commands) {
             process = Runtime.getRuntime().exec(command)
             process.waitFor()
