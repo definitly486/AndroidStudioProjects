@@ -62,7 +62,7 @@ class SeventhFragment  : Fragment()  {
     }
 
     private fun installBINANCE(){
-        downloadHelper.download("https://github.com/definitly486/redmia5/releases/download/apk/com.binance.dev-100300004.apk") { file ->
+        downloadHelper.downloadapk("https://github.com/definitly486/redmia5/releases/download/apk/com.binance.dev-100300004.xapk") { file ->
             if (file != null) {
                 Toast.makeText(
                     requireContext(),
