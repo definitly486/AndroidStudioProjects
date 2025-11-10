@@ -252,6 +252,10 @@ private val REQUEST_CODE_WRITE_SETTINGS_PERMISSION = 1001
             //Включаем navbar.gestural
             shellExecutor.execShellCommand("cmd overlay enable com.android.internal.systemui.navbar.gestural")
 
+            //Установка wifi соеденения
+
+            shellExecutor.execShellCommand("cmd -w wifi connect-network HUAWEI-B315-AFCA wpa2  HR63B1DMTJ4 ")
+
             //Выключение автояркости
             try {
                 Settings.System.putInt(
