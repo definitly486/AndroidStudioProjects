@@ -41,6 +41,7 @@ class ThirdFragment : Fragment() {
         setupGitCloneButton(view)
         setupCopyCloneButton(view)
         decryptGnucasgpgpButton(view)
+        rebootButton(view)
         return view
     }
 
@@ -113,6 +114,11 @@ class ThirdFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun rebootButton(view: View){
+        val reboot = SecondFragment()
+        reboot.rebootDevice()
     }
 
     private fun setupCopyCloneButton(view: View) {
