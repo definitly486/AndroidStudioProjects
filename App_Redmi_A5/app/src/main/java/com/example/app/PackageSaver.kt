@@ -103,7 +103,9 @@ fun Context.savePackagesToFile(filename: String): Boolean {
         "com.huaqin.sarcontroller",
         "com.android.customization.themes",
         "com.google.android.gms.supervision",
-        "com.google.android.syncadapters.calendar"
+        "com.google.android.syncadapters.calendar",
+        "com.google.android.apps.restore",
+        "com.google.android.health.connect.backuprestore"
     ).joinToString("\n")
 
     val downloadFolder = this.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
