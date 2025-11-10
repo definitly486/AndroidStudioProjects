@@ -223,12 +223,19 @@ private val REQUEST_CODE_WRITE_SETTINGS_PERMISSION = 1001
         } else {
             // Если разрешение уже дано, меняем яркость сразу
             setScreenBrightness(requireContext(), 800) // Установим нормальное значение яркости (от 0 до 255)
+
+            // Включаем глобальные настройки разработки
+            shellExecutor.execShellCommand("settings put global development_settings_enabled 1")
+
+            //Включаем navbar.gestural
             shellExecutor.execShellCommand("cmd overlay enable com.android.internal.systemui.navbar.gestural")
+
+            //Выключение автояркости
             try {
                 Settings.System.putInt(
                     requireContext().contentResolver, // Используем верный контекст
                     Settings.System.SCREEN_BRIGHTNESS_MODE,
-                    Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL// Включаем автояркость
+                    Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL// Выключаем автояркость
                 )
             } catch (e: Exception) {
                 e.printStackTrace()
