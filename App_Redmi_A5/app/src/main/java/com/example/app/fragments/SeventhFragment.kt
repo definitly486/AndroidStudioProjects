@@ -75,7 +75,7 @@ class SeventhFragment  : Fragment()  {
         // Check if target APK already exists
         val targetApk = File(folder, "gate.apk")
         if (targetApk.exists()) {
-            Toast.makeText(context, "Файл gate.base.apk  уже существует", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Файл gate.apk  уже существует", Toast.LENGTH_SHORT).show()
 
             return true
         }
