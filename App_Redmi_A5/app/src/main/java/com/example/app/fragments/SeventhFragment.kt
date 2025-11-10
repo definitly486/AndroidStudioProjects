@@ -55,7 +55,7 @@ class SeventhFragment  : Fragment()  {
     }
 
     private fun installGATE(){
-        unzip_gate("gate.base.zip")
+        unzipgate("gate.base.zip")
         downloadHelper.installApk("gate.apk")
     }
 
@@ -67,7 +67,7 @@ class SeventhFragment  : Fragment()  {
         }
     }
 
-    fun unzip_gate(filename: String): Boolean {
+    fun unzipgate(filename: String): Boolean {
         val folder = getDownloadFolder() ?: return false
         val zipFile = File(folder, filename)
 
@@ -87,7 +87,7 @@ class SeventhFragment  : Fragment()  {
                     while (zis.nextEntry.also { entry = it } != null) {
                         val destFile = File(folder, entry!!.name)
                         destFile.parentFile?.mkdirs()
-                        if (!entry!!.isDirectory) {
+                        if (!entry.isDirectory) {
                             FileOutputStream(destFile).use { fos ->
                                 val buffer = ByteArray(4096)
                                 var count: Int
