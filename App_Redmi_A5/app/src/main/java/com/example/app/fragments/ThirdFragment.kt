@@ -11,7 +11,6 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.app.R
-import decryptPGPFileWithPassword
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -41,7 +40,7 @@ class ThirdFragment : Fragment() {
         setupGitCloneButton(view)
         setupCopyCloneButton(view)
         decryptGnucasgpgpButton(view)
-      rebootButton(view)
+        rebootButton(view)
         return view
     }
 
@@ -118,8 +117,8 @@ class ThirdFragment : Fragment() {
 
     private fun rebootButton(view: View){
 
-        val REBOOTButton = view.findViewById<Button>(R.id.reboot)
-        REBOOTButton.setOnClickListener {
+        val rEBOOTButton = view.findViewById<Button>(R.id.reboot)
+        rEBOOTButton.setOnClickListener {
             val reboot = SecondFragment()
             reboot.rebootDevice()
         }
