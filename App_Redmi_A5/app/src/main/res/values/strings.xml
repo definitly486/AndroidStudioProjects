@@ -47,5 +47,6 @@
     <string name="installfdroid">Установить  F Droid </string>
     <string name="downloadapk">Скачать APK </string>
     <string name="setsettings">Установить настройки</string>
+    <string name="insstallapk">Установить APK </string>
 
 </resources>

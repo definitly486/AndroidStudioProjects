@@ -86,6 +86,15 @@
             android:text="@string/downloadapk"
             tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
 
+
+        <Button
+            android:id="@+id/installapk"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/insstallapk"
+            tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+
+
         <Button
             android:id="@+id/setsettings"
             android:layout_width="match_parent"
