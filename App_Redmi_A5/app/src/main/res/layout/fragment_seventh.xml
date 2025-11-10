@@ -32,6 +32,13 @@
             tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
 
 
+        <Button
+            android:id="@+id/installbinance"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/installbinance"
+            android:onClick="installbinance"
+            tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
 
 
 

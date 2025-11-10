@@ -51,5 +51,6 @@
     <string name="download_gate">Скачать Gate </string>
     <string name="install_gate">Установить Gate </string>
     <string name="reboot">Перегрузить  </string>
+    <string name="installbinance">Установить Binance </string>
 
 </resources>
