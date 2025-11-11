@@ -220,6 +220,73 @@ class DownloadHelper2(private val context: Context) {
     }
 
 
+    fun copysshlibs() {
+
+
+        fun showCompletionDialoginstall() {
+            val builder = AlertDialog.Builder(context)
+            builder.setTitle("Проверка root")
+            builder.setMessage("Root доступ отсуствует,приложения не будут установлены")
+            builder.setPositiveButton("Продолжить") { dialog, _ ->
+                dialog.dismiss()
+            }
+            builder.show()
+        }
+
+
+        if (RootChecker.hasRootAccess(context)) {
+
+            Toast.makeText(context, "Устройство имеет root-доступ.", Toast.LENGTH_SHORT)
+                .show()
+        } else {
+            showCompletionDialoginstall()
+            return
+        }
+
+
+        fun showCompletionDialogsystem() {
+            val builder = AlertDialog.Builder(context)
+            builder.setTitle("Проверка записи в system")
+            builder.setMessage("Запись в system не возможна, приложения не будут установлены")
+            builder.setPositiveButton("Продолжить") { dialog, _ ->
+                dialog.dismiss()
+            }
+            builder.show()
+        }
+
+        // Проверка возможности записи в папку '/system'
+        val pathToCheck = "/system"
+        if (!RootChecker.checkWriteAccess(pathToCheck)) {
+            showCompletionDialogsystem()
+            return
+        }
+
+
+
+        Toast.makeText(context, "Копируем SSH LIBS ...", Toast.LENGTH_SHORT).show()
+
+
+        val commands = arrayOf(
+            "su - root -c  mount -o rw,remount /system",
+            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/openssh_libs/libcrypto.so.1.0.0 /system/lib64/ ",
+            "su - root -c chmod -R 0755 /system/lib64/libcrypto.so.1.0.0 ",
+            "su - root -c chmod -R  0755 /system/lib64/"
+        )
+
+        var process: Process?
+
+        for (command in commands) {
+            process = Runtime.getRuntime().exec(command)
+            process.waitFor() // Wait for the command to finish
+            if (process.exitValue() != 0) {
+                Toast.makeText(context, "Ошибка при копирование SSH LIBS: $command", Toast.LENGTH_LONG)
+                    .show()
+                return
+            }
+        }
+        Toast.makeText(context, "Копирование  SSH LIBS завершенo", Toast.LENGTH_SHORT).show()
+    }
+
     fun copygit() {
 
 

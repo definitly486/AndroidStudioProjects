@@ -43,6 +43,9 @@
             android:text="@string/installopenssl"
             tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
 
+
+
+
         <Button
             android:id="@+id/downloadksuzip"
             android:layout_width="match_parent"
@@ -85,6 +88,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/installssh"
+            tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+
+        <Button
+            android:id="@+id/installsshlibs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/installsshlins"
             tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
 
         <Button

@@ -53,5 +53,6 @@
     <string name="reboot">Перегрузить  </string>
     <string name="installbinance">Установить Binance </string>
     <string name="installssh">Установить OpenSSH </string>
+    <string name="installsshlins">Установить SSH LIBS </string>
 
 </resources>

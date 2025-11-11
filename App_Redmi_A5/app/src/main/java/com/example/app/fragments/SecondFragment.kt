@@ -108,6 +108,11 @@ private val REQUEST_CODE_WRITE_SETTINGS_PERMISSION = 1001
         val installssh = view.findViewById<Button>(R.id.installssh)
         installssh.setOnClickListener { installSSH() }
 
+
+        // Кнопка установки OpenSSH LIBS
+        val installsshlibs = view.findViewById<Button>(R.id.installsshlibs)
+        installsshlibs.setOnClickListener { installSSHLIBS() }
+
     }
 
     private fun downloadBusyBox() {
@@ -330,6 +335,7 @@ private val REQUEST_CODE_WRITE_SETTINGS_PERMISSION = 1001
         if (!tarGzFile.exists()) {
             Toast.makeText(requireContext(), "Файл openssh_bin.tar.xz не существует", Toast.LENGTH_SHORT).show()
             downloadHelper.downloadgpg("https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/openssh/openssh_bin.tar.xz")
+
             return
         }
         downloadHelper2 = DownloadHelper2(requireContext())
@@ -338,7 +344,21 @@ private val REQUEST_CODE_WRITE_SETTINGS_PERMISSION = 1001
         downloadHelper2.copyssh()
     }
 
+    private fun installSSHLIBS() {
+        val folder = getDownloadFolder() ?: return
+        val tarGzFile = File(folder, "openssh_libs.tar.xz")
+        val outputDir = File(folder, "")
+        if (!tarGzFile.exists()) {
+            Toast.makeText(requireContext(), "Файл openssh_libs.tar.xz не существует", Toast.LENGTH_SHORT).show()
+            downloadHelper.downloadgpg("https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/openssh/openssh_libs.tar.xz")
 
+            return
+        }
+        downloadHelper2 = DownloadHelper2(requireContext())
+        downloadHelper2.unpackTarXz(tarGzFile, outputDir)
+        Thread.sleep(3000L)
+        downloadHelper2.copysshlibs()
+    }
 
     private fun installGNUPG() {
         val folder = getDownloadFolder() ?: return
