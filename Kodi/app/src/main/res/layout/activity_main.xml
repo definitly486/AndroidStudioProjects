@@ -29,4 +29,16 @@
         android:text="50%"
         android:textSize="18sp" />
 
+    <Button
+        android:id="@+id/playbutton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Play channel" />
+
+    <Button
+        android:id="@+id/stopbutton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Stop channel" />
+
 </LinearLayout>

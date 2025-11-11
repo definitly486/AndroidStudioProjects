@@ -31,7 +31,8 @@
             android:id="@+id/editTextPasswordgnucash"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="Введите пароль" />
+            android:hint="Введите пароль"
+            android:minHeight="48dp" />
 
 
 

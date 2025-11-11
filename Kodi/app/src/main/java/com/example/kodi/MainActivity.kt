@@ -1,6 +1,7 @@
 package com.example.kodi
 
 import android.os.Bundle
+import android.widget.Button
 import android.widget.SeekBar
 import android.widget.TextView
 import androidx.activity.ComponentActivity
@@ -24,6 +25,9 @@ class MainActivity : ComponentActivity() {
 
         val seekBar = findViewById<SeekBar>(R.id.seekBarVolume)
         val tvVolume = findViewById<TextView>(R.id.tvVolume)
+        val play = findViewById<Button>(R.id.playbutton)
+        val stop = findViewById<Button>(R.id.stopbutton)
+
 
         tvVolume.text = "${seekBar.progress}%"
 
@@ -37,6 +41,14 @@ class MainActivity : ComponentActivity() {
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
+
+        play.setOnClickListener {
+            play()
+        }
+
+        stop.setOnClickListener {
+            stop()
+        }
     }
 
     private fun setKodiVolume(volume: Int) {
@@ -44,6 +56,77 @@ class MainActivity : ComponentActivity() {
             sendVolumeCommand(volume)
         }
     }
+
+    private fun play () {
+
+        lifecycleScope.launch {
+            sendPlayCommand()
+        }
+    }
+
+    private suspend fun sendPlayCommand() = withContext(Dispatchers.IO) {
+        val client = OkHttpClient()
+
+        // JSON body for Player.Open method to open the specified channel
+        val json = """
+        {"jsonrpc":"2.0","id":1,"method":"Player.Open","params":{"item":{"channelid":1}}}
+    """.trimIndent()
+
+        val body = json.toRequestBody("application/json; charset=utf-8".toMediaType())
+        val request = Request.Builder()
+            .url(kodiUrl)  // Make sure kodiUrl points to the correct IP address and port of your Kodi instance
+            .post(body)
+            .build()
+
+        try {
+            client.newCall(request).execute().use { response ->
+                if (!response.isSuccessful) {
+                    println("Error: ${response.code}")
+                } else {
+                    println("Play command sent successfully.")
+                }
+            }
+        } catch (e: Exception) {
+            println("Network error: ${e.message}")
+        }
+    }
+
+
+
+    private fun stop () {
+        lifecycleScope.launch {
+            sendStopCommand()
+        }
+
+    }
+
+    private suspend fun sendStopCommand() = withContext(Dispatchers.IO) {
+        val client = OkHttpClient()
+
+        // JSON body
+        val json = """
+        {"jsonrpc": "2.0", "method": "Player.Stop", "params": { "playerid": 1 }, "id": 1}
+    """.trimIndent()
+
+        val body = json.toRequestBody("application/json; charset=utf-8".toMediaType())
+        val request = Request.Builder()
+            .url(kodiUrl)  // Make sure the kodiUrl is the correct IP address of your Kodi instance
+            .post(body)
+            .build()
+
+        try {
+            client.newCall(request).execute().use { response ->
+                if (!response.isSuccessful) {
+                    println("Error: ${response.code}")
+                } else {
+                    println("Stop command sent successfully.")
+                }
+            }
+        } catch (e: Exception) {
+            println("Network error: ${e.message}")
+        }
+    }
+
 
     private suspend fun sendVolumeCommand(volume: Int) = withContext(Dispatchers.IO) {
         val client = OkHttpClient()
