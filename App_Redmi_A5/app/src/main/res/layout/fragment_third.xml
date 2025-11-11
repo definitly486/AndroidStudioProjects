@@ -30,12 +30,19 @@
 
 
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/decryptgnucashgpg"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/decryptgnucashgpg"
+            app:icon="@drawable/ic_decrypt"
+            app:iconGravity="start"
+            app:iconPadding="8dp"
+            app:iconTint="@null"
+            android:backgroundTint="?attr/colorPrimary"
+            style="@style/Widget.MaterialComponents.Button"
             tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+
 
 
 
