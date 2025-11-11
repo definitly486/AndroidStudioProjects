@@ -58,5 +58,6 @@
     <string name="donloadplumaprofile">Скачать Pluma profile </string>
     <string name="installplumaprofile">Установить Pluma profile </string>
     <string name="installray">Установить V2rayNG </string>
+    <string name="button_clone">Клонировать </string>
 
 </resources>
