@@ -46,17 +46,6 @@
             android:backgroundTint="?attr/colorPrimary"
             style="@style/Widget.MaterialComponents.Button" />
 
-
-        <Button
-            android:id="@+id/installopenssl"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/installopenssl"
-            tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
-
-
-
-
         <Button
             android:id="@+id/downloadksuzip"
             android:layout_width="match_parent"
@@ -104,12 +93,17 @@
             style="@style/Widget.MaterialComponents.Button" />
 
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/installssh"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/installssh"
-            tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+            app:icon="@drawable/ic_ssh"
+            app:iconGravity="start"
+            app:iconPadding="12dp"
+            app:iconTint="@null"
+            android:backgroundTint="?attr/colorPrimary"
+            style="@style/Widget.MaterialComponents.Button" />
 
         <Button
             android:id="@+id/installsshlibs"
