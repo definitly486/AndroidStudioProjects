@@ -6,26 +6,51 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.setPadding
+import androidx.fragment.app.Fragment
 import com.example.app.R
+import com.example.app.fragments.FifthFragment
+import com.example.app.fragments.FirstFragment
+import com.example.app.fragments.SecondFragment
+import com.example.app.fragments.SeventhFragment
+import com.example.app.fragments.SixthFragment
+import com.example.app.fragments.ThirdFragment
 
 class MainActivity : AppCompatActivity() {
+
+    // Список твоих фрагментов (в порядке кнопок)
+    private val fragmentList = listOf<Fragment>(
+        FirstFragment(),
+        SecondFragment(),
+        ThirdFragment(),
+        FifthFragment(),
+        SixthFragment(),
+        SeventhFragment()
+    )
+
+    private val buttonTitles = listOf(
+        "Первая", "Вторая", "Третья", "Пятая", "Шестая", "Седьмая"
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // === СОЗДАНИЕ ФАЙЛА packages.txt ===
+        // === Создание файла packages.txt ===
         if (savePackagesToFile("packages.txt")) {
-            Toast.makeText(this, "Файл packages.txt успешно создан.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Файл packages.txt создан.", Toast.LENGTH_SHORT).show()
         } else {
-            Toast.makeText(this, "Ошибка при создании файла.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Ошибка создания файла.", Toast.LENGTH_SHORT).show()
         }
 
-        // === НАСТРОЙКА КНОПОК ===
+        // === Настройка кнопок ===
         setupActionButtons()
+
+        // Открываем первый фрагмент при запуске
+        if (savedInstanceState == null) {
+            openFragment(fragmentList[0], buttonTitles[0])
+        }
     }
 
-    // === Функция создания файла с пакетами ===
     private fun savePackagesToFile(fileName: String): Boolean {
         return try {
             val packages = packageManager.getInstalledPackages(0)
@@ -40,57 +65,42 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // === НОВАЯ ФУНКЦИЯ: Создание списка кнопок вместо табов ===
     private fun setupActionButtons() {
         val buttonsContainer = findViewById<LinearLayout>(R.id.buttonsContainer)
-        val buttonTitles = listOf(
-            "Первая",
-            "Вторая",
-            "Третья",
-            "Пятая",
-            "Шестая",
-            "Седьмая"
-        )
 
         buttonTitles.forEachIndexed { index, title ->
             val button = Button(this).apply {
                 text = title
+                textSize = 13f  // Компактный текст
+
+                minHeight = 0
                 layoutParams = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
+                    36.dpToPx()  // Компактная высота
                 ).apply {
-                    setMargins(0, 0, 0, 8.dpToPx())
+                    setMargins(0, 0, 0, 4.dpToPx())  // Меньше между кнопками
                 }
-                setPadding(16.dpToPx())
-                setOnClickListener {
-                    onButtonClicked(title, index)
-                }
+
+                setPadding(10.dpToPx())  // Внутренний отступ
+                setBackgroundResource(android.R.drawable.btn_default)
             }
+
+            button.setOnClickListener {
+                openFragment(fragmentList[index], title)
+            }
+
             buttonsContainer.addView(button)
         }
     }
 
-    // === Обработчик нажатия на кнопку ===
-    private fun onButtonClicked(title: String, position: Int) {
-        Toast.makeText(this, "Нажата: $title (позиция: $position)", Toast.LENGTH_SHORT).show()
-
-        // Здесь можно открыть нужный фрагмент или выполнить действие
-        when (position) {
-            0 -> showToast("Открываем Первый фрагмент")
-            1 -> showToast("Открываем Второй фрагмент")
-            2 -> showToast("Открываем Третий фрагмент")
-            3 -> showToast("Открываем Пятый фрагмент")
-            4 -> showToast("Открываем Шестой фрагмент")
-            5 -> showToast("Открываем Седьмой фрагмент")
-        }
+    private fun openFragment(fragment: Fragment, title: String) {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragmentContainer, fragment)
+            .setReorderingAllowed(true)
+            .addToBackStack(title) // Чтобы Back возвращал к нужной кнопке
+            .commit()
     }
 
-    private fun showToast(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-    }
-
-    // === Утилита: dp → px ===
-    private fun Int.dpToPx(): Int {
-        return (this * resources.displayMetrics.density).toInt()
-    }
+    private fun Int.dpToPx(): Int =
+        (this * resources.displayMetrics.density).toInt()
 }
