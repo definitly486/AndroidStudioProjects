@@ -211,13 +211,18 @@
                 tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
 
 
-            <Button
-                android:id="@+id/installhaker"
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/installhacker"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="48dp"
-                android:text="@string/intallhaker"
-                tools:ignore="UsingOnClickInXml,VisualLintButtonSize,TouchTargetSizeCheck" />
+                android:text="@string/installhacker"
+                app:icon="@drawable/ic_hacker"
+                app:iconGravity="start"
+                app:iconPadding="8dp"
+                app:iconTint="@null"
+                android:backgroundTint="?attr/colorPrimary"
+                style="@style/Widget.MaterialComponents.Button"
+                tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/installzepp"
