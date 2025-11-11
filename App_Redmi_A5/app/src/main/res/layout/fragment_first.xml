@@ -39,12 +39,17 @@
                 android:text="@string/installtermosplus"
                 tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/installfm"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/installfm"
-                tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+                app:icon="@drawable/ic_fm"
+                app:iconGravity="start"
+                app:iconPadding="12dp"
+                app:iconTint="@null"
+                android:backgroundTint="?attr/colorPrimary"
+                style="@style/Widget.MaterialComponents.Button" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/installaurora"
@@ -71,19 +76,29 @@
                 android:backgroundTint="?attr/colorPrimary"
                 style="@style/Widget.MaterialComponents.Button" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/installjob"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/installjob"
-                tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+                app:icon="@drawable/ic_job"
+                app:iconGravity="start"
+                app:iconPadding="12dp"
+                app:iconTint="@null"
+                android:backgroundTint="?attr/colorPrimary"
+                style="@style/Widget.MaterialComponents.Button" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/installtc"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/installtc"
-                tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+                app:icon="@drawable/ic_tc"
+                app:iconGravity="start"
+                app:iconPadding="12dp"
+                app:iconTint="@null"
+                android:backgroundTint="?attr/colorPrimary"
+                style="@style/Widget.MaterialComponents.Button" />
 
             <Button
                 android:id="@+id/installozonbank"
