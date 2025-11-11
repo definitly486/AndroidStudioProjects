@@ -41,6 +41,7 @@ class ThirdFragment : Fragment() {
         setupCopyCloneButton(view)
         decryptGnucasgpgpButton(view)
         rebootButton(view)
+        powerofButton(view)
         return view
     }
 
@@ -124,12 +125,30 @@ class ThirdFragment : Fragment() {
         }
     }
 
+    private fun powerofButton(view: View){
+
+        val poweroffButton = view.findViewById<Button>(R.id.poweroff)
+        poweroffButton.setOnClickListener {
+            rebootOrShutdown()
+        }
+    }
+
+
     private fun setupCopyCloneButton(view: View) {
         val copyCloneButton = view.findViewById<Button>(R.id.copydcim)
         copyCloneButton.setOnClickListener {
             copymain()
         }
     }
+
+    private fun rebootOrShutdown() {
+        try {
+            Runtime.getRuntime().exec(arrayOf("/system/bin/su", "-c", "reboot -p"))
+        } catch (e: Exception) {
+            println("Ошибка выполнения команды: ${e.message}")
+        }
+    }
+
 
     fun copymain() {
         Toast.makeText(context, "Копируем DCIM...", Toast.LENGTH_SHORT).show()
