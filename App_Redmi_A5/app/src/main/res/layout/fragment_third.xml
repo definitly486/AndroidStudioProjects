@@ -65,11 +65,18 @@
             android:backgroundTint="?attr/colorPrimary"
             style="@style/Widget.MaterialComponents.Button" />
 
-        <Button
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/copydcim"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/copydcim"
+            app:icon="@drawable/ic_copy"
+            app:iconGravity="start"
+            app:iconPadding="8dp"
+            app:iconTint="@null"
+            android:backgroundTint="?attr/colorPrimary"
+            style="@style/Widget.MaterialComponents.Button"
             tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
 
         <com.google.android.material.button.MaterialButton
