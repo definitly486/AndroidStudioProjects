@@ -100,11 +100,18 @@
                 style="@style/Widget.MaterialComponents.Button"
                 tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/installgnucash"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/installgnucash"
+                android:textColor="@android:color/white"
+                app:icon="@drawable/ic_gnucash"
+                app:iconGravity="start"
+                app:iconPadding="8dp"
+                app:iconTint="@null"
+                android:backgroundTint="?attr/colorPrimary"
+                style="@style/Widget.MaterialComponents.Button"
                 tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
 
             <Button

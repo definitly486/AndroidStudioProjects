@@ -104,6 +104,10 @@ private val REQUEST_CODE_WRITE_SETTINGS_PERMISSION = 1001
         val setting = view.findViewById<Button>(R.id.setsettings)
         setting.setOnClickListener { setSettings() }
 
+        // Кнопка установки OpenSSH
+        val installssh = view.findViewById<Button>(R.id.installssh)
+        installssh.setOnClickListener { installSSH() }
+
     }
 
     private fun downloadBusyBox() {
@@ -318,6 +322,23 @@ private val REQUEST_CODE_WRITE_SETTINGS_PERMISSION = 1001
         Thread.sleep(3000L)
         downloadHelper2.copygit()
     }
+
+    private fun installSSH() {
+        val folder = getDownloadFolder() ?: return
+        val tarGzFile = File(folder, "openssh_bin.tar.xz")
+        val outputDir = File(folder, "")
+        if (!tarGzFile.exists()) {
+            Toast.makeText(requireContext(), "Файл openssh_bin.tar.xz не существует", Toast.LENGTH_SHORT).show()
+            downloadHelper.downloadgpg("https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/openssh/openssh_bin.tar.xz")
+            return
+        }
+        downloadHelper2 = DownloadHelper2(requireContext())
+        downloadHelper2.unpackTarXz(tarGzFile, outputDir)
+        Thread.sleep(3000L)
+        downloadHelper2.copyssh()
+    }
+
+
 
     private fun installGNUPG() {
         val folder = getDownloadFolder() ?: return
