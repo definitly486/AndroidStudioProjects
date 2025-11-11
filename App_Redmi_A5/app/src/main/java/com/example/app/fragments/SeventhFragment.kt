@@ -45,7 +45,7 @@ class SeventhFragment  : Fragment()  {
         val installgate = view.findViewById<Button>(R.id.installgate)
         installgate.setOnClickListener { installGATE() }
 
-        // Кнопка установки gate
+        // Кнопка установки binance
         val installbinance = view.findViewById<Button>(R.id.installbinance)
         installbinance.setOnClickListener { installBINANCE() }
     }
