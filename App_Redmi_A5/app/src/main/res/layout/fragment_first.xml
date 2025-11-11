@@ -19,11 +19,17 @@
             tools:context=".MainActivity"
             tools:ignore="ExtraText,UselessParent">
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/installtermos"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/install_termos"
+                app:icon="@drawable/ic_termos"
+                app:iconGravity="start"
+                app:iconPadding="8dp"
+                app:iconTint="@null"
+                android:backgroundTint="?attr/colorPrimary"
+                style="@style/Widget.MaterialComponents.Button"
                 tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
 
             <Button
