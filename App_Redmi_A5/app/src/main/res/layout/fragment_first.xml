@@ -195,12 +195,7 @@
                 style="@style/Widget.MaterialComponents.Button"
                 tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
 
-            <Button
-                android:id="@+id/installgesture"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/intallgesture"
-                tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/installtelegramx"
