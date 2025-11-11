@@ -1,47 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
+        android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:id="@+id/main"
         android:layout_margin="16dp"
         tools:context=".MainActivity">
 
-
-
-        <Button
-            android:id="@+id/downloadgate"
+        <!-- Кнопка 1: Скачать Gate.io -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/download_gate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/download_gate"
-            android:onClick="downloadgate"
-            tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+            app:icon="@drawable/ic_gate_io"
+            app:iconGravity="start"
+            app:iconPadding="12dp"
+            app:iconTint="@null"
+            android:backgroundTint="?attr/colorPrimary"
+            style="@style/Widget.MaterialComponents.Button" />
 
-
+        <!-- Кнопка 2: Установить Gate.io -->
         <Button
             android:id="@+id/installgate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:text="@string/install_gate"
+            android:drawableStart="@drawable/ic_gate_io"
+            android:drawablePadding="12dp"
+            android:gravity="center_vertical|start"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
             android:onClick="installgate"
-            tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+            tools:ignore="UsingOnClickInXml,VisualLintButtonSize,RtlSymmetry" />
 
-
+        <!-- Кнопка 3: Установить Binance (можно без иконки или с другой) -->
         <Button
             android:id="@+id/installbinance"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:text="@string/installbinance"
+            android:drawableStart="@drawable/ic_gate_io"
+            android:drawablePadding="12dp"
+            android:gravity="center_vertical|start"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
             android:onClick="installbinance"
-            tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
-
-
-
+            tools:ignore="UsingOnClickInXml,VisualLintButtonSize,RtlSymmetry" />
 
     </LinearLayout>
 </FrameLayout>

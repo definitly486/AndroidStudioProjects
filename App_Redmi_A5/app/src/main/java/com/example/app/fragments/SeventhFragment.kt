@@ -38,7 +38,7 @@ class SeventhFragment  : Fragment()  {
     private fun setupButtons(view: View) {
 
         // Кнопка скачивания gate
-        val downloadgate = view.findViewById<Button>(R.id.downloadgate)
+        val downloadgate = view.findViewById<Button>(R.id.download_gate)
         downloadgate.setOnClickListener { downloadGATE() }
 
         // Кнопка установки gate
