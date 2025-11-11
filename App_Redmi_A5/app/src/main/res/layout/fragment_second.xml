@@ -91,12 +91,17 @@
             android:backgroundTint="?attr/colorPrimary"
             style="@style/Widget.MaterialComponents.Button" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/installgnupg"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/installgnupg"
-            tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+            app:icon="@drawable/ic_gnupg"
+            app:iconGravity="start"
+            app:iconPadding="12dp"
+            app:iconTint="@null"
+            android:backgroundTint="?attr/colorPrimary"
+            style="@style/Widget.MaterialComponents.Button" />
 
 
         <Button
