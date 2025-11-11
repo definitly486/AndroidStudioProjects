@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="512"
+    android:viewportHeight="512">
+
+    <!-- Android robot head (simplified) -->
+    <path
+        android:fillColor="#3DDC84"
+        android:pathData="M256,0C114.6,0,0,114.6,0,256s114.6,256,256,256s256-114.6,256-256S397.4,0,256,0z" />
+
+    <!-- Eyes -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M176,192c-26.5,0-48,21.5-48,48s21.5,48,48,48s48-21.5,48-48S202.5,192,176,192z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M336,192c-26.5,0-48,21.5-48,48s21.5,48,48,48s48-21.5,48-48S362.5,192,336,192z" />
+
+    <!-- Antennae (simplified) -->
+    <path
+        android:fillColor="#3DDC84"
+        android:pathData="M136,112l-24-24l24-24" />
+    <path
+        android:fillColor="#3DDC84"
+        android:pathData="M376,112l24-24l-24-24" />
+
+    <!-- Sleep Z's (the floating Z's above the head) -->
+    <path
+        android:fillColor="#000000"
+        android:pathData="M96,48h32l-24,24h32v16H96z" />
+    <path
+        android:fillColor="#000000"
+        android:pathData="M64,16h32l-24,24h32v16H64z" />
+    <path
+        android:fillColor="#000000"
+        android:pathData="M32,0h32l-24,24h32v16H32z" />
+
+</vector>
