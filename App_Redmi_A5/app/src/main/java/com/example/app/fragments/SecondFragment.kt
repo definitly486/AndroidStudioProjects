@@ -64,10 +64,6 @@ private val REQUEST_CODE_WRITE_SETTINGS_PERMISSION = 1001
         val downloadbusybox = view.findViewById<Button>(R.id.downloadbusybox)
         downloadbusybox.setOnClickListener { downloadBusyBox() }
 
-        // Кнопка установки openssl
-        val installopenssl = view.findViewById<Button>(R.id.installopenssl)
-        installopenssl.setOnClickListener { downloadOpenSSL() }
-
         // Кнопка установки gh
         val installgh = view.findViewById<Button>(R.id.installgh)
         installgh.setOnClickListener { downloadGH() }
