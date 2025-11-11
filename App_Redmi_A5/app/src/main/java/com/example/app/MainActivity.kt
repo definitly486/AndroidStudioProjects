@@ -14,27 +14,22 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
+        // === СОЗДАНИЕ ФАЙЛА (твой код) ===
         if (this.savePackagesToFile("packages.txt")) {
             Toast.makeText(this, "Файл успешно создан.", Toast.LENGTH_SHORT).show()
         } else {
             Toast.makeText(this, "Ошибка при создании файла.", Toast.LENGTH_SHORT).show()
         }
 
-
-
-
-        // Найти ViewPager2 по его ID
+        // === НАСТРОЙКА ViewPager2 и TabLayout ===
         val viewPager = findViewById<ViewPager2>(R.id.viewPager)
+        val tabs = findViewById<TabLayout>(R.id.tabs) // ID из <include android:id="@+id/tabs" ...>
 
-        // Установить адаптер для ViewPager2
+        // Адаптер для фрагментов
         val sectionsPagerAdapter = SectionsPagerAdapter(this)
         viewPager.adapter = sectionsPagerAdapter
 
-        // Получить ссылку на TabLayout
-        val tabs = findViewById<TabLayout>(R.id.tabs)
-
-        // Связать TabLayout с ViewPager2
+        // Связываем TabLayout с ViewPager2
         TabLayoutMediator(tabs, viewPager) { tab, position ->
             tab.text = when (position) {
                 0 -> "Первая"
@@ -43,9 +38,23 @@ class MainActivity : AppCompatActivity() {
                 3 -> "Пятая"
                 4 -> "Шестая"
                 5 -> "Седьмая"
-                else -> ""
+                else -> "Вкладка ${position + 1}"
             }
         }.attach()
     }
 
+    // === ТВОЯ ФУНКЦИЯ (добавь её в класс, если ещё не добавлена) ===
+    private fun AppCompatActivity.savePackagesToFile(fileName: String): Boolean {
+        return try {
+            val packages = packageManager.getInstalledPackages(0)
+            val data = packages.joinToString("\n") { it.packageName }
+            openFileOutput(fileName, MODE_PRIVATE).use { output ->
+                output.write(data.toByteArray())
+            }
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
+    }
 }
