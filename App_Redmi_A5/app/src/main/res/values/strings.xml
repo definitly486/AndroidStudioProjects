@@ -19,7 +19,7 @@
     <string name="installsports">Установить Sports </string>
     <string name="intallgesture">Установить Gesture </string>
     <string name="intallhaker">Установить Hacker </string>
-    <string name="intallzepp">Установить Zepp Life</string>
+    <string name="installzepp">Установить Zepp Life</string>
     <string name="installmpv">Установить MPV</string>
     <string name="intallray">Установить v2rayNG </string>
     <string name="downloadbusybox">Установить Busybox,Curl и OpenSSL </string>
