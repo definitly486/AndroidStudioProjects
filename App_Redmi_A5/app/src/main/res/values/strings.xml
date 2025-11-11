@@ -52,5 +52,6 @@
     <string name="install_gate">Установить Gate </string>
     <string name="reboot">Перегрузить  </string>
     <string name="installbinance">Установить Binance </string>
+    <string name="installssh">Установить OpenSSH </string>
 
 </resources>
