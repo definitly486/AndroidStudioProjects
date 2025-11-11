@@ -55,5 +55,7 @@
     <string name="installssh">Установить OpenSSH </string>
     <string name="installsshlins">Установить SSH LIBS </string>
     <string name="installtermoplus">Установить TermOne Plus </string>
+    <string name="donloadplumaprofile">Скачать Pluma profile </string>
+    <string name="installplumaprofile">Установить Pluma profile </string>
 
 </resources>

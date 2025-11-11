@@ -30,28 +30,29 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/downloadplumaprofile"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Скачать plumaprofile"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.269" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/downloadplumaprofile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/donloadplumaprofile"
+                app:icon="@drawable/ic_pluma"
+                app:iconGravity="start"
+                app:iconPadding="12dp"
+                app:iconTint="@null"
+                android:backgroundTint="?attr/colorPrimary"
+                style="@style/Widget.MaterialComponents.Button" />
 
-    <Button
-        android:id="@+id/installplumaprofile"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Установить plumaprofile"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/downloadplumaprofile"
-        app:layout_constraintVertical_bias="0.104" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/installlumaprofile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/installplumaprofile"
+                app:icon="@drawable/ic_pluma"
+                app:iconGravity="start"
+                app:iconPadding="12dp"
+                app:iconTint="@null"
+                android:backgroundTint="?attr/colorPrimary"
+                style="@style/Widget.MaterialComponents.Button" />
 
     <Button
         android:id="@+id/downloadtelegramprofile"

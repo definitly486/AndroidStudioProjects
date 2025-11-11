@@ -267,12 +267,17 @@
                 android:text="@string/installcore"
                 tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/installpluma"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/installpluma"
-                tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+                app:icon="@drawable/ic_pluma"
+                app:iconGravity="start"
+                app:iconPadding="12dp"
+                app:iconTint="@null"
+                android:backgroundTint="?attr/colorPrimary"
+                style="@style/Widget.MaterialComponents.Button" />
 
             <Button
                 android:id="@+id/install3с"
@@ -301,19 +306,30 @@
                 android:text="@string/installgoogleauth"
                 tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/installyandexmap"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/installyandexmap"
-                tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+                app:icon="@drawable/ic_yandexmap"
+                app:iconGravity="start"
+                app:iconPadding="12dp"
+                app:iconTint="@null"
+                android:backgroundTint="?attr/colorPrimary"
+                style="@style/Widget.MaterialComponents.Button" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/installfdroid"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/installfdroid"
-                tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+                app:icon="@drawable/ic_fdroid"
+                app:iconGravity="start"
+                app:iconPadding="12dp"
+                app:iconTint="@null"
+                android:backgroundTint="?attr/colorPrimary"
+                style="@style/Widget.MaterialComponents.Button" />
+
 
 
         </LinearLayout>
