@@ -295,10 +295,10 @@
                 style="@style/Widget.MaterialComponents.Button" />
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/install3c"
+                android:id="@+id/install3с"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/install3c"
+                android:text="@string/install3с"
                 app:icon="@drawable/ic_3c"
                 app:iconGravity="start"
                 app:iconPadding="8dp"
