@@ -57,5 +57,6 @@
     <string name="installtermoplus">Установить TermOne Plus </string>
     <string name="donloadplumaprofile">Скачать Pluma profile </string>
     <string name="installplumaprofile">Установить Pluma profile </string>
+    <string name="installray">Установить V2rayNG </string>
 
 </resources>
