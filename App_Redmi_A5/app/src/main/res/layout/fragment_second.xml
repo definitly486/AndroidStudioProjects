@@ -15,12 +15,17 @@
         tools:ignore="ExtraText,UselessParent">
 
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/deletepkg"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/deletepkg"
-            tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+            app:icon="@drawable/ic_trash"
+            app:iconGravity="start"
+            app:iconPadding="12dp"
+            app:iconTint="@null"
+            android:backgroundTint="?attr/colorPrimary"
+            style="@style/Widget.MaterialComponents.Button" />
 
         <Button
             android:id="@+id/downloadbusybox"
