@@ -2,7 +2,8 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <!-- Оборачиваем LinearLayout внутрь ScrollView -->
     <ScrollView
@@ -16,7 +17,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             tools:context=".MainActivity"
-            tools:ignore="UselessParent">
+            tools:ignore="ExtraText,UselessParent">
 
             <Button
                 android:id="@+id/installtermos"
@@ -46,12 +47,17 @@
                 android:text="@string/installaurora"
                 tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/installnewpipe"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/installnewpipe"
-                tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+                app:icon="@drawable/ic_newpipe"
+                app:iconGravity="start"
+                app:iconPadding="12dp"
+                app:iconTint="@null"
+                android:backgroundTint="?attr/colorPrimary"
+                style="@style/Widget.MaterialComponents.Button" />
 
             <Button
                 android:id="@+id/installjob"
@@ -81,11 +87,17 @@
                 android:text="@string/installsberbank"
                 tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/installtelegram"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/installtelegram"
+                app:icon="@drawable/ic_telegram"
+                app:iconGravity="start"
+                app:iconPadding="8dp"
+                app:iconTint="@null"
+                android:backgroundTint="?attr/colorPrimary"
+                style="@style/Widget.MaterialComponents.Button"
                 tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
 
             <Button
