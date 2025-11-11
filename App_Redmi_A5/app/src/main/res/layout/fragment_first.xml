@@ -138,12 +138,17 @@
                 android:text="@string/installkeychain"
                 tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/installdpi"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/intalldpi"
-                tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+                android:text="@string/installdpi"
+                app:icon="@drawable/ic_bye"
+                app:iconGravity="start"
+                app:iconPadding="12dp"
+                app:iconTint="@null"
+                android:backgroundTint="?attr/colorPrimary"
+                style="@style/Widget.MaterialComponents.Button" />
 
             <Button
                 android:id="@+id/installsports"
@@ -182,12 +187,17 @@
                 android:text="@string/intallzepp"
                 tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/installmpv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/intallmpv"
-                tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+                android:text="@string/installmpv"
+                app:icon="@drawable/ic_mpv"
+                app:iconGravity="start"
+                app:iconPadding="12dp"
+                app:iconTint="@null"
+                android:backgroundTint="?attr/colorPrimary"
+                style="@style/Widget.MaterialComponents.Button" />
 
             <Button
                 android:id="@+id/installray"
