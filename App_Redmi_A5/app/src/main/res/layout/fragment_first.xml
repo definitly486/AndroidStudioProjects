@@ -46,11 +46,17 @@
                 android:text="@string/installfm"
                 tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/installaurora"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/installaurora"
+                app:icon="@drawable/ic_shopping_basket"
+                app:iconGravity="start"
+                app:iconPadding="8dp"
+                app:iconTint="@null"
+                android:backgroundTint="?attr/colorPrimary"
+                style="@style/Widget.MaterialComponents.Button"
                 tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
 
             <com.google.android.material.button.MaterialButton
@@ -86,12 +92,17 @@
                 android:text="@string/installozonbank"
                 tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/installsberbank"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/installsberbank"
-                tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+                app:icon="@drawable/ic_sberbank"
+                app:iconGravity="start"
+                app:iconPadding="12dp"
+                app:iconTint="@null"
+                android:backgroundTint="?attr/colorPrimary"
+                style="@style/Widget.MaterialComponents.Button" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/installtelegram"
