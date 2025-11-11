@@ -67,7 +67,6 @@ class FirstFragment : Fragment() {
             R.id.installkeychain to "https://github.com/definitly486/Lenovo_TB-X304L/releases/download/apk/org.sufficientlysecure.keychain_60200.apk",
             R.id.installdpi to "https://github.com/definitly486/Lenovo_TB-X304L/releases/download/apk/ByeByeDPI-arm64-v8a-release.apk",
             R.id.installsports to "https://github.com/definitly486/Lenovo_TB-X304L/releases/download/apk/sports+2024_1.2_apkcombo.com_antisplit.apk",
-            R.id.installgesture to "https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/apk/Gesture.apk",
             R.id.installhaker to "https://github.com/definitly486/Lenovo_TB-X304L/releases/download/apk/Hacker_v1.41.1.apk",
             R.id.installzepp to "https://github.com/definitly486/redmia5/releases/download/apk/zepplife_6.14.0_repack.apk",
             R.id.installmpv to "https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/apk/is.xyz.mpv_41.apk",
