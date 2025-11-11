@@ -32,11 +32,17 @@
                 style="@style/Widget.MaterialComponents.Button"
                 tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/installtermosplus"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/installtermosplus"
+                android:text="@string/installtermoplus"
+                app:icon="@drawable/ic_termplus"
+                app:iconGravity="start"
+                app:iconPadding="8dp"
+                app:iconTint="@null"
+                android:backgroundTint="?attr/colorPrimary"
+                style="@style/Widget.MaterialComponents.Button"
                 tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
 
             <com.google.android.material.button.MaterialButton
@@ -151,11 +157,17 @@
                 style="@style/Widget.MaterialComponents.Button"
                 tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/installkeychain"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/installkeychain"
+                app:icon="@drawable/ic_key"
+                app:iconGravity="start"
+                app:iconPadding="8dp"
+                app:iconTint="@null"
+                android:backgroundTint="?attr/colorPrimary"
+                style="@style/Widget.MaterialComponents.Button"
                 tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
 
             <com.google.android.material.button.MaterialButton
@@ -263,12 +275,18 @@
                 android:text="@string/install3с"
                 tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/installk9mail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/installk9mail"
-                tools:ignore="UsingOnClickInXml,VisualLintButtonSize" />
+                app:icon="@drawable/ic_k9"
+                app:iconGravity="start"
+                app:iconPadding="12dp"
+                app:iconTint="@null"
+                android:backgroundTint="?attr/colorPrimary"
+                style="@style/Widget.MaterialComponents.Button" />
+
 
             <Button
                 android:id="@+id/installgoogleauth"

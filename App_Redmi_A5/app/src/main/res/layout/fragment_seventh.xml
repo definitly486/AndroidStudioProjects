@@ -27,19 +27,17 @@
             style="@style/Widget.MaterialComponents.Button" />
 
         <!-- Кнопка 2: Установить Gate.io -->
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/installgate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/install_gate"
-            android:drawableStart="@drawable/ic_gate_io"
-            android:drawablePadding="12dp"
-            android:gravity="center_vertical|start"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:onClick="installgate"
-            tools:ignore="UsingOnClickInXml,VisualLintButtonSize,RtlSymmetry" />
+            android:text="@string/installgate"
+            app:icon="@drawable/ic_gate"
+            app:iconGravity="start"
+            app:iconPadding="12dp"
+            app:iconTint="@null"
+            android:backgroundTint="?attr/colorPrimary"
+            style="@style/Widget.MaterialComponents.Button" />
 
         <!-- Кнопка 3: Установить Binance (можно без иконки или с другой) -->
         <Button
