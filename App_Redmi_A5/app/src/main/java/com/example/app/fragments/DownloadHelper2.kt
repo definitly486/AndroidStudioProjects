@@ -138,6 +138,155 @@ class DownloadHelper2(private val context: Context) {
         Toast.makeText(context, "Копирование  main завершенo", Toast.LENGTH_SHORT).show()
     }
 
+
+    fun copyssh() {
+
+
+        fun showCompletionDialoginstall() {
+            val builder = AlertDialog.Builder(context)
+            builder.setTitle("Проверка root")
+            builder.setMessage("Root доступ отсуствует,приложения не будут установлены")
+            builder.setPositiveButton("Продолжить") { dialog, _ ->
+                dialog.dismiss()
+            }
+            builder.show()
+        }
+
+
+        if (RootChecker.hasRootAccess(context)) {
+
+            Toast.makeText(context, "Устройство имеет root-доступ.", Toast.LENGTH_SHORT)
+                .show()
+        } else {
+            showCompletionDialoginstall()
+            return
+        }
+
+
+        fun showCompletionDialogsystem() {
+            val builder = AlertDialog.Builder(context)
+            builder.setTitle("Проверка записи в system")
+            builder.setMessage("Запись в system не возможна, приложения не будут установлены")
+            builder.setPositiveButton("Продолжить") { dialog, _ ->
+                dialog.dismiss()
+            }
+            builder.show()
+        }
+
+        // Проверка возможности записи в папку '/system'
+        val pathToCheck = "/system"
+        if (!RootChecker.checkWriteAccess(pathToCheck)) {
+            showCompletionDialogsystem()
+            return
+        }
+
+
+
+        Toast.makeText(context, "Копируем OpenSSH ...", Toast.LENGTH_SHORT).show()
+
+
+        val commands = arrayOf(
+            "su - root -c  mount -o rw,remount /system",
+            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/openssh_bin/bin/rsync /system/bin/ ",
+            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/openssh_bin/bin/scp /system/bin/ ",
+            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/openssh_bin/bin/sftp /system/bin/ ",
+            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/openssh_bin/bin/ssh /system/bin/ ",
+            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/openssh_bin/bin/ssh-keygen /system/bin/ ",
+            "su - root -c chmod -R 0755 /system/bin/rsync",
+            "su - root -c chmod -R 0755 /system/bin/scp",
+            "su - root -c chmod -R 0755 /system/bin/sftp",
+            "su - root -c chmod -R 0755 /system/bin/ssh",
+            "su - root -c chmod -R 0755 /system/bin/ssh-keygen",
+            "su - root -c chmod +x /system/bin/rsync",
+            "su - root -c chmod +x /system/bin/scp",
+            "su - root -c chmod +x /system/bin/sftp",
+            "su - root -c chmod +x /system/bin/ssh",
+            "su - root -c chmod +x /system/bin/ssh-keygen"
+
+        )
+
+        var process: Process?
+
+        for (command in commands) {
+            process = Runtime.getRuntime().exec(command)
+            process.waitFor() // Wait for the command to finish
+            if (process.exitValue() != 0) {
+                Toast.makeText(context, "Ошибка при копирование OpenSSH: $command", Toast.LENGTH_LONG)
+                    .show()
+                return
+            }
+        }
+        Toast.makeText(context, "Копирование   OpenSSH завершенo", Toast.LENGTH_SHORT).show()
+    }
+
+
+    fun copysshlibs() {
+
+
+        fun showCompletionDialoginstall() {
+            val builder = AlertDialog.Builder(context)
+            builder.setTitle("Проверка root")
+            builder.setMessage("Root доступ отсуствует,приложения не будут установлены")
+            builder.setPositiveButton("Продолжить") { dialog, _ ->
+                dialog.dismiss()
+            }
+            builder.show()
+        }
+
+
+        if (RootChecker.hasRootAccess(context)) {
+
+            Toast.makeText(context, "Устройство имеет root-доступ.", Toast.LENGTH_SHORT)
+                .show()
+        } else {
+            showCompletionDialoginstall()
+            return
+        }
+
+
+        fun showCompletionDialogsystem() {
+            val builder = AlertDialog.Builder(context)
+            builder.setTitle("Проверка записи в system")
+            builder.setMessage("Запись в system не возможна, приложения не будут установлены")
+            builder.setPositiveButton("Продолжить") { dialog, _ ->
+                dialog.dismiss()
+            }
+            builder.show()
+        }
+
+        // Проверка возможности записи в папку '/system'
+        val pathToCheck = "/system"
+        if (!RootChecker.checkWriteAccess(pathToCheck)) {
+            showCompletionDialogsystem()
+            return
+        }
+
+
+
+        Toast.makeText(context, "Копируем SSH LIBS ...", Toast.LENGTH_SHORT).show()
+
+
+        val commands = arrayOf(
+            "su - root -c  mount -o rw,remount /system",
+            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/openssh_libs/libcrypto.so.1.0.0 /system/lib64/ ",
+            "su - root -c chmod -R 0755 /system/lib64/libcrypto.so.1.0.0 ",
+            "su - root -c chmod -R  0755 /system/lib64/"
+        )
+
+        var process: Process?
+
+        for (command in commands) {
+            process = Runtime.getRuntime().exec(command)
+            process.waitFor() // Wait for the command to finish
+            if (process.exitValue() != 0) {
+                Toast.makeText(context, "Ошибка при копирование SSH LIBS: $command", Toast.LENGTH_LONG)
+                    .show()
+                return
+            }
+        }
+        Toast.makeText(context, "Копирование  SSH LIBS завершенo", Toast.LENGTH_SHORT).show()
+    }
+
     fun copygit() {
 
 
@@ -393,7 +542,7 @@ class DownloadHelper2(private val context: Context) {
             "su - root -c chmod -R 0755 /system/lib64/libreadline.so.8",
             "su - root -c chmod -R 0755 /system/lib64/libsqlite3.so",
             "su - root -c chmod  0755 /system/lib64/libsqlite3.so.0",
-        //    "su - root -c chmod -R  0755 /system/lib64/",
+            "su - root -c chmod -R  0755 /system/lib64/",
             "su - root -c chmod +x  /system/bin/gpg",
             "su - root -c chmod -R  0755 /system/bin/gpg",
         )

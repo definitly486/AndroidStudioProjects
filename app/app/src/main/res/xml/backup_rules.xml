@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="utf-8"?><full-backup-content>    <!-- Specify which files to include or exclude from the backup -->    <include domain="sharedpref"/>    <exclude path="files/cache"/></full-backup-content>

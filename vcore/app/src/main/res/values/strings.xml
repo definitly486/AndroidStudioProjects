@@ -5,4 +5,7 @@
     <string name="canel" />
     <string name="ok" />
     <string name="read">READ</string>
+    <string name="subtitle_text"> </string>
+    <string name="button_read">Прочитать </string>
+    <string name="button_get_balance">Получить баланс </string>
 </resources>

@@ -15,7 +15,7 @@ class GPGHelper(private val gpgExecutable: String = "/system/bin/gpg") {
      */
     fun decryptFile(inputFile: String, outputFile: String, passphrase: String): Boolean {
         // Формируем команду с указанием переменной окружения HOME
-        val command = arrayOf("sh", "-c", "HOME='/storage/emulated/0/Download'; ${gpgExecutable} --output '$outputFile' --batch --passphrase '${passphrase}' -d '$inputFile'")
+        val command = arrayOf("sh", "-c", "HOME='/storage/emulated/0/Download'; $gpgExecutable --output '$outputFile' --batch --passphrase '${passphrase}' -d '$inputFile'")
 
         // Запускаем процесс
         val process = ProcessBuilder(*command)

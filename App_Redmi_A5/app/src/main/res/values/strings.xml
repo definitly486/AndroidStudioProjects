@@ -15,12 +15,12 @@
     <string name="installgnucash">Установить Gnucash </string>
     <string name="installkeychain">Установить Keychain </string>
     <string name="downloadnote">Скачать Note </string>
-    <string name="intalldpi">Установить BYEBYEDPI </string>
-    <string name="intallsports">Установить Sports </string>
+    <string name="installdpi">Установить BYEBYEDPI </string>
+    <string name="installsports">Установить Sports </string>
     <string name="intallgesture">Установить Gesture </string>
-    <string name="intallhaker">Установить Hacker </string>
-    <string name="intallzepp">Установить Zepp Life</string>
-    <string name="intallmpv">Установить MPV</string>
+    <string name="installhacker">Установить Hacker </string>
+    <string name="installzepp">Установить Zepp Life</string>
+    <string name="installmpv">Установить MPV</string>
     <string name="intallray">Установить v2rayNG </string>
     <string name="downloadbusybox">Установить Busybox,Curl и OpenSSL </string>
     <string name="installtermosplus">Установить TermOne Plus </string>
@@ -44,5 +44,21 @@
     <string name="installk9mail">Установить K-9 Mail </string>
     <string name="installgoogleauth">Установить Google Authenticator </string>
     <string name="installyandexmap">Установить Yandex Map  </string>
+    <string name="installfdroid">Установить  F Droid </string>
+    <string name="downloadapk">Скачать APK </string>
+    <string name="setsettings">Установить настройки</string>
+    <string name="insstallapk">Установить APK </string>
+    <string name="download_gate">Скачать Gate </string>
+    <string name="installgate">Установить Gate </string>
+    <string name="reboot">Перегрузить  </string>
+    <string name="installbinance">Установить Binance </string>
+    <string name="installssh">Установить OpenSSH </string>
+    <string name="installsshlins">Установить SSH LIBS </string>
+    <string name="installtermoplus">Установить TermOne Plus </string>
+    <string name="donloadplumaprofile">Скачать Pluma profile </string>
+    <string name="installplumaprofile">Установить Pluma profile </string>
+    <string name="installray">Установить V2rayNG </string>
+    <string name="button_clone">Клонировать </string>
+    <string name="poweroff">Выключить  </string>
 
 </resources>

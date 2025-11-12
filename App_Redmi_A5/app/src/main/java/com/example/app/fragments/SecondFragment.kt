@@ -4,9 +4,12 @@ import DownloadHelper
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.DialogInterface
-
+import android.content.Intent
+import android.net.Uri
+import android.provider.Settings
 import android.os.Bundle
 import android.os.Environment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,15 +23,17 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import java.io.BufferedReader
+import java.io.DataOutputStream
 import java.io.File
 import java.io.FileReader
 import java.io.IOException
 
 
 class SecondFragment : Fragment() {
-
+private val REQUEST_CODE_WRITE_SETTINGS_PERMISSION = 1001
     private lateinit var downloadHelper: DownloadHelper
     private lateinit var downloadHelper2: DownloadHelper2
 
@@ -59,10 +64,6 @@ class SecondFragment : Fragment() {
         val downloadbusybox = view.findViewById<Button>(R.id.downloadbusybox)
         downloadbusybox.setOnClickListener { downloadBusyBox() }
 
-        // Кнопка установки openssl
-        val installopenssl = view.findViewById<Button>(R.id.installopenssl)
-        installopenssl.setOnClickListener { downloadOpenSSL() }
-
         // Кнопка установки gh
         val installgh = view.findViewById<Button>(R.id.installgh)
         installgh.setOnClickListener { downloadGH() }
@@ -86,6 +87,28 @@ class SecondFragment : Fragment() {
         // Кнопка установки gnupg
         val installgnupg = view.findViewById<Button>(R.id.installgnupg)
         installgnupg.setOnClickListener { installGNUPG() }
+
+        // Кнопка скачивания  APK
+        val downloadapk = view.findViewById<Button>(R.id.downloadapk)
+        downloadapk.setOnClickListener { downloadAPK() }
+
+        // Кнопка установки  APK
+        val installapk = view.findViewById<Button>(R.id.installapk)
+        installapk.setOnClickListener { installAPK() }
+
+        // Кнопка установки настроек
+        val setting = view.findViewById<Button>(R.id.setsettings)
+        setting.setOnClickListener { setSettings() }
+
+        // Кнопка установки OpenSSH
+        val installssh = view.findViewById<Button>(R.id.installssh)
+        installssh.setOnClickListener { installSSH() }
+
+
+        // Кнопка установки OpenSSH LIBS
+        val installsshlibs = view.findViewById<Button>(R.id.installsshlibs)
+        installsshlibs.setOnClickListener { installSSHLIBS() }
+
     }
 
     private fun downloadBusyBox() {
@@ -112,6 +135,52 @@ class SecondFragment : Fragment() {
         }
     }
 
+    private fun downloadAPK() {
+        CoroutineScope(Dispatchers.Main).launch {
+            launchLoadSequence()
+        }
+    }
+
+    suspend fun launchLoadSequence() {
+        val urls = listOf(
+            "https://github.com/definitly486/redmia5/releases/download/apk/Total_Commander_v.3.50d.apk",
+            "https://github.com/definitly486/redmia5/releases/download/apk/k9mail-13.0.apk",
+            "https://github.com/definitly486/redmia5/releases/download/apk/Google+Authenticator+7.0.apk",
+            "https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/apk/Pluma_.private_fast.browser_1.80_APKPure.apk",
+            "https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/apk/com.aurora.store_70.apk",
+            "https://github.com/definitly486/redmia5/releases/download/apk/KernelSU_v1.0.5_12081-release.apk",
+            "https://github.com/definitly486/Lenovo_TB-X304L/releases/download/apk/ByeByeDPI-arm64-v8a-release.apk",
+            "https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/apk/Telegram+X+0.27.5.1747-arm64-v8a.apk",
+            "https://github.com/definitly486/redmia5/releases/download/apk/Core+Music+Player_1.0.apk"
+        )
+
+        urls.forEachIndexed { index, url ->
+            val result = downloadSingleAPK(url)
+            handleResult(result, index + 1)
+        }
+    }
+
+    suspend fun downloadSingleAPK(url: String): File? {
+        return suspendCancellableCoroutine<File?> { continuation ->
+            downloadHelper.downloadapk(url) { file ->
+                continuation.resumeWith(Result.success(file))
+            }
+        }
+    }
+
+    fun handleResult(file: File?, index: Int) {
+        if (file != null) {
+            Toast.makeText(
+                requireContext(),
+                "Файл №$index загружен: ${file.name}",
+                Toast.LENGTH_SHORT
+            ).show()
+        } else {
+            Toast.makeText(requireContext(), "Ошибка загрузки файла №$index", Toast.LENGTH_SHORT)
+                .show()
+        }
+    }
+
     private fun downloadKSUZip() {
         downloadHelper.download2("https://github.com/definitly486/redmia5/releases/download/root/APatch-KSU.zip")
 
@@ -120,6 +189,111 @@ class SecondFragment : Fragment() {
     private fun downloadMain() {
         downloadHelper.downloadgpg("https://github.com/definitly486/redmia5/archive/main.tar.gz")
     }
+
+    private fun installAPK() {
+        val urls = listOf(
+            "Total_Commander_v.3.50d.apk",
+            "k9mail-13.0.apk",
+            "Google+Authenticator+7.0.apk",
+            "Pluma_.private_fast.browser_1.80_APKPure.apk",
+            "com.aurora.store_70.apk",
+            "KernelSU_v1.0.5_12081-release.apk",
+            "ByeByeDPI-arm64-v8a-release.apk",
+            "Telegram+X+0.27.5.1747-arm64-v8a.apk",
+            "Core+Music+Player_1.0.apk"
+        )
+
+        for (url in urls) {
+            downloadHelper.installApk2(url)
+        }
+    }
+
+    private fun setSettings() {
+
+   //     if (!RootChecker.hasRootAccess(requireContext())) {
+   //         showCompletionDialogroot(requireContext())
+   //         return
+   //     }
+
+
+        // Анонимный объект для выполнения shell-команд
+        val shellExecutor = object {
+            fun execShellCommand(command: String): Boolean {
+                var process: Process? = null
+                var outputStream: DataOutputStream? = null
+
+                return try {
+                    process = Runtime.getRuntime().exec("su") // запускаем процесс с правами root
+                    outputStream = DataOutputStream(process.outputStream)
+                    outputStream.writeBytes("$command\nexit\n") // выполняем команду и заканчиваем сеанс
+                    outputStream.flush()
+                    outputStream.close()
+                    process.waitFor()
+                    Log.d("ShellExecutor", "Выполнено с результатом ${process.exitValue()}") // Логирование результата
+                    process.exitValue() == 0 // возвращаем успех, если выходное значение равно 0
+                } catch (e: Exception) {
+                    Log.e("ShellExecutor", "Ошибка выполнения команды:", e)
+                    false
+                } finally {
+                    outputStream?.close()
+                    process?.destroy()
+                }
+            }
+        }
+
+
+        if (!Settings.System.canWrite(requireContext())) {
+            val intent = Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS).apply {
+                data = Uri.parse("package:${requireContext().packageName}")
+            }
+            startActivityForResult(intent, REQUEST_CODE_WRITE_SETTINGS_PERMISSION)
+        } else {
+            // Если разрешение уже дано, меняем яркость сразу
+            setScreenBrightness(requireContext(), 800) // Установим нормальное значение яркости (от 0 до 255)
+
+            // Включаем глобальные настройки разработки
+            shellExecutor.execShellCommand("settings put global development_settings_enabled 1")
+
+            //Включаем navbar.gestural
+            shellExecutor.execShellCommand("cmd overlay enable com.android.internal.systemui.navbar.gestural")
+
+            //Установка wifi соеденения
+
+            shellExecutor.execShellCommand("cmd -w wifi connect-network HUAWEI-B315-AFCA wpa2  HR63B1DMTJ4")
+
+            //выключение bluetooth
+
+            shellExecutor.execShellCommand( "cmd bluetooth_manager disable")
+            //Выключение автояркости
+            try {
+                Settings.System.putInt(
+                    requireContext().contentResolver, // Используем верный контекст
+                    Settings.System.SCREEN_BRIGHTNESS_MODE,
+                    Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL// Выключаем автояркость
+                )
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+
+    fun setScreenBrightness(context: Context, brightnessValue: Int) {
+        if (brightnessValue in 0..1000) {
+            Settings.System.putInt(
+                context.contentResolver,
+                Settings.System.SCREEN_BRIGHTNESS_MODE,
+                Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL
+            )
+
+            Settings.System.putInt(
+                context.contentResolver,
+                Settings.System.SCREEN_BRIGHTNESS,
+                brightnessValue
+            )
+        }
+    }
+
 
     private fun unpackMain() {
         val folder = getDownloadFolder() ?: return
@@ -148,6 +322,38 @@ class SecondFragment : Fragment() {
         downloadHelper2.unpackTarXz(tarGzFile, outputDir)
         Thread.sleep(3000L)
         downloadHelper2.copygit()
+    }
+
+    private fun installSSH() {
+        val folder = getDownloadFolder() ?: return
+        val tarGzFile = File(folder, "openssh_bin.tar.xz")
+        val outputDir = File(folder, "")
+        if (!tarGzFile.exists()) {
+            Toast.makeText(requireContext(), "Файл openssh_bin.tar.xz не существует", Toast.LENGTH_SHORT).show()
+            downloadHelper.downloadgpg("https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/openssh/openssh_bin.tar.xz")
+
+            return
+        }
+        downloadHelper2 = DownloadHelper2(requireContext())
+        downloadHelper2.unpackTarXz(tarGzFile, outputDir)
+        Thread.sleep(3000L)
+        downloadHelper2.copyssh()
+    }
+
+    private fun installSSHLIBS() {
+        val folder = getDownloadFolder() ?: return
+        val tarGzFile = File(folder, "openssh_libs.tar.xz")
+        val outputDir = File(folder, "")
+        if (!tarGzFile.exists()) {
+            Toast.makeText(requireContext(), "Файл openssh_libs.tar.xz не существует", Toast.LENGTH_SHORT).show()
+            downloadHelper.downloadgpg("https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/openssh/openssh_libs.tar.xz")
+
+            return
+        }
+        downloadHelper2 = DownloadHelper2(requireContext())
+        downloadHelper2.unpackTarXz(tarGzFile, outputDir)
+        Thread.sleep(3000L)
+        downloadHelper2.copysshlibs()
     }
 
     private fun installGNUPG() {
@@ -261,6 +467,15 @@ class SecondFragment : Fragment() {
         builder.show()
     }
 
+    fun rebootDevice() {
+        try {
+            val runtime = Runtime.getRuntime()
+            val process = runtime.exec("su -c reboot")
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
      fun createReloadDialog(context: Context) {
         val alertBuilder = AlertDialog.Builder(requireContext())
 
@@ -273,9 +488,8 @@ class SecondFragment : Fragment() {
         // Положительная кнопка (перезагружаем устройство)
         alertBuilder.setPositiveButton("Да") { _: DialogInterface, _: Int ->
             // Логика перезагрузки устройства (нужны права администратора или root)
-            // Пример:
-            val runtime = Runtime.getRuntime()
-            val process = runtime.exec(arrayOf("su - root -c reboot", "/system/bin/reboot"))     }
+
+            rebootDevice() }
 
         // Отрицательная кнопка (закрываем диалог)
         alertBuilder.setNegativeButton("Нет") { dialog: DialogInterface, _: Int ->

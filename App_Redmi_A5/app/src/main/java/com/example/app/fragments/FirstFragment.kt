@@ -10,8 +10,7 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.app.R
-import com.example.app.savePackagesToFile
-import java.io.File
+
 
 class FirstFragment : Fragment() {
 
@@ -58,7 +57,7 @@ class FirstFragment : Fragment() {
             R.id.installtermos to "https://github.com/definitly486/redmia5/releases/download/apk/Termos_v2.4_universal.apk",
             R.id.installaurora to "https://github.com/definitly486/Lenovo_TB-X304L/releases/download/apk/com.aurora.store_70.apk",
             R.id.installnewpipe to "https://github.com/definitly486/redmia5/releases/download/apk/NewPipe_nightly-1068.apk",
-            R.id.installjob to "https://github.com/definitly486/Lenovo_TB-X304L/releases/download/apk/Ozon+Job_1.62.0-GMS-release_apkcombo.com_antisplit.apk",
+            R.id.installjob to "https://github.com/definitly486/redmia5/releases/download/apk/ozonjob.apk",
             R.id.installtc to "https://github.com/definitly486/redmia5/releases/download/apk/Total_Commander_v.3.50d.apk",
             R.id.installsberbank to "https://github.com/definitly486/redmia5/releases/download/apk/SberbankOnline.apk",
             R.id.installozonbank to "https://github.com/definitly486/redmia5/releases/download/apk/Ozon_Bank_18.35.0.apk",
@@ -67,8 +66,7 @@ class FirstFragment : Fragment() {
             R.id.installkeychain to "https://github.com/definitly486/Lenovo_TB-X304L/releases/download/apk/org.sufficientlysecure.keychain_60200.apk",
             R.id.installdpi to "https://github.com/definitly486/Lenovo_TB-X304L/releases/download/apk/ByeByeDPI-arm64-v8a-release.apk",
             R.id.installsports to "https://github.com/definitly486/Lenovo_TB-X304L/releases/download/apk/sports+2024_1.2_apkcombo.com_antisplit.apk",
-            R.id.installgesture to "https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/apk/Gesture.apk",
-            R.id.installhaker to "https://github.com/definitly486/Lenovo_TB-X304L/releases/download/apk/Hacker_v1.41.1.apk",
+            R.id.installhacker to "https://github.com/definitly486/Lenovo_TB-X304L/releases/download/apk/Hacker_v1.41.1.apk",
             R.id.installzepp to "https://github.com/definitly486/redmia5/releases/download/apk/zepplife_6.14.0_repack.apk",
             R.id.installmpv to "https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/apk/is.xyz.mpv_41.apk",
             R.id.installray to "https://github.com/definitly486/redmia5/releases/download/apk/v2rayNG_1.10.24_arm64-v8a.apk",
@@ -81,7 +79,8 @@ class FirstFragment : Fragment() {
             R.id.install3с to "https://github.com/definitly486/redmia5/releases/download/apk/3C+Task+Manager+v3.9.4+.33127.+arm64-v8a.apk",
             R.id.installk9mail to "https://github.com/definitly486/redmia5/releases/download/apk/k9mail-13.0.apk",
             R.id.installgoogleauth to "https://github.com/definitly486/redmia5/releases/download/apk/Google+Authenticator+7.0.apk",
-            R.id.installyandexmap to "https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/apk/Yandex_Maps_17.2.0.apk"
+            R.id.installyandexmap to "https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/apk/Yandex_Maps_17.2.0.apk",
+            R.id.installfdroid to "https://github.com/definitly486/redmia5/releases/download/apk/org.fdroid.fdroid_1018050.apk"
         )
 
         // Назначаем обработчик события каждому элементу карты

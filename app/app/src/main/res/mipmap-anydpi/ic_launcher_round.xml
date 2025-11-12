@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <!-- Example round icon -->
+    <path
+        android:fillColor="#FF0000"
+        android:pathData="M24,0 C37.8,0 48,10.2 48,24 C48,37.8 37.8,48 24,48 C10.2,48 0,37.8 0,24 C0,10.2 10.2,0 24,0 Z"/>
+</vector>
