@@ -1,10 +1,9 @@
-package com.example.vcore
-
-import io.ktor.client.HttpClient
+import android.content.Context
+import com.example.vcore.R
+import io.ktor.client.*
 import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.request.accept
 import io.ktor.client.request.get
 import io.ktor.client.request.headers
 import io.ktor.client.request.parameter
@@ -16,27 +15,68 @@ import kotlinx.serialization.json.Json
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 
-// Настройки API Binance
 object Constants {
     const val BASE_URL = "https://api.binance.com/api/v3/"
-    const val API_KEY = "<YOUR_BINANCE_API_KEY>"
-    const val SECRET_KEY = "<YOUR_BINANCE_SECRET_KEY>"
+    lateinit var API_KEY: String
+    lateinit var SECRET_KEY: String
 }
 
 @Serializable
-data class AccountInfo(val balances: List<Balance>)
+data class AccountInfo(
+    val makerCommission: Int,
+    val takerCommission: Int,
+    val buyerCommission: Int,
+    val sellerCommission: Int,
+    val canTrade: Boolean,
+    val canWithdraw: Boolean,
+    val canDeposit: Boolean,
+    val updateTime: Long,
+    val accountType: String,
+    val balances: List<Balance>,
+    val permissions: List<String>
+)
 
 @Serializable
-data class Balance(val asset: String, val free: String, val locked: String)
+data class Balance(
+    val asset: String,
+    val free: String,
+    val locked: String
+)
 
-class GetBalance {
+class GetBalance(public val context: Context) {
 
-    /**
-     * Метод для получения текущего баланса аккаунта Binance.
-     */
+    init {
+        loadApiKeys(context)
+    }
+
+    private fun loadApiKeys(context: Context) {
+        try {
+            val inputStream = context.resources.openRawResource(R.raw.binance_keys)
+            inputStream.bufferedReader().useLines { lines ->
+                lines.forEach { line ->
+                    if (line.contains("=")) {
+                        val parts = line.split('=', limit = 2)
+                        when (parts[0].trim()) {
+                            "API_KEY" -> Constants.API_KEY = parts[1].trim()
+                            "SECRET_KEY" -> Constants.SECRET_KEY = parts[1].trim()
+                        }
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            throw IllegalStateException("Failed to load Binance API keys", e)
+        }
+    }
+
     suspend fun fetchAccountBalance(): AccountInfo {
-        val timestamp = System.currentTimeMillis().toString()
-        val params = mapOf("timestamp" to timestamp)
+        val timestamp = System.currentTimeMillis()
+        val recvWindow = 5000L
+
+        val params = linkedMapOf(
+            "timestamp" to timestamp.toString(),
+            "recvWindow" to recvWindow.toString()
+        )
+
         val signature = generateSignature(params)
 
         return HttpClient(CIO) {
@@ -44,45 +84,30 @@ class GetBalance {
                 json(Json {
                     prettyPrint = true
                     isLenient = true
+                    ignoreUnknownKeys = true
                 })
             }
         }.use { client ->
             client.get("${Constants.BASE_URL}account") {
-                accept(ContentType.Application.Json)
-                parameter("timestamp", timestamp)
-                parameter("signature", signature)
                 headers {
-                    append(HttpHeaders.Authorization, "Bearer ${Constants.API_KEY}")
+                    append("X-MBX-APIKEY", Constants.API_KEY)
                 }
+                parameter("timestamp", timestamp)
+                parameter("recvWindow", recvWindow)
+                parameter("signature", signature)
             }.body()
         }
     }
 
-    /**
-     * Генерируем подпись запроса методом HMAC SHA256.
-     */
-    fun generateSignature(parameters: Map<String, String>): String {
+    private fun generateSignature(parameters: Map<String, String>): String {
+        val queryString = parameters.entries
+            .sortedBy { it.key }
+            .joinToString("&") { "${it.key}=${it.value}" }
+
         val mac = Mac.getInstance("HmacSHA256")
-        val keySpec = SecretKeySpec(Constants.SECRET_KEY.toByteArray(), mac.algorithm)
+        val keySpec = SecretKeySpec(Constants.SECRET_KEY.toByteArray(Charsets.UTF_8), "HmacSHA256")
         mac.init(keySpec)
-
-        val encodedParams = parameters.entries.joinToString("&") { "${it.key}=${it.value}" }
-        val digest = mac.doFinal(encodedParams.toByteArray())
-        return digest.encodeHex()
+        val digest = mac.doFinal(queryString.toByteArray(Charsets.UTF_8))
+        return digest.joinToString("") { "%02x".format(it) }
     }
-
-    /**
-     * Преобразуем массив байтов в hex-кодировку.
-     */
-    private fun ByteArray.encodeHex(): String =
-        joinToString(separator = "") { byte -> "%02x".format(byte) }.lowercase()
 }
-
-// Тестируем получение баланса
-//fun main() {
- //   runBlocking {
- //       val balanceFetcher = GetBalance()
- //       val accountInfo = balanceFetcher.fetchAccountBalance()
- //       println(accountInfo)
- //   }
-//}

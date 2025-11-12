@@ -10,6 +10,7 @@
 /.kotlin
 .DS_Store
 /build
+/vcore/app/src/main/res/raw/binance_keys.txt
 /captures
 .externalNativeBuild
 .cxx
