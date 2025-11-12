@@ -25,11 +25,13 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
+import org.apache.commons.io.file.PathUtils.deleteDirectory
 import java.io.BufferedReader
 import java.io.DataOutputStream
 import java.io.File
 import java.io.FileReader
 import java.io.IOException
+import java.nio.file.Path
 
 
 class SecondFragment : Fragment() {
@@ -109,6 +111,10 @@ private val REQUEST_CODE_WRITE_SETTINGS_PERMISSION = 1001
         val installsshlibs = view.findViewById<Button>(R.id.installsshlibs)
         installsshlibs.setOnClickListener { installSSHLIBS() }
 
+        //Кнопка удаления main.tar.gz и main folder
+        val deleteMain = view.findViewById<Button>(R.id.deletemain)
+        deleteMain.setOnClickListener {  deleteMAIN(requireContext()) }
+
     }
 
     private fun downloadBusyBox() {
@@ -123,11 +129,57 @@ private val REQUEST_CODE_WRITE_SETTINGS_PERMISSION = 1001
         }
     }
 
-    private fun downloadOpenSSL() {
-        downloadHelper.downloadTool("https://github.com/definitly486/Lenovo_TB-X304L/releases/download/openssl/openssl","openssl") { file ->
-            handleDownloadResult(file, "openssl")
+
+
+    private fun deleteMAIN(context: Context) {
+        // Получаем приватный каталог "Загрузки"
+        val privateDownloadsDir = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
+
+        // Проверяем, существует ли каталог
+        if (privateDownloadsDir != null && privateDownloadsDir.exists()) {
+            // Архив main.tar.gz
+            val firstFile = privateDownloadsDir.resolve("main.tar.gz")
+            if (firstFile.exists()) {
+                if (firstFile.delete()) {
+                    Log.d("MainActivity", "Архив main.tar.gz успешно удалён!")
+                } else {
+                    Log.e("MainActivity", "Ошибка при удалении архива main.tar.gz.")
+                }
+            } else {
+                Log.w("MainActivity", "Архив main.tar.gz не найден.")
+            }
+
+            // Папка redmia5-main
+            val folderToDelete = privateDownloadsDir.resolve("redmia5-main")
+            if (folderToDelete.exists()) {
+                if (deleteDirectory(folderToDelete)) {
+                    Log.d("MainActivity", "Папка 'redmia5-main' успешно удалена!")
+                } else {
+                    Log.e("MainActivity", "Ошибка при удалении папки 'redmia5-main'.")
+                }
+            } else {
+                Log.w("MainActivity", "Папка 'redmia5-main' не найдена.")
+            }
+        } else {
+            Log.e("MainActivity", "Приватный каталог 'Загрузки' не найден.")
         }
     }
+
+
+    fun deleteDirectory(directory: File): Boolean {
+        if (!directory.exists()) return false // Проверяем существование папки
+
+        directory.listFiles()?.forEach { file ->
+            if (file.isDirectory) {
+                deleteDirectory(file) // Рекурсивно удаляем подпапки
+            } else {
+                file.delete() // Удаляем файлы
+            }
+        }
+
+        return directory.delete() // Пробуем удалить основную папку
+    }
+
 
     private fun downloadGH() {
         downloadHelper.downloadTool("https://github.com/definitly486/redmia5/releases/download/gh/gh","gh") { file ->

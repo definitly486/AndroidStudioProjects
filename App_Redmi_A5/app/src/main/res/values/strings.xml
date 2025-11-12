@@ -61,5 +61,6 @@
     <string name="button_clone">Клонировать </string>
     <string name="poweroff">Выключить  </string>
     <string name="deletegnucashgpg">Удалить definitly.gnucash и definitly.gnucash.gpg </string>
+    <string name="deletemain">Удалить main.tar.gz и main folder  </string>
 
 </resources>
