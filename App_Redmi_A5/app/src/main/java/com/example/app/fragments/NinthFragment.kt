@@ -130,29 +130,42 @@ class NinthFragment : Fragment() {
     private fun decryptWithOpenSslFormat(inputUri: Uri, outputFile: File, password: String) {
         requireContext().contentResolver.openInputStream(inputUri)?.use { input ->
             FileOutputStream(outputFile).use { fileOut ->
+
+                // 1. Читаем "Salted__"
                 val header = ByteArray(8)
-                if (input.read(header) < 8 || !header.contentEquals("Salted__".toByteArray())) {
-                    throw IllegalArgumentException("Неверный формат файла")
+                if (input.read(header) != 8 || !header.contentEquals("Salted__".toByteArray())) {
+                    throw IllegalArgumentException("Файл не в формате OpenSSL")
                 }
 
-                val salt = ByteArray(8).also { input.read(it) }
-                val iv = ByteArray(16).also { input.read(it) }
-                val key = deriveKey(password, salt)
+                // 2. Читаем соль (8 байт)
+                val salt = ByteArray(8)
+                if (input.read(salt) != 8) throw IOException("Не удалось прочитать salt")
 
+                // 3. Генерируем ключ (32) + IV (16) через PBKDF2-HMAC-SHA256
+                val (key, iv) = deriveKeyAndIvWithPbkdf2(password, salt)
+
+                // 4. Расшифровка
                 val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding").apply {
                     init(Cipher.DECRYPT_MODE, SecretKeySpec(key, "AES"), IvParameterSpec(iv))
                 }
 
                 CipherOutputStream(fileOut, cipher).use { cipherOut ->
-                    input.copyTo(cipherOut)
+                    input.copyTo(cipherOut) // ВЕСЬ остаток — ciphertext
                 }
             }
         } ?: throw IOException("Не удалось открыть файл")
     }
+    private fun deriveKeyAndIvWithPbkdf2(password: String, salt: ByteArray): Pair<ByteArray, ByteArray> {
+        val factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256")
+        val spec = PBEKeySpec(password.toCharArray(), salt, 100000, 384) // 384 бита = 32 + 16
+        val key = factory.generateSecret(spec).encoded
 
-    private fun deriveKey(password: String, salt: ByteArray): ByteArray {
-        val spec = PBEKeySpec(password.toCharArray(), salt, 100000, 256)
-        return SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256").generateSecret(spec).encoded
+        val aesKey = ByteArray(32)
+        val iv = ByteArray(16)
+        System.arraycopy(key, 0, aesKey, 0, 32)
+        System.arraycopy(key, 32, iv, 0, 16)
+
+        return aesKey to iv
     }
 
     private fun onSuccess() {
