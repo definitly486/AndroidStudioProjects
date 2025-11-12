@@ -56,7 +56,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/deletegnucashgpg"
-            app:icon="@drawable/ic_decrypt"
+            app:icon="@drawable/ic_trash"
             app:iconGravity="start"
             app:iconPadding="8dp"
             app:iconTint="@null"
