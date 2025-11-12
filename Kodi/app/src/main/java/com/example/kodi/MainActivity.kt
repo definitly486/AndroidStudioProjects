@@ -1,12 +1,12 @@
 package com.example.kodi
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.widget.Button
 import android.widget.SeekBar
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.lifecycleScope
-import com.example.kodi.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -19,6 +19,7 @@ class MainActivity : ComponentActivity() {
 
     private val kodiUrl = "http://192.168.8.45:8081/jsonrpc"
 
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
