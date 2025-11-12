@@ -1,6 +1,5 @@
 package com.example.vcore
 
-import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.widget.Button
@@ -8,8 +7,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import kotlinx.coroutines.runBlocking
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.OkHttpClient
@@ -26,8 +24,10 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
 
-        val textView : TextView = findViewById(R.id.textView)
-        val textView2 : TextView = findViewById(R.id.textView2)
+        val textView: TextView = findViewById(R.id.textView)
+        val textView2: TextView = findViewById(R.id.textView2)
+        val getBalacneButton: Button = findViewById(R.id.getbalancebutton)
+
 
         fun getfio5() {
 
@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity() {
                     val json = response.body!!.string()
                     val jsonArray = JSONObject(json)
                     val name = jsonArray.getString("price")
-                    applicationContext.openFileOutput("fio.txt", Context.MODE_PRIVATE).use()
+                    applicationContext.openFileOutput("fio.txt", MODE_PRIVATE).use()
                     {
                         it.write(name.toByteArray())
                     }
@@ -60,7 +60,6 @@ class MainActivity : AppCompatActivity() {
             })
 
         }
-
 
 
         fun getbtc() {
@@ -85,7 +84,7 @@ class MainActivity : AppCompatActivity() {
                     val json = response.body!!.string()
                     val jsonArray = JSONObject(json)
                     val name = jsonArray.getString("price")
-                    applicationContext.openFileOutput("btc.txt", Context.MODE_PRIVATE).use()
+                    applicationContext.openFileOutput("btc.txt", MODE_PRIVATE).use()
                     {
                         it.write(name.toByteArray())
                     }
@@ -96,15 +95,13 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-
-
         val myButton3: Button = findViewById(R.id.buttonread)
         myButton3.setOnClickListener {
-            myButton3.setBackgroundColor(Color.GREEN);
+            myButton3.setBackgroundColor(Color.GREEN)
             Toast.makeText(this, "READ", Toast.LENGTH_SHORT).show()
             getfio5()
             getbtc()
-         TimeUnit.SECONDS.sleep(2L)
+            TimeUnit.SECONDS.sleep(2L)
             val fio = File("/data/data/com.example.vcore/files/fio.txt").readText()
             val btc = File("/data/data/com.example.vcore/files/btc.txt").readText()
             textView.text = fio
@@ -112,6 +109,13 @@ class MainActivity : AppCompatActivity() {
         }
 
 
+        getBalacneButton.setOnClickListener {
+            runBlocking {
+                val balanceFetcher = GetBalance()
+                val accountInfo = balanceFetcher.fetchAccountBalance()
+                println(accountInfo)
+            }
+        }
     }
 }
 
