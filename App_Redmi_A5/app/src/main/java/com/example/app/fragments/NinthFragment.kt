@@ -1,24 +1,28 @@
 package com.example.app.fragments
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
+import android.provider.OpenableColumns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.core.content.ContextCompat
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
-import com.example.app.R
-import android.app.Activity.RESULT_OK
 import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.example.app.R
+import java.io.*
+import javax.crypto.Cipher
+import javax.crypto.CipherOutputStream
+import javax.crypto.SecretKeyFactory
+import javax.crypto.spec.IvParameterSpec
+import javax.crypto.spec.PBEKeySpec
+import javax.crypto.spec.SecretKeySpec
+import kotlinx.coroutines.*
 
 class NinthFragment : Fragment() {
 
@@ -29,13 +33,17 @@ class NinthFragment : Fragment() {
     private lateinit var progressBar: ProgressBar
     private lateinit var tvStatus: TextView
 
-    private var selectedFileUri: Uri? = null // Хранит URI выбранного файла
+    private var selectedFileUri: Uri? = null
+    private var outputFile: File? = null
+
+    private val selectFileLauncher = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+        uri?.let { handleFileSelected(it) }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_ninth, container, false)
         initViews(rootView)
         setupUI()
-        checkPermissions()
         return rootView
     }
 
@@ -51,107 +59,118 @@ class NinthFragment : Fragment() {
     private fun setupUI() {
         btnSelectFile.setOnClickListener { selectFile() }
         btnDecrypt.setOnClickListener { decryptFile() }
-        etPassword.setOnKeyListener { _, _, _ ->
-            updateDecryptButtonState()
-            false
-        }
-    }
-
-    private fun checkPermissions() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
-            val permissions = arrayOf(
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            )
-            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
-                ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(permissions, PERMISSION_REQUEST_CODE)
+        etPassword.addTextChangedListener(object : SimpleTextWatcher() {
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                updateDecryptButtonState()
             }
-        }
+        })
     }
 
     private fun selectFile() {
-        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-            addCategory(Intent.CATEGORY_OPENABLE)
-            type = "*/*"
-        }
-        startActivityForResult(intent, REQUEST_CODE_SELECT_FILE)
+        selectFileLauncher.launch(arrayOf("*/*"))
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_CODE_SELECT_FILE && resultCode == RESULT_OK) {
-            data?.data?.let { uri ->
-                selectedFileUri = uri
-       //         contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
-                tvSelectedFile.text = "Выбран файл: $uri"
-                updateDecryptButtonState()
-            }
+    private fun handleFileSelected(uri: Uri) {
+        selectedFileUri = uri
+        try {
+            val takeFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+            requireContext().contentResolver.takePersistableUriPermission(uri, takeFlags)
+        } catch (e: Exception) { /* игнорируем, если временный доступ */ }
+
+        tvSelectedFile.text = "Выбран: ${getFileName(uri)}"
+        updateDecryptButtonState()
+    }
+
+    private fun getFileName(uri: Uri): String {
+        return try {
+            requireContext().contentResolver.query(uri, null, null, null, null)?.use { cursor ->
+                if (cursor.moveToFirst()) {
+                    cursor.getString(cursor.getColumnIndexOrThrow(OpenableColumns.DISPLAY_NAME))
+                } else "файл"
+            } ?: "файл"
+        } catch (e: Exception) {
+            uri.lastPathSegment ?: "файл"
         }
     }
 
     private fun updateDecryptButtonState() {
-        btnDecrypt.isEnabled = selectedFileUri != null && !etPassword.text.isNullOrBlank()
+        btnDecrypt.isEnabled = selectedFileUri != null && etPassword.text.toString().trim().isNotEmpty()
     }
 
     private fun decryptFile() {
-        val password = etPassword.text.toString()
-        val inputFileUri = selectedFileUri ?: return
-        val outputFilePath = "/storage/emulated/0/Android/data/com.example.decryptopenssl/files/Download/new.txt"
+        val password = etPassword.text.toString().trim()
+        if (password.isEmpty() || selectedFileUri == null) return
 
-        lifecycleScope.launch(Dispatchers.IO) {
+        progressBar.visibility = View.VISIBLE
+        tvStatus.text = "Расшифровка..."
+        btnDecrypt.isEnabled = false
+        outputFile = getOutputFile()
+
+        // КЛЮЧЕВОЕ ИСПРАВЛЕНИЕ: viewLifecycleOwner.lifecycleScope
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
             try {
-                decryptFile(inputFileUri, outputFilePath, password)
+                decryptWithOpenSslFormat(selectedFileUri!!, outputFile!!, password)
                 withContext(Dispatchers.Main) {
-                    progressBar.visibility = View.GONE
-                    Toast.makeText(requireContext(), "Файл успешно расшифрован", Toast.LENGTH_LONG).show()
+                    onSuccess()
                 }
-            } catch (ex: Exception) {
-                ex.printStackTrace()
+            } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
-                    progressBar.visibility = View.GONE
-                    Toast.makeText(requireContext(), "Ошибка: ${ex.message}", Toast.LENGTH_LONG).show()
+                    onError(e)
                 }
             }
         }
     }
 
-    private suspend fun decryptFile(inputFileUri: Uri, outputFilePath: String, password: String) {
-
-        val command = listOf(
-            "openssl",
-            "enc",
-            "-d",
-            "-iter",
-            "100000",
-            "-pbkdf2",
-            "-aes-256-cbc",                     // Алгоритм шифрования
-            "-in",inputFileUri,
-            "-out", outputFilePath,
-            "-pass", "pass:$password"
-        )
-
-        // Выполняем команду
-        val result = runCommand(command as List<String>)
-        println(result)
-
-        if (result.contains("error")) {
-            println("Ошибка при расшифровке!")
-        } else {
-            println("Файл успешно расшифрован!")
-        }
-
+    private fun getOutputFile(): File {
+        val dir = requireContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)!!
+        dir.mkdirs()
+        return File(dir, "decrypted_${System.currentTimeMillis()}.txt")
     }
 
-    fun runCommand(command: List<String>): String {
-        return ProcessBuilder().command(command)
-            .redirectErrorStream(true)
-            .start()
-            .inputStream.bufferedReader().readText()
+    private fun decryptWithOpenSslFormat(inputUri: Uri, outputFile: File, password: String) {
+        requireContext().contentResolver.openInputStream(inputUri)?.use { input ->
+            FileOutputStream(outputFile).use { fileOut ->
+                val header = ByteArray(8)
+                if (input.read(header) < 8 || !header.contentEquals("Salted__".toByteArray())) {
+                    throw IllegalArgumentException("Неверный формат файла")
+                }
+
+                val salt = ByteArray(8).also { input.read(it) }
+                val iv = ByteArray(16).also { input.read(it) }
+                val key = deriveKey(password, salt)
+
+                val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding").apply {
+                    init(Cipher.DECRYPT_MODE, SecretKeySpec(key, "AES"), IvParameterSpec(iv))
+                }
+
+                CipherOutputStream(fileOut, cipher).use { cipherOut ->
+                    input.copyTo(cipherOut)
+                }
+            }
+        } ?: throw IOException("Не удалось открыть файл")
     }
 
-    companion object {
-        const val REQUEST_CODE_SELECT_FILE = 1
-        const val PERMISSION_REQUEST_CODE = 2
+    private fun deriveKey(password: String, salt: ByteArray): ByteArray {
+        val spec = PBEKeySpec(password.toCharArray(), salt, 100000, 256)
+        return SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256").generateSecret(spec).encoded
+    }
+
+    private fun onSuccess() {
+        progressBar.visibility = View.GONE
+        tvStatus.text = "Успешно!"
+        btnDecrypt.isEnabled = true
+        Toast.makeText(requireContext(), "Файл расшифрован: ${outputFile?.name}", Toast.LENGTH_LONG).show()
+    }
+
+    private fun onError(e: Exception) {
+        progressBar.visibility = View.GONE
+        tvStatus.text = "Ошибка"
+        btnDecrypt.isEnabled = true
+        Toast.makeText(requireContext(), "Ошибка: ${e.message}", Toast.LENGTH_LONG).show()
+    }
+
+    abstract class SimpleTextWatcher : android.text.TextWatcher {
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+        override fun afterTextChanged(s: android.text.Editable?) {}
     }
 }
