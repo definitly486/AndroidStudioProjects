@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,7 +14,7 @@ import android.widget.*
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.app.R
-
+import android.app.Activity.RESULT_OK
 class NinthFragment : Fragment() {
 
     private lateinit var tvSelectedFile: TextView
@@ -22,6 +23,8 @@ class NinthFragment : Fragment() {
     private lateinit var btnDecrypt: Button
     private lateinit var progressBar: ProgressBar
     private lateinit var tvStatus: TextView
+
+    private var selectedFileUri: Uri? = null // Переменная для хранения пути к файлу
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_ninth, container, false)
@@ -83,12 +86,24 @@ class NinthFragment : Fragment() {
         startActivityForResult(intent, REQUEST_CODE_SELECT_FILE)
     }
 
-    // Простое обновление состояния кнопки "Дешифровать"
-    private fun updateDecryptButtonState() {
-        btnDecrypt.isEnabled = !etPassword.text.isNullOrBlank()
+    // Получение результата выбора файла
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_CODE_SELECT_FILE && resultCode == RESULT_OK) {
+            data?.data?.let { uri ->
+                selectedFileUri = uri
+                tvSelectedFile.text = "Выбран файл: $uri"
+                updateDecryptButtonState()
+            }
+        }
     }
 
-    // Эмулятор функции расшифровки (реализуйте реальную логику позже)
+    // Простое обновление состояния кнопки "Дешифровать"
+    private fun updateDecryptButtonState() {
+        btnDecrypt.isEnabled = selectedFileUri != null && !etPassword.text.isNullOrBlank()
+    }
+
+    // Заглушка функции расшифровки (реализуйте реальную логику позже)
     private fun decryptFile() {
         // Добавьте вашу логику дешифровки файла здесь
         Toast.makeText(context, "Нажата кнопка Дешифровать", Toast.LENGTH_SHORT).show()
