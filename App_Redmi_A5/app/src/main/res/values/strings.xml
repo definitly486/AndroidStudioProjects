@@ -60,5 +60,6 @@
     <string name="installray">Установить V2rayNG </string>
     <string name="button_clone">Клонировать </string>
     <string name="poweroff">Выключить  </string>
+    <string name="deletegnucashgpg">Удалить definitly.gnucash и definitly.gnucash.gpg </string>
 
 </resources>
