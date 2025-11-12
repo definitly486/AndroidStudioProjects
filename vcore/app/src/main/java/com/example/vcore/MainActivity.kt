@@ -1,5 +1,6 @@
 package com.example.vcore
 
+import GetBalance
 import android.graphics.Color
 import android.os.Bundle
 import android.widget.Button
@@ -7,18 +8,24 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.coroutines.runBlocking
-import okhttp3.Call
-import okhttp3.Callback
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import okhttp3.Response
 import org.json.JSONObject
-import java.io.File
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
+
+    // Один клиент на всё приложение
+    private val okHttpClient = OkHttpClient.Builder()
+        .connectTimeout(10, TimeUnit.SECONDS)
+        .readTimeout(10, TimeUnit.SECONDS)
+        .build()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -26,96 +33,78 @@ class MainActivity : AppCompatActivity() {
 
         val textView: TextView = findViewById(R.id.tvTitle)
         val textView2: TextView = findViewById(R.id.tvSubtitle)
-        val getBalacneButton: Button = findViewById(R.id.btnGetBalance)
+        val getBalanceButton: Button = findViewById(R.id.btnGetBalance)
+        val readButton: Button = findViewById(R.id.btnRead)
 
+        // Кнопка: Получить баланс
+        getBalanceButton.setOnClickListener {
+            lifecycleScope.launch {
+                try {
+                    // Создаём экземпляр с context
+                    val getBalance = GetBalance(this@MainActivity)
+                    val accountInfo = getBalance.fetchAccountBalance()
 
-        fun getfio5() {
+                    // Фильтруем только ненулевые балансы
+                    val nonZero = accountInfo.balances
+                        .filter {
+                            val free = it.free.toDoubleOrNull() ?: 0.0
+                            val locked = it.locked.toDoubleOrNull() ?: 0.0
+                            free > 0 || locked > 0
+                        }
+                        .joinToString("\n") { "${it.asset}: ${it.free} (locked: ${it.locked})" }
 
-            val url = "https://api.binance.com/api/v3/ticker/price?symbol=FIOUSDT"
-            val client = OkHttpClient()
-            val request = Request.Builder()
-                .url(url)
-                .build()
-
-            println(Thread.currentThread())
-            client.newCall(request).enqueue(object : Callback {
-                override fun onFailure(call: Call, e: IOException) {
-                    e.printStackTrace()
+                    textView.text = nonZero.ifEmpty { "No assets" }
+                    Toast.makeText(this@MainActivity, "Balance loaded", Toast.LENGTH_SHORT).show()
+                } catch (e: Exception) {
+                    textView.text = "Error: ${e.message}"
+                    Toast.makeText(this@MainActivity, "Failed: ${e.message}", Toast.LENGTH_LONG).show()
                 }
-
-                override fun onResponse(call: Call, response: Response) {
-                    if (!response.isSuccessful) {
-                        System.err.println("Response not successful")
-                        return
-                    }
-                    val json = response.body!!.string()
-                    val jsonArray = JSONObject(json)
-                    val name = jsonArray.getString("price")
-                    applicationContext.openFileOutput("fio.txt", MODE_PRIVATE).use()
-                    {
-                        it.write(name.toByteArray())
-                    }
-                }
-
-            })
-
+            }
         }
 
+        // Кнопка: Получить цены FIO и BTC
+        readButton.setOnClickListener {
+            readButton.setBackgroundColor(Color.GREEN)
+            lifecycleScope.launch {
+                try {
+                    val fioPrice = fetchPrice("FIOUSDT")
+                    val btcPrice = fetchPrice("BTCUSDT")
 
-        fun getbtc() {
-
-            val url = "https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT"
-            val client = OkHttpClient()
-            val request = Request.Builder()
-                .url(url)
-                .build()
-
-            println(Thread.currentThread())
-            client.newCall(request).enqueue(object : Callback {
-                override fun onFailure(call: Call, e: IOException) {
-                    e.printStackTrace()
-                }
-
-                override fun onResponse(call: Call, response: Response) {
-                    if (!response.isSuccessful) {
-                        System.err.println("Response not successful")
-                        return
+                    // Сохраняем в файлы
+                    applicationContext.openFileOutput("fio.txt", MODE_PRIVATE).use {
+                        it.write(fioPrice.toByteArray())
                     }
-                    val json = response.body!!.string()
-                    val jsonArray = JSONObject(json)
-                    val name = jsonArray.getString("price")
-                    applicationContext.openFileOutput("btc.txt", MODE_PRIVATE).use()
-                    {
-                        it.write(name.toByteArray())
+                    applicationContext.openFileOutput("btc.txt", MODE_PRIVATE).use {
+                        it.write(btcPrice.toByteArray())
+                    }
+
+                    // Читаем обратно (без задержки!)
+                    val fio = applicationContext.getFileStreamPath("fio.txt").readText()
+                    val btc = applicationContext.getFileStreamPath("btc.txt").readText()
+
+                    withContext(Dispatchers.Main) {
+                        textView.text = fio
+                        textView2.text = btc
+                        Toast.makeText(this@MainActivity, "Prices updated", Toast.LENGTH_SHORT).show()
+                    }
+                } catch (e: Exception) {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(this@MainActivity, "Error: ${e.message}", Toast.LENGTH_LONG).show()
                     }
                 }
-
-            })
-
-        }
-
-
-        val myButton3: Button = findViewById(R.id.btnRead)
-        myButton3.setOnClickListener {
-            myButton3.setBackgroundColor(Color.GREEN)
-            Toast.makeText(this, "READ", Toast.LENGTH_SHORT).show()
-            getfio5()
-            getbtc()
-            TimeUnit.SECONDS.sleep(2L)
-            val fio = File("/data/data/com.example.vcore/files/fio.txt").readText()
-            val btc = File("/data/data/com.example.vcore/files/btc.txt").readText()
-            textView.text = fio
-            textView2.text = btc
-        }
-
-
-        getBalacneButton.setOnClickListener {
-            runBlocking {
-                val balanceFetcher = GetBalance()
-                val accountInfo = balanceFetcher.fetchAccountBalance()
-                println(accountInfo)
             }
         }
     }
-}
 
+    // Универсальная функция для получения цены
+    private suspend fun fetchPrice(symbol: String): String = withContext(Dispatchers.IO) {
+        val url = "https://api.binance.com/api/v3/ticker/price?symbol=$symbol"
+        val request = Request.Builder().url(url).build()
+
+        okHttpClient.newCall(request).execute().use { response ->
+            if (!response.isSuccessful) throw IOException("Failed: ${response.code}")
+            val json = JSONObject(response.body!!.string())
+            json.getString("price")
+        }
+    }
+}
