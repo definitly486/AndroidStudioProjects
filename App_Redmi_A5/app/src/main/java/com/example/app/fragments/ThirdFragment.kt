@@ -2,6 +2,8 @@ package com.example.app.fragments
 
 import DownloadHelper
 import android.os.Bundle
+import android.os.Environment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -60,7 +62,27 @@ class ThirdFragment : Fragment() {
        val deleteDefinitlygnucahButton = view.findViewById<Button>(R.id.deletegnucashgpg)
         deleteDefinitlygnucahButton.setOnClickListener {
 
+          val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
 
+// Определяем файлы для удаления
+            val firstFile = downloadsDir.resolve("definitly.gnucash")
+            val secondFile = downloadsDir.resolve("another_file.gnucash") // второй файл
+
+// Удаляем первый файл
+            if (firstFile.exists()) {
+                firstFile.delete()
+                Log.d("MainActivity", "Первый файл успешно удалён!")
+            } else {
+                Log.e("MainActivity", "Первый файл не найден.")
+            }
+
+// Удаляем второй файл
+            if (secondFile.exists()) {
+                secondFile.delete()
+                Log.d("MainActivity", "Второй файл успешно удалён!")
+            } else {
+                Log.e("MainActivity", "Второй файл не найден.")
+            }
         }
     }
 
