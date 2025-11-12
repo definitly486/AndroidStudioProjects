@@ -6,11 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.app.R
-import decryptPGPFileWithPassword
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -23,6 +23,8 @@ class ThirdFragment : Fragment() {
     private lateinit var downloadHelper: DownloadHelper
     private lateinit var downloadHelper2: DownloadHelper2
 
+    private lateinit var editTextPasswordgnucash: EditText
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -32,11 +34,14 @@ class ThirdFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_third, container, false)
         downloadHelper = DownloadHelper(requireContext())
         downloadHelper2 = DownloadHelper2(requireContext())
+        editTextPasswordgnucash = view.findViewById(R.id.editTextPasswordgnucash)
         setupInstallButton(view)
         setupDownloadNoteButton(view)
         setupGitCloneButton(view)
         setupCopyCloneButton(view)
         decryptGnucasgpgpButton(view)
+        rebootButton(view)
+        powerofButton(view)
         return view
     }
 
@@ -51,17 +56,40 @@ class ThirdFragment : Fragment() {
 
     private fun decryptGnucasgpgpButton(view: View) {
         val installButton = view.findViewById<Button>(R.id.decryptgnucashgpg)
-        installButton.setOnClickListener {
 
-         //   decryptPGPFileWithPassword(context = requireContext())
+        installButton.setOnClickListener { _ ->
 
+            // Получаем введённый пароль из EditText поля
+            val enteredPassword = editTextPasswordgnucash.text.toString().trim() // trim удалит лишние пробелы
+
+            // Проверяем наличие пароля
+            if (enteredPassword.isBlank()) {
+                showToast("Пароль не введен. Пожалуйста, введите пароль.")
+                return@setOnClickListener
+            }
+
+            // Создаем экземпляр помощника для работы с PGP-шифрованием
             val helper = GPGHelper()
-            val result = helper.decryptFile("/storage/emulated/0/Download/definitly.gnucash.gpg", "/storage/emulated/0/Download/definitly.gnucash", "639639")
-            println(if (result) "Файл успешно расшифрован." else "Ошибка при расшифровке файла.")
 
+            try {
+                // Расшифровка файла с использованием переданного пароля
+                val isDecryptedSuccessfully = helper.decryptFile(
+                     "/storage/emulated/0/Download/definitly.gnucash.gpg",
+                    "/storage/emulated/0/Download/definitly.gnucash",
+                     enteredPassword
+                )
+
+                if (isDecryptedSuccessfully) {
+                    showToast("Файл успешно расшифрован.")
+                } else {
+                    showToast("Ошибка при расшифровке файла.")
+                }
+            } catch (exception: Exception) {
+                // Обрабатываем возможные исключения, возникающие при шифровании
+                showToast("Ошибка при обработке файла: ${exception.localizedMessage}")
+            }
         }
     }
-
 
     private fun setupDownloadNoteButton(view: View) {
         val downloadnote = view.findViewById<Button>(R.id.downloadnote)
@@ -88,12 +116,39 @@ class ThirdFragment : Fragment() {
         }
     }
 
+    private fun rebootButton(view: View){
+
+        val rEBOOTButton = view.findViewById<Button>(R.id.reboot)
+        rEBOOTButton.setOnClickListener {
+            val reboot = SecondFragment()
+            reboot.rebootDevice()
+        }
+    }
+
+    private fun powerofButton(view: View){
+
+        val poweroffButton = view.findViewById<Button>(R.id.poweroff)
+        poweroffButton.setOnClickListener {
+            rebootOrShutdown()
+        }
+    }
+
+
     private fun setupCopyCloneButton(view: View) {
         val copyCloneButton = view.findViewById<Button>(R.id.copydcim)
         copyCloneButton.setOnClickListener {
             copymain()
         }
     }
+
+    private fun rebootOrShutdown() {
+        try {
+            Runtime.getRuntime().exec(arrayOf("/system/bin/su", "-c", "reboot -p"))
+        } catch (e: Exception) {
+            println("Ошибка выполнения команды: ${e.message}")
+        }
+    }
+
 
     fun copymain() {
         Toast.makeText(context, "Копируем DCIM...", Toast.LENGTH_SHORT).show()
@@ -117,7 +172,7 @@ class ThirdFragment : Fragment() {
     }
 
     private fun executeCommands(commands: Array<String>) {
-        var process: Process? = null
+        var process: Process?
         for (command in commands) {
             process = Runtime.getRuntime().exec(command)
             process.waitFor()

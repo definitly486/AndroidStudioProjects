@@ -18,6 +18,7 @@ openpgpLibrary = "1.0.0"
 orgEclipseJgit = "6.8.0.202311291450-r"
 viewpager2 = "1.1.0"
 xz = "1.10"
+runtimeSavedInstanceState = "1.0.0-alpha11"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -39,6 +40,7 @@ androidx-constraintlayout = { group = "androidx.constraintlayout", name = "const
 openpgp-library = { module = "org.example:openpgp-library", version.ref = "openpgpLibrary" }
 org-eclipse-jgit = { module = "org.eclipse.jgit:org.eclipse.jgit", version.ref = "orgEclipseJgit" }
 xz = { module = "org.tukaani:xz", version.ref = "xz" }
+androidx-runtime-saved-instance-state = { group = "androidx.compose.runtime", name = "runtime-saved-instance-state", version.ref = "runtimeSavedInstanceState" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -53,7 +53,7 @@ dependencies {
 
 
     implementation(libs.material)
-
+    implementation("com.google.android.material:material:1.11.0")
     implementation(libs.org.eclipse.jgit)
     implementation(libs.androidx.viewpager2)
     implementation(libs.commons.compress)
@@ -63,6 +63,7 @@ dependencies {
     implementation(libs.xz)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.runtime.saved.instance.state)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
