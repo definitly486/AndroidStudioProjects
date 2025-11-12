@@ -51,7 +51,7 @@ dependencies {
 // If you need the full PGP suite (includes openpgp)
     implementation("org.bouncycastle:bcpkix-jdk18on:1.78.1")
 
-
+implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.8.6")
     implementation(libs.material)
     implementation("com.google.android.material:material:1.11.0")
     implementation(libs.org.eclipse.jgit)
