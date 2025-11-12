@@ -1,0 +1,3 @@
+/app/build
+/.gradle
+/vcore/app/src/main/res/raw/binance_keys.txt

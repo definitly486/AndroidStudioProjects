@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data-extraction-rules>
+    <cloud />
+    <device />
+    <!-- Optional: explicitly control extraction -->
+    <!-- <extract-native-libs value="false" /> -->
+</data-extraction-rules>
