@@ -19,11 +19,12 @@ class MainActivity : AppCompatActivity() {
         ThirdFragment(),
         FifthFragment(),
         SixthFragment(),
-        SeventhFragment()
+        SeventhFragment(),
+        NinthFragment()
     )
 
     private val buttonTitles = listOf(
-        "Первая", "Вторая", "Третья", "Пятая", "Шестая", "Седьмая"
+        "Первая", "Вторая", "Третья", "Пятая", "Шестая", "Седьмая" ,"Восьмая"
     )
 
     private var selectedButton: Button? = null

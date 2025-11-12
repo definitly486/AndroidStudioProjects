@@ -43,11 +43,12 @@ class MainActivity : AppCompatActivity() {
         val btnRead: Button = findViewById(R.id.btnRead)
 
         btnGetBalance.setOnClickListener {
+              Toast.makeText(this@MainActivity, "test", Toast.LENGTH_SHORT).show()
             Timber.d("Get Balance clicked")
             lifecycleScope.launch {
                 try {
                     val account = getBalance.fetchAccountBalance()
-                    val active = (account.balances ?: emptyList())
+                    val activeBalances = (account.balances ?: emptyList())
                         .filter {
                             val free = it.free.toBigDecimalOrNull() ?: BigDecimal.ZERO
                             val locked = it.locked.toBigDecimalOrNull() ?: BigDecimal.ZERO
@@ -55,7 +56,7 @@ class MainActivity : AppCompatActivity() {
                         }
                         .joinToString("\n") { "${it.asset}: ${it.free} (locked: ${it.locked})" }
 
-                    tvTitle.text = if (active.isEmpty()) "No assets" else active
+                    tvTitle.text = if (activeBalances.isEmpty()) "No assets" else activeBalances
                     Timber.d("Balance shown")
                 } catch (e: Exception) {
                     tvTitle.text = "Error: ${e.message}"
@@ -78,7 +79,7 @@ class MainActivity : AppCompatActivity() {
 
                     val fio = applicationContext.filesDir.resolve("fio.txt").readText()
                     val btc = applicationContext.filesDir.resolve("btc.txt").readText()
-
+Timber.i("This is an info message")
                     withContext(Dispatchers.Main) {
                         tvTitle.text = "FIO: $fio"
                         tvSubtitle.text = "BTC: $btc"
