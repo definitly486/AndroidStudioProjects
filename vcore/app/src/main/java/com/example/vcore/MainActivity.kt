@@ -24,9 +24,9 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
 
-        val textView: TextView = findViewById(R.id.textView)
-        val textView2: TextView = findViewById(R.id.textView2)
-        val getBalacneButton: Button = findViewById(R.id.getbalancebutton)
+        val textView: TextView = findViewById(R.id.tvTitle)
+        val textView2: TextView = findViewById(R.id.tvSubtitle)
+        val getBalacneButton: Button = findViewById(R.id.btnGetBalance)
 
 
         fun getfio5() {
@@ -95,7 +95,7 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-        val myButton3: Button = findViewById(R.id.buttonread)
+        val myButton3: Button = findViewById(R.id.btnRead)
         myButton3.setOnClickListener {
             myButton3.setBackgroundColor(Color.GREEN)
             Toast.makeText(this, "READ", Toast.LENGTH_SHORT).show()
