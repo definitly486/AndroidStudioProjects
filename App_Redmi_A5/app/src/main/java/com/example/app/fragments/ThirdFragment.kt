@@ -42,6 +42,7 @@ class ThirdFragment : Fragment() {
         decryptGnucasgpgpButton(view)
         rebootButton(view)
         powerofButton(view)
+        deletedefinitlygnucahButton(view)
         return view
     }
 
@@ -53,6 +54,16 @@ class ThirdFragment : Fragment() {
 
         }
     }
+
+    private fun deletedefinitlygnucahButton(view:View) {
+
+       val deleteDefinitlygnucahButton = view.findViewById<Button>(R.id.deletegnucashgpg)
+        deleteDefinitlygnucahButton.setOnClickListener {
+
+
+        }
+    }
+
 
     private fun decryptGnucasgpgpButton(view: View) {
         val installButton = view.findViewById<Button>(R.id.decryptgnucashgpg)
