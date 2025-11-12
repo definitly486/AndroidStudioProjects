@@ -66,7 +66,7 @@ class ThirdFragment : Fragment() {
 
 // Определяем файлы для удаления
             val firstFile = downloadsDir.resolve("definitly.gnucash")
-            val secondFile = downloadsDir.resolve("another_file.gnucash") // второй файл
+            val secondFile = downloadsDir.resolve("definitly.gnucash.gpg") // второй файл
 
 // Удаляем первый файл
             if (firstFile.exists()) {
