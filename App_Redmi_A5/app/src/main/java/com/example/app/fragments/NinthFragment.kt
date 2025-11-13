@@ -75,7 +75,7 @@ class NinthFragment : Fragment() {
         try {
             val takeFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION
             requireContext().contentResolver.takePersistableUriPermission(uri, takeFlags)
-        } catch (e: Exception) { /* игнорируем, если временный доступ */ }
+        } catch (_: Exception) { /* игнорируем, если временный доступ */ }
 
         tvSelectedFile.text = "Выбран: ${getFileName(uri)}"
         updateDecryptButtonState()
@@ -88,7 +88,7 @@ class NinthFragment : Fragment() {
                     cursor.getString(cursor.getColumnIndexOrThrow(OpenableColumns.DISPLAY_NAME))
                 } else "файл"
             } ?: "файл"
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             uri.lastPathSegment ?: "файл"
         }
     }
@@ -211,7 +211,7 @@ class NinthFragment : Fragment() {
                         addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                     }
                     startActivity(intent)
-                } catch (e: Exception) {
+                } catch (_: Exception) {
                     Toast.makeText(requireContext(), "Нет приложения для открытия", Toast.LENGTH_SHORT).show()
                 }
             }
