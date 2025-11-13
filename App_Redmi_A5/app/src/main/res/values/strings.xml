@@ -62,5 +62,7 @@
     <string name="poweroff">Выключить  </string>
     <string name="deletegnucashgpg">Удалить definitly.gnucash и definitly.gnucash.gpg </string>
     <string name="deletemain">Удалить main.tar.gz и main folder  </string>
+    <string name="downloadk9mailprofile">Скачать k9mail profile </string>
+    <string name="installk9mailprofile">Установить k9mail profile </string>
 
 </resources>
