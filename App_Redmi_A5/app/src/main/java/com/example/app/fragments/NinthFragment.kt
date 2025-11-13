@@ -46,7 +46,6 @@ class NinthFragment : Fragment() {
         setupUI()
         return rootView
     }
-
     private fun initViews(view: View) {
         tvSelectedFile = view.findViewById(R.id.tvSelectedFile)
         btnSelectFile = view.findViewById(R.id.btnSelectFile)
