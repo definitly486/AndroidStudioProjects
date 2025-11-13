@@ -1,3 +1,5 @@
+@file:Suppress("SpellCheckingInspection")
+
 import android.content.Context
 import androidx.appcompat.app.AlertDialog
 

@@ -1,4 +1,4 @@
-@file:Suppress("ControlFlowWithEmptyBody")
+@file:Suppress("ControlFlowWithEmptyBody", "SpellCheckingInspection")
 
 package com.example.app.fragments
 

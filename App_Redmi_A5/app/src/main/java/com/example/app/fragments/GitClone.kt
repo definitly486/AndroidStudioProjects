@@ -1,3 +1,5 @@
+@file:Suppress("SpellCheckingInspection")
+
 package com.example.app.fragments
 
 import kotlinx.coroutines.Dispatchers
