@@ -165,7 +165,7 @@ fun copyprofile(context: Context, appPackageName: String) {
     }
 
 
-    if ("$appPackageName" == "org.thunderdog.challegram") {
+    if (appPackageName == "org.thunderdog.challegram") {
 
         "su - root -c   rm   /data_mirror/data_ce/null/0/$appPackageName/files/tdlib/td.binlog"
 
@@ -178,7 +178,7 @@ fun copyprofile(context: Context, appPackageName: String) {
     showToastOnMainThread(context, "ID $fileOwner")
 
 
-    if ("$appPackageName" == "com.google.android.apps.authenticator2") {
+    if (appPackageName == "com.google.android.apps.authenticator2") {
 
         val commands = arrayOf(
             "su - root -c cp  -R ${folder!!.absolutePath}/$appPackageName/files/accounts  /data_mirror/data_ce/null/0/$appPackageName/files/",
@@ -189,7 +189,7 @@ fun copyprofile(context: Context, appPackageName: String) {
 
 
 
-    if ("$appPackageName" == "org.thunderdog.challegram") {
+    if (appPackageName == "org.thunderdog.challegram") {
 
         val commands = arrayOf(
             "su - root -c cp  -R ${folder!!.absolutePath}/$appPackageName/files/accounts  /data_mirror/data_ce/null/0/$appPackageName/files/ ",
