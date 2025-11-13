@@ -1,9 +1,10 @@
+@file:Suppress("SameParameterValue")
+
 package com.example.app.fragments
 
 import DownloadHelper
 import android.os.Bundle
 import android.os.Environment
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -68,20 +69,25 @@ class ThirdFragment : Fragment() {
             val firstFile = downloadsDir.resolve("definitly.gnucash")
             val secondFile = downloadsDir.resolve("definitly.gnucash.gpg") // второй файл
 
+
+
+
 // Удаляем первый файл
             if (firstFile.exists()) {
                 firstFile.delete()
-                Log.d("MainActivity", "Первый файл успешно удалён!")
+
+                showToast("Файл definitly.gnucash  успешно удалён! ")
             } else {
-                Log.e("MainActivity", "Первый файл не найден.")
+                showToast("Файл  definitly.gnucash не найден.")
             }
 
 // Удаляем второй файл
             if (secondFile.exists()) {
                 secondFile.delete()
-                Log.d("MainActivity", "Второй файл успешно удалён!")
+                showToast("Файл definitly.gnucash.gpg  успешно удалён! ")
+
             } else {
-                Log.e("MainActivity", "Второй файл не найден.")
+                showToast("Файл definitly.gnucash.gpg  успешно удалён! ")
             }
         }
     }
@@ -191,7 +197,8 @@ class ThirdFragment : Fragment() {
         )
         executeCommands(prepareCommands)
 
-        val ownerCmd = "su - root -c ls -l /data_mirror/data_ce/null/0/com.termos | awk '{print \$3}' | head -n 2"
+        val ownerCmd =
+            "su - root -c ls -l /data_mirror/data_ce/null/0/com.termos | awk '{print $3}' | head -n 2"
         val fileOwner = execShell(ownerCmd)?.trim() ?: ""
 
         val commands = arrayOf(
