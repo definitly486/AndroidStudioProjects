@@ -16,7 +16,7 @@ object RootChecker {
             val process = Runtime.getRuntime().exec(arrayOf("/system/bin/sh", "-c", "su -c id"))
             val result = process.waitFor()
             result == 0
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             false
         }
     }
@@ -32,7 +32,7 @@ object RootChecker {
             try {
                 context.packageManager.getApplicationInfo(pkg, 0)
                 return true
-            } catch (ignored: PackageManager.NameNotFoundException) {}
+            } catch (_: PackageManager.NameNotFoundException) {}
         }
         return false
     }
@@ -51,7 +51,7 @@ object RootChecker {
                 0 -> true // Файл успешно создан
                 else -> false // Ошибка при создании файла
             }.also { testFile.delete() }
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             false
         }
     }
