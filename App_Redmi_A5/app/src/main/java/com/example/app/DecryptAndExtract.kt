@@ -56,6 +56,9 @@ fun download(context: Context, url: String) {
                 lastPart
             )
 
+            val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+            downloadManager.enqueue(request)
+
         } catch (ex: Exception) {
             ex.printStackTrace()
             withContext(Dispatchers.Main) {
