@@ -159,6 +159,15 @@ class ThirdFragment : Fragment() {
 
         val rEBOOTButton = view.findViewById<Button>(R.id.reboot)
         rEBOOTButton.setOnClickListener {
+
+            // Проверка root-доступа устройства
+            if (RootChecker.hasRootAccess(requireContext())) {
+                Toast.makeText(requireContext(), "Устройство имеет root-доступ.", Toast.LENGTH_SHORT)
+                    .show()
+            } else {
+                Toast.makeText(requireContext(), "Root-доступ отсутствует.Устройство не будет перезагружено", Toast.LENGTH_SHORT).show()
+            }
+
             val reboot = SecondFragment()
             reboot.rebootDevice()
         }
@@ -168,6 +177,15 @@ class ThirdFragment : Fragment() {
 
         val poweroffButton = view.findViewById<Button>(R.id.poweroff)
         poweroffButton.setOnClickListener {
+
+            // Проверка root-доступа устройства
+            if (RootChecker.hasRootAccess(requireContext())) {
+                Toast.makeText(requireContext(), "Устройство имеет root-доступ.", Toast.LENGTH_SHORT)
+                    .show()
+            } else {
+                Toast.makeText(requireContext(), "Root-доступ отсутствует.Устройство не будет выключно.", Toast.LENGTH_SHORT).show()
+            }
+
             rebootOrShutdown()
         }
     }
