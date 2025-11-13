@@ -91,7 +91,7 @@
                 style="@style/Widget.MaterialComponents.Button" />
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/install9mailprofile"
+                android:id="@+id/installk9mailprofile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/installplumaprofile"
