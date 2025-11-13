@@ -1,3 +1,5 @@
+@file:Suppress("SameParameterValue")
+
 package com.example.app.fragments
 
 import android.content.Context
@@ -17,6 +19,7 @@ import java.io.FileOutputStream
 import java.io.InputStreamReader
 
 
+@Suppress("RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 class DownloadHelper2(private val context: Context) {
 
     fun decompressTarGz(tarGzFile: File, outputDir: File) {
@@ -360,110 +363,6 @@ class DownloadHelper2(private val context: Context) {
         }
         Toast.makeText(context, "Копирование  main завершенo", Toast.LENGTH_SHORT).show()
     }
-
-    fun copyKSUZip () {
-
-
-        fun showCompletionDialoginstall() {
-            val builder = AlertDialog.Builder(context)
-            builder.setTitle("Проверка root")
-            builder.setMessage("Root доступ отсуствует,приложения не будут установлены")
-            builder.setPositiveButton("Продолжить") { dialog, _ ->
-                dialog.dismiss()
-            }
-            builder.show()
-        }
-
-
-        if (RootChecker.hasRootAccess(context)) {
-
-            Toast.makeText(context, "Устройство имеет root-доступ.", Toast.LENGTH_SHORT)
-                .show()
-        } else {
-            showCompletionDialoginstall()
-            return
-        }
-
-
-
-        Toast.makeText(context, "Копируем  APatch-KSU.zip  ...", Toast.LENGTH_SHORT).show()
-
-        val ownerCmd =
-            "su - root -c   ls -l    /storage/emulated/0/Download | awk '{print $3}' | head -n 2"
-        val fileOwner = execShell(ownerCmd)?.trim() ?: ""
-
-        val commands = arrayOf(
-
-            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/APatch-KSU.zip  /storage/emulated/0/Download",
-            "su - root -c chmod 0755  /storage/emulated/0/Download/APatch-KSU.zip",
-            "su - root -c chown -R  $fileOwner:$fileOwner  /storage/emulated/0/Download/APatch-KSU.zip",
-
-            )
-
-        var process: Process?
-
-        for (command in commands) {
-            process = Runtime.getRuntime().exec(command)
-            process.waitFor() // Wait for the command to finish
-            if (process.exitValue() != 0) {
-                Toast.makeText(context, "Ошибка при копирование  APatch-KSU.zip : $command", Toast.LENGTH_LONG)
-                    .show()
-                return
-            }
-        }
-        Toast.makeText(context, "Копирование   APatch-KSU.zip  завершенo", Toast.LENGTH_SHORT).show()
-    }
-
-
-    fun copygpg() {
-
-
-        fun showCompletionDialoginstall() {
-            val builder = AlertDialog.Builder(context)
-            builder.setTitle("Проверка root")
-            builder.setMessage("Root доступ отсуствует,приложения не будут установлены")
-            builder.setPositiveButton("Продолжить") { dialog, _ ->
-                dialog.dismiss()
-            }
-            builder.show()
-        }
-
-
-        if (RootChecker.hasRootAccess(context)) {
-
-            Toast.makeText(context, "Устройство имеет root-доступ.", Toast.LENGTH_SHORT)
-                .show()
-        } else {
-            showCompletionDialoginstall()
-            return
-        }
-
-
-
-        Toast.makeText(context, "Копируем  definitly.gnucash.gpg  ...", Toast.LENGTH_SHORT).show()
-
-
-        val commands = arrayOf(
-
-            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/definitly.gnucash.gpg  /storage/emulated/0/Download",
-            "su - root -c chmod 0755  /storage/emulated/0/Download/definitly.gnucash.gpg",
-
-            )
-
-        var process: Process?
-
-        for (command in commands) {
-            process = Runtime.getRuntime().exec(command)
-            process.waitFor() // Wait for the command to finish
-            if (process.exitValue() != 0) {
-                Toast.makeText(context, "Ошибка при копирование  definitly.gnucash.gpg : $command", Toast.LENGTH_LONG)
-                    .show()
-                return
-            }
-        }
-        Toast.makeText(context, "Копирование  definitly.gnucash.gpg   завершенo", Toast.LENGTH_SHORT).show()
-    }
-
 
     fun copygnupg() {
 
