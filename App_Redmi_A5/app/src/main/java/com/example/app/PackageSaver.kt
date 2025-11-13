@@ -2,14 +2,13 @@ package com.example.app
 
 import android.content.Context
 import android.os.Environment
-import java.io.File
 import java.io.FileWriter
 import java.io.IOException
 
 /**
  * Функция для записи списка пакетов в указанный файл.
  *
- * @param context Контекст приложения
+ * @param org.bouncycastle.crypto.params.Blake3Parameters.context Контекст приложения
  * @param filename Название файла куда записать пакеты.
  */
 fun Context.savePackagesToFile(filename: String): Boolean {
@@ -120,7 +119,7 @@ fun Context.savePackagesToFile(filename: String): Boolean {
     return try {
         FileWriter(fullPath).use { it.write(packages) }
         true
-    } catch (e: IOException) {
+    } catch (_: IOException) {
         false
     }
 }
