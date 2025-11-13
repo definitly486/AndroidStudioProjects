@@ -213,7 +213,7 @@ private val REQUEST_CODE_WRITE_SETTINGS_PERMISSION = 1001
     }
 
     suspend fun downloadSingleAPK(url: String): File? {
-        return suspendCancellableCoroutine<File?> { continuation ->
+        return suspendCancellableCoroutine { continuation ->
             downloadHelper.downloadapk(url) { file ->
                 continuation.resumeWith(Result.success(file))
             }
