@@ -2,6 +2,8 @@
 
 package com.example.app.fragments
 import android.os.Bundle
+import android.os.Environment
+import android.os.Environment.getExternalStoragePublicDirectory
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -46,7 +48,7 @@ class SixthFragment : Fragment() {
             gitCloneInstance.setRepositoryUrl(repoUrl)
 
             // Определение родительского каталога для скачивания
-            val parentDirectory = "/storage/emulated/0/Android/data/com.example.app/files/Download/"
+            val parentDirectory =getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
 
             // Извлечение названия репозитория из URL
             val repoName = extractRepoNameFromURL(repoUrl)
