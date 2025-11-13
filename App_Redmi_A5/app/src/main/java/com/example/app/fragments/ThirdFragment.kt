@@ -87,7 +87,7 @@ class ThirdFragment : Fragment() {
                 showToast("Файл definitly.gnucash.gpg  успешно удалён! ")
 
             } else {
-                showToast("Файл definitly.gnucash.gpg  успешно удалён! ")
+                showToast("Файл definitly.gnucash.gpg  не найден ! ")
             }
         }
     }
