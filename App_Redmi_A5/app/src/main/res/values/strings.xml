@@ -64,5 +64,10 @@
     <string name="deletemain">Удалить main.tar.gz и main folder  </string>
     <string name="downloadk9mailprofile">Скачать k9mail profile </string>
     <string name="installk9mailprofile">Установить k9mail profile </string>
+    <string name="openssl_decryptor">OpenSSL Decryptor</string>
+    <string name="no_file_selected">No file selected</string>
+    <string name="select_encrypted_file">Select Encrypted File</string>
+    <string name="enter_password">Enter password</string>
+    <string name="decrypt_file">Decrypt File</string>
 
 </resources>
