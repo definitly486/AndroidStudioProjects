@@ -211,7 +211,7 @@ class DownloadHelper(private val context: Context) {
                     }
                 }
 
-                try { ctx?.unregisterReceiver(this) } catch (e: Exception) {}
+                try { ctx?.unregisterReceiver(this) } catch (_: Exception) {}
                 downloadReceiver = null
                 lastDownloadId = -1
 
@@ -318,7 +318,7 @@ class DownloadHelper(private val context: Context) {
 
         try {
             context.startActivity(intent)
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             Toast.makeText(context, "Не удалось открыть установщик", Toast.LENGTH_SHORT).show()
         }
     }
@@ -361,7 +361,7 @@ class DownloadHelper(private val context: Context) {
 
         try {
             context.startActivity(intent)
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             Toast.makeText(context, "Не удалось открыть установщик", Toast.LENGTH_SHORT).show()
         }
     }
@@ -434,7 +434,7 @@ class DownloadHelper(private val context: Context) {
                 context.unregisterReceiver(it)
                 downloadReceiver = null
             }
-        } catch (e: Exception) { /* ignore */ }
+        } catch (_: Exception) { /* ignore */ }
     }
 
     // === ПРОЧИЕ МЕТОДЫ ===
@@ -467,7 +467,6 @@ class DownloadHelper(private val context: Context) {
                     lastPart
                 )
 
-                val downloadID = downloadManager.enqueue(request)
                 // Сохраняйте downloadID, если хотите отслеживать завершение загрузки
             } catch (ex: Exception) {
                 ex.printStackTrace()
@@ -558,7 +557,6 @@ class DownloadHelper(private val context: Context) {
                     lastPart
                 )
 
-                val downloadID = downloadManager.enqueue(request)
                 // Сохраняйте downloadID, если хотите отслеживать завершение загрузки
             } catch (ex: Exception) {
                 ex.printStackTrace()
