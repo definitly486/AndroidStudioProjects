@@ -1,8 +1,5 @@
 import android.content.Context
 import androidx.appcompat.app.AlertDialog
-import org.bouncycastle.openpgp.*
-import org.bouncycastle.openpgp.operator.jcajce.*
-import java.io.*
 
 fun decryptPGPFileWithPassword(context: Context){
 
