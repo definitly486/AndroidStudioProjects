@@ -467,7 +467,7 @@ class DownloadHelper(private val context: Context) {
                     Environment.DIRECTORY_DOWNLOADS,
                     lastPart
                 )
-
+                downloadManager.enqueue(request)
                 // Сохраняйте downloadID, если хотите отслеживать завершение загрузки
             } catch (ex: Exception) {
                 ex.printStackTrace()
@@ -557,7 +557,7 @@ class DownloadHelper(private val context: Context) {
                     Environment.DIRECTORY_DOWNLOADS,
                     lastPart
                 )
-
+                downloadManager.enqueue(request)
                 // Сохраняйте downloadID, если хотите отслеживать завершение загрузки
             } catch (ex: Exception) {
                 ex.printStackTrace()
