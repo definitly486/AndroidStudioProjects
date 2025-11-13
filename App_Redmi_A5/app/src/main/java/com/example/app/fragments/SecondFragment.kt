@@ -35,7 +35,8 @@ import java.io.IOException
 
 @Suppress("DEPRECATION")
 class SecondFragment : Fragment() {
-private val REQUEST_CODE_WRITE_SETTINGS_PERMISSION = 1001
+
+    private val requestCodeWriteSettingsPermission = 1001
     private lateinit var downloadHelper: DownloadHelper
     private lateinit var downloadHelper2: DownloadHelper2
 
@@ -298,7 +299,7 @@ private val REQUEST_CODE_WRITE_SETTINGS_PERMISSION = 1001
             val intent = Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS).apply {
                 data = Uri.parse("package:${requireContext().packageName}")
             }
-            startActivityForResult(intent, REQUEST_CODE_WRITE_SETTINGS_PERMISSION)
+            startActivityForResult(intent, requestCodeWriteSettingsPermission)
         } else {
             // Если разрешение уже дано, меняем яркость сразу
             setScreenBrightness(requireContext(), 800) // Установим нормальное значение яркости (от 0 до 255)
