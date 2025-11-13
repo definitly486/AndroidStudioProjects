@@ -1,9 +1,7 @@
 package com.example.app.fragments
 
-import android.Manifest
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.OpenableColumns
@@ -15,6 +13,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.app.R
+import kotlinx.coroutines.*
 import java.io.*
 import javax.crypto.Cipher
 import javax.crypto.CipherOutputStream
@@ -22,7 +21,8 @@ import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.PBEKeySpec
 import javax.crypto.spec.SecretKeySpec
-import kotlinx.coroutines.*
+import android.content.ContentValues
+import android.provider.MediaStore
 
 class NinthFragment : Fragment() {
 
@@ -34,7 +34,7 @@ class NinthFragment : Fragment() {
     private lateinit var tvStatus: TextView
 
     private var selectedFileUri: Uri? = null
-    private var outputFile: File? = null
+    private var finalOutputUri: Uri? = null // Ссылка на файл в Downloads
 
     private val selectFileLauncher = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         uri?.let { handleFileSelected(it) }
@@ -104,27 +104,31 @@ class NinthFragment : Fragment() {
         progressBar.visibility = View.VISIBLE
         tvStatus.text = "Расшифровка..."
         btnDecrypt.isEnabled = false
-        outputFile = getOutputFile()
 
-        // КЛЮЧЕВОЕ ИСПРАВЛЕНИЕ: viewLifecycleOwner.lifecycleScope
+        val tempFile = getTempOutputFile()
+
         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
             try {
-                decryptWithOpenSslFormat(selectedFileUri!!, outputFile!!, password)
+                decryptWithOpenSslFormat(selectedFileUri!!, tempFile, password)
+                val downloadedUri = saveFileToDownloads(tempFile, "decrypted_${System.currentTimeMillis()}.txt")
+                finalOutputUri = downloadedUri
+
                 withContext(Dispatchers.Main) {
                     onSuccess()
+                    tempFile.delete()
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     onError(e)
+                    tempFile.delete()
                 }
             }
         }
     }
 
-    private fun getOutputFile(): File {
-        val dir = requireContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)!!
-        dir.mkdirs()
-        return File(dir, "decrypted_${System.currentTimeMillis()}.txt")
+    private fun getTempOutputFile(): File {
+        val cacheDir = requireContext().cacheDir
+        return File(cacheDir, "temp_decrypted_${System.currentTimeMillis()}.bin")
     }
 
     private fun decryptWithOpenSslFormat(inputUri: Uri, outputFile: File, password: String) {
@@ -134,12 +138,12 @@ class NinthFragment : Fragment() {
                 // 1. Читаем "Salted__"
                 val header = ByteArray(8)
                 if (input.read(header) != 8 || !header.contentEquals("Salted__".toByteArray())) {
-                    throw IllegalArgumentException("Файл не в формате OpenSSL")
+                    throw IllegalArgumentException("Файл не в формате OpenSSL (нет 'Salted__')")
                 }
 
                 // 2. Читаем соль (8 байт)
                 val salt = ByteArray(8)
-                if (input.read(salt) != 8) throw IOException("Не удалось прочитать salt")
+                if (input.read(salt) != 8) throw IOException("Не удалось прочитать соль")
 
                 // 3. Генерируем ключ (32) + IV (16) через PBKDF2-HMAC-SHA256
                 val (key, iv) = deriveKeyAndIvWithPbkdf2(password, salt)
@@ -150,14 +154,15 @@ class NinthFragment : Fragment() {
                 }
 
                 CipherOutputStream(fileOut, cipher).use { cipherOut ->
-                    input.copyTo(cipherOut) // ВЕСЬ остаток — ciphertext
+                    input.copyTo(cipherOut)
                 }
             }
-        } ?: throw IOException("Не удалось открыть файл")
+        } ?: throw IOException("Не удалось открыть зашифрованный файл")
     }
+
     private fun deriveKeyAndIvWithPbkdf2(password: String, salt: ByteArray): Pair<ByteArray, ByteArray> {
         val factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256")
-        val spec = PBEKeySpec(password.toCharArray(), salt, 100000, 384) // 384 бита = 32 + 16
+        val spec = PBEKeySpec(password.toCharArray(), salt, 100000, 384) // 384 бита = 48 байт
         val key = factory.generateSecret(spec).encoded
 
         val aesKey = ByteArray(32)
@@ -168,16 +173,54 @@ class NinthFragment : Fragment() {
         return aesKey to iv
     }
 
+    private suspend fun saveFileToDownloads(tempFile: File, fileName: String): Uri = withContext(Dispatchers.IO) {
+        val resolver = requireContext().contentResolver
+
+        val contentValues = ContentValues().apply {
+            put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
+            put(MediaStore.MediaColumns.MIME_TYPE, "text/plain")
+            put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
+        }
+
+        val uri = resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, contentValues)
+            ?: throw IOException("Не удалось создать запись в MediaStore")
+
+        resolver.openOutputStream(uri)?.use { outputStream ->
+            FileInputStream(tempFile).use { inputStream ->
+                inputStream.copyTo(outputStream)
+            }
+        } ?: throw IOException("Не удалось записать файл в Downloads")
+
+        return@withContext uri
+    }
+
     private fun onSuccess() {
         progressBar.visibility = View.GONE
-        tvStatus.text = "Успешно!"
+        tvStatus.text = "Успешно сохранено в Загрузки!"
         btnDecrypt.isEnabled = true
-        Toast.makeText(requireContext(), "Файл расшифрован: ${outputFile?.name}", Toast.LENGTH_LONG).show()
+
+        val fileName = finalOutputUri?.let { getFileName(it) } ?: "файл"
+        Toast.makeText(requireContext(), "Расшифровано: $fileName", Toast.LENGTH_LONG).show()
+
+        // Опционально: кнопка "Открыть"
+        tvStatus.setOnClickListener {
+            finalOutputUri?.let { uri ->
+                try {
+                    val intent = Intent(Intent.ACTION_VIEW).apply {
+                        setDataAndType(uri, "text/plain")
+                        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    }
+                    startActivity(intent)
+                } catch (e: Exception) {
+                    Toast.makeText(requireContext(), "Нет приложения для открытия", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 
     private fun onError(e: Exception) {
         progressBar.visibility = View.GONE
-        tvStatus.text = "Ошибка"
+        tvStatus.text = "Ошибка: ${e.message}"
         btnDecrypt.isEnabled = true
         Toast.makeText(requireContext(), "Ошибка: ${e.message}", Toast.LENGTH_LONG).show()
     }
