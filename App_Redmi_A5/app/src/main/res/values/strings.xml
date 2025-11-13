@@ -69,6 +69,6 @@
     <string name="select_encrypted_file">Select Encrypted File</string>
     <string name="enter_password">Enter password</string>
     <string name="decrypt_file">Decrypt File</string>
-    <string name="tvSelectedFile">Выбрать зашифрованый файл </string>
+    <string name="btnSelectFile">Выбрать зашифрованый файл </string>
 
 </resources>
