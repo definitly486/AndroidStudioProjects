@@ -8,12 +8,17 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.setPadding
 import androidx.fragment.app.Fragment
-import com.example.app.R
-import com.example.app.fragments.*
+import com.example.app.fragments.FifthFragment
+import com.example.app.fragments.FirstFragment
+import com.example.app.fragments.NinthFragment
+import com.example.app.fragments.SecondFragment
+import com.example.app.fragments.SeventhFragment
+import com.example.app.fragments.SixthFragment
+import com.example.app.fragments.ThirdFragment
 
 class MainActivity : AppCompatActivity() {
 
-    private val fragmentList = listOf<Fragment>(
+    private val fragmentList = listOf(
         FirstFragment(),
         SecondFragment(),
         ThirdFragment(),
