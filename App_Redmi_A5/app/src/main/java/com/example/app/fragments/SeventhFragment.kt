@@ -77,7 +77,7 @@ class SeventhFragment  : Fragment()  {
     }
 
 
-    private fun handleDownloadResult(file: File?, name: String) {
+    private fun handleDownloadResult(file: File?, @Suppress("SameParameterValue") name: String) {
         if (file != null) {
             Toast.makeText(requireContext(), "Файл загружен: ${file.name}", Toast.LENGTH_SHORT).show()
         } else {

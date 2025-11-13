@@ -1,3 +1,5 @@
+@file:Suppress("ControlFlowWithEmptyBody")
+
 package com.example.app.fragments
 
 import DownloadHelper
@@ -6,34 +8,32 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
-import android.provider.Settings
 import android.os.Bundle
 import android.os.Environment
+import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import com.example.app.R
-import androidx.appcompat.app.AlertDialog
-
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
-import org.apache.commons.io.file.PathUtils.deleteDirectory
 import java.io.BufferedReader
 import java.io.DataOutputStream
 import java.io.File
 import java.io.FileReader
 import java.io.IOException
-import java.nio.file.Path
 
 
+@Suppress("DEPRECATION")
 class SecondFragment : Fragment() {
 private val REQUEST_CODE_WRITE_SETTINGS_PERMISSION = 1001
     private lateinit var downloadHelper: DownloadHelper
@@ -490,7 +490,7 @@ private val REQUEST_CODE_WRITE_SETTINGS_PERMISSION = 1001
                 withContext(Dispatchers.Main) {
                     showCompletionDialog(requireContext())
                     Toast.makeText(requireContext(), "Удаление завершено!", Toast.LENGTH_SHORT).show()
-                    createReloadDialog(requireContext())
+                    createReloadDialog()
                 }
             } catch (e: IOException) {
                 withContext(Dispatchers.Main) {
@@ -522,13 +522,13 @@ private val REQUEST_CODE_WRITE_SETTINGS_PERMISSION = 1001
     fun rebootDevice() {
         try {
             val runtime = Runtime.getRuntime()
-            val process = runtime.exec("su -c reboot")
+            runtime.exec("su -c reboot")
         } catch (e: Exception) {
             e.printStackTrace()
         }
     }
 
-     fun createReloadDialog(context: Context) {
+     fun createReloadDialog() {
         val alertBuilder = AlertDialog.Builder(requireContext())
 
         // Заголовок диалога
