@@ -1,6 +1,5 @@
 package com.example.app.fragments
 
-import DownloadHelper
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -123,21 +122,21 @@ class FifthFragment : Fragment() {
         }
     }
 
-    private suspend fun downloadTelegramProfile() {
+    private fun downloadTelegramProfile() {
         download(requireContext(), "https://github.com/definitly486/redmia5/releases/download/shared/org.thunderdog.challegram.tar.enc")
     }
 
-    private suspend fun downloadProfile() {
+    private fun downloadProfile() {
         download(requireContext(), "https://github.com/definitly486/redmia5/releases/download/shared/com.qflair.browserq.tar.enc")
     }
 
 
-    private suspend fun downloadk9mailProfile() {
+    private fun downloadk9mailProfile() {
         download(requireContext(), "https://github.com/definitly486/redmia5/releases/download/shared/com.fsck.k9.tar.enc")
     }
 
 
-    private suspend fun downloadauthProfile() {
+    private fun downloadauthProfile() {
         download(requireContext(), "https://github.com/definitly486/redmia5/releases/download/shared/com.google.android.apps.authenticator2.tar.enc")
     }
 

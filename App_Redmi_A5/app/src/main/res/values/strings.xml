@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">App</string>
 
     <string name="install_termos">Install Termos</string>
@@ -11,7 +11,7 @@
     <string name="installozonbank">Установить Ozon Bank</string>
     <string name="installsberbank">Установить Sberbank</string>
     <string name="installtelegram">Установить Telegram </string>
-    <string name="installgnucashgpg"> Скачать definitly.gnucash.gpg </string>
+    <string name="installgnucashgpg" tools:ignore="Typos"> Скачать definitly.gnucash.gpg </string>
     <string name="installgnucash">Установить Gnucash </string>
     <string name="installkeychain">Установить Keychain </string>
     <string name="downloadnote">Скачать Note </string>
@@ -60,7 +60,7 @@
     <string name="installray">Установить V2rayNG </string>
     <string name="button_clone">Клонировать </string>
     <string name="poweroff">Выключить  </string>
-    <string name="deletegnucashgpg">Удалить definitly.gnucash и definitly.gnucash.gpg </string>
+    <string name="deletegnucashgpg" tools:ignore="Typos">Удалить definitly.gnucash и definitly.gnucash.gpg </string>
     <string name="deletemain">Удалить main.tar.gz и main folder  </string>
     <string name="downloadk9mailprofile">Скачать k9mail profile </string>
     <string name="installk9mailprofile">Установить k9mail profile </string>
