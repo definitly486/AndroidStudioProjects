@@ -12,7 +12,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="OpenSSL Decryptor"
+            android:text="@string/openssl_decryptor"
             android:textSize="24sp"
             android:textStyle="bold"
             android:gravity="center"
@@ -23,15 +23,16 @@
             android:id="@+id/tvSelectedFile"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="No file selected"
+            android:text="@string/no_file_selected"
             android:textSize="14sp"
+            android:textColor="@android:color/black"
             android:layout_marginBottom="16dp" />
 
         <Button
             android:id="@+id/btnSelectFile"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Select Encrypted File"
+            android:text="@string/select_encrypted_file"
             android:layout_marginBottom="24dp" />
 
         <EditText
@@ -39,7 +40,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:hint="Enter password"
+            android:autofillHints=""
+            android:hint="@string/enter_password"
+            android:textColor="@android:color/black"
             android:inputType="textPassword"
             android:minHeight="48dp" />
 
@@ -47,7 +50,7 @@
             android:id="@+id/btnDecrypt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Decrypt File"
+            android:text="@string/decrypt_file"
             android:enabled="false"
             android:layout_marginBottom="16dp" />
 
