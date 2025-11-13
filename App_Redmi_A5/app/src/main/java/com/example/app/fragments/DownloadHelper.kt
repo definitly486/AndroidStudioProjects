@@ -22,6 +22,7 @@ import java.io.File
 
 
 
+@Suppress("DEPRECATION")
 class DownloadHelper(private val context: Context) {
     private val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
     private var lastDownloadId: Long = -1L
@@ -160,8 +161,8 @@ class DownloadHelper(private val context: Context) {
                             val uriString = it.getString(it.getColumnIndexOrThrow(DownloadManager.COLUMN_LOCAL_URI))
                             val fileUri = Uri.parse(uriString)
                             downloadedFile = File(fileUri.path ?: "")
-                            success = downloadedFile?.exists() == true && downloadedFile?.name == fileName
-                            Log.d("DOWNLOAD", "Файл: ${downloadedFile?.absolutePath}, exists: ${downloadedFile?.exists()}")
+                            success = downloadedFile.exists() == true && downloadedFile.name == fileName
+                            Log.d("DOWNLOAD", "Файл: ${downloadedFile.absolutePath}, exists: ${downloadedFile.exists()}")
                         }
                     }
                 }
@@ -171,7 +172,7 @@ class DownloadHelper(private val context: Context) {
                 downloadReceiver = null
                 lastDownloadId = -1
 
-                if (success && downloadedFile != null) {
+                if (success) {
                     Handler(Looper.getMainLooper()).post {
                         Toast.makeText(ctx, "Загрузка завершена: $fileName", Toast.LENGTH_LONG).show()
                         installApk(fileName)
@@ -206,7 +207,7 @@ class DownloadHelper(private val context: Context) {
                             val uriString = it.getString(it.getColumnIndexOrThrow(DownloadManager.COLUMN_LOCAL_URI))
                             val fileUri = Uri.parse(uriString)
                             downloadedFile = File(fileUri.path ?: "")
-                            success = downloadedFile?.exists() == true && downloadedFile?.name == fileName
+                            success = downloadedFile.exists() == true && downloadedFile.name == fileName
                         }
                     }
                 }
@@ -215,7 +216,7 @@ class DownloadHelper(private val context: Context) {
                 downloadReceiver = null
                 lastDownloadId = -1
 
-                if (success && downloadedFile != null) {
+                if (success) {
                     Handler(Looper.getMainLooper()).post {
                         Toast.makeText(ctx, "Загрузка $toolName завершена", Toast.LENGTH_LONG).show()
                         installTool(toolName)
@@ -253,8 +254,8 @@ class DownloadHelper(private val context: Context) {
                             val uriString = it.getString(it.getColumnIndexOrThrow(DownloadManager.COLUMN_LOCAL_URI))
                             val fileUri = Uri.parse(uriString)
                             downloadedFile = File(fileUri.path ?: "")
-                            success = downloadedFile?.exists() == true && downloadedFile?.name == fileName
-                            Log.d("DOWNLOAD", "Файл: ${downloadedFile?.absolutePath}, exists: ${downloadedFile?.exists()}")
+                            success = downloadedFile.exists() == true && downloadedFile.name == fileName
+                            Log.d("DOWNLOAD", "Файл: ${downloadedFile.absolutePath}, exists: ${downloadedFile.exists()}")
                         }
                     }
                 }
@@ -264,7 +265,7 @@ class DownloadHelper(private val context: Context) {
                 downloadReceiver = null
                 lastDownloadId = -1
 
-                if (success && downloadedFile != null) {
+                if (success) {
                     Handler(Looper.getMainLooper()).post {
                         Toast.makeText(ctx, "Загрузка завершена: $fileName", Toast.LENGTH_LONG).show()
                         installApk2(fileName)
