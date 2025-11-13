@@ -61,19 +61,7 @@ class MainActivity : AppCompatActivity() {
         outState.putInt("SELECTED_BUTTON_INDEX", selectedIndex)
     }
 
-    private fun savePackagesToFile(fileName: String): Boolean {
-        return try {
-            val packages = packageManager.getInstalledPackages(0)
-            val data = packages.joinToString("\n") { it.packageName }
-            openFileOutput(fileName, MODE_PRIVATE).use { output ->
-                output.write(data.toByteArray())
-            }
-            true
-        } catch (e: Exception) {
-            e.printStackTrace()
-            false
-        }
-    }
+
 
     private fun setupActionButtons(savedInstanceState: Bundle?) {
         buttonsContainer.removeAllViews()
