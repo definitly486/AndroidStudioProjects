@@ -1,4 +1,4 @@
-@file:Suppress("SameParameterValue")
+@file:Suppress("SameParameterValue", "SpellCheckingInspection")
 
 package com.example.app.fragments
 
