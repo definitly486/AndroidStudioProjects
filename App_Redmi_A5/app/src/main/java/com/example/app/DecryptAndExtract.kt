@@ -239,22 +239,7 @@ private fun deriveKeyAndIvWithPbkdf2(password: String, salt: ByteArray): Pair<By
 fun copyprofile(context: Context, appPackageName: String) {
     val folder = context.getExternalFilesDir("shared")
 
-    fun showCompletionDialoginstall() {
-        val builder = AlertDialog.Builder(context)
-        builder.setTitle("Проверка root")
-        builder.setMessage("Root доступ отсутствует, приложения не будут установлены")
-        builder.setPositiveButton("Продолжить") { dialog, _ ->
-            dialog.dismiss()
-        }
-        builder.show()
-    }
 
-    if (RootChecker.hasRootAccess(context)) {
-        showToastOnMainThread(context, "Устройство имеет root-доступ.")
-    } else {
-        showCompletionDialoginstall()
-        return
-    }
 
     fun showCompletionDialogsystem() {
         val builder = AlertDialog.Builder(context)
