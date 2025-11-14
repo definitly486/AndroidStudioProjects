@@ -26,17 +26,18 @@
     <!-- Дополнительный текст внизу экрана -->
 
     <!-- Кнопка чтения -->
+
     <TextView
         android:id="@+id/textView2"
         android:layout_width="127dp"
-        android:layout_height="6dp"
+        android:layout_height="42dp"
         android:text="@string/textview2"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.535"
+        app:layout_constraintHorizontal_bias="0.313"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.176" />
+        app:layout_constraintVertical_bias="0.126" />
 
     <Button
         android:id="@+id/buttonread"
