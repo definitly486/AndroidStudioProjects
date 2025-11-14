@@ -8,6 +8,7 @@ import android.net.Uri
 
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContentProviderCompat.requireContext
 import com.example.app.fragments.RootChecker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -16,9 +17,18 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.BufferedReader
 import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.io.IOException
 import java.io.InputStreamReader
 import java.lang.ProcessBuilder
 import java.lang.RuntimeException
+import javax.crypto.Cipher
+import javax.crypto.CipherOutputStream
+import javax.crypto.SecretKeyFactory
+import javax.crypto.spec.IvParameterSpec
+import javax.crypto.spec.PBEKeySpec
+import javax.crypto.spec.SecretKeySpec
 
 
 // Вспомогательные функции
@@ -128,6 +138,68 @@ suspend fun decryptAndExtractArchive(context: Context, archiveName: String, pass
         }
     }
 }
+
+//Расшифровка с испоьзованием библиотек
+fun CoroutineScope.decryptWithOpenSslFormat2(context: Context, archiveName: String, password: String) {
+    launch(Dispatchers.IO) {
+        val folder = context.getExternalFilesDir("shared")
+        val encryptedFilePath = "${folder?.absolutePath}/${archiveName}.tar.enc"
+        val decryptedFilePath = "${folder?.absolutePath}/${archiveName}.tar"
+
+        if (!folder?.exists()!!) {
+            folder.mkdirs()
+        }
+
+        try {
+            // Используем FileInputStream для чтения файла по абсолютному пути
+            FileInputStream(File(encryptedFilePath)).use { input ->
+                FileOutputStream(decryptedFilePath).use { fileOut ->
+
+                    // 1. Чтение заголовка "Salted__"
+                    val header = ByteArray(8)
+                    if (input.read(header) != 8 || !header.contentEquals("Salted__".toByteArray())) {
+                        throw IllegalArgumentException("Файл не в формате OpenSSL (нет 'Salted__')")
+                    }
+
+                    // 2. Чтение соли (8 байт)
+                    val salt = ByteArray(8)
+                    if (input.read(salt) != 8) throw IOException("Не удалось прочитать соль")
+
+                    // 3. Генерация ключа (32 байта) и вектора инициализации (IV, 16 байт) через PBKDF2-HMAC-SHA256
+                    val (key, iv) = deriveKeyAndIvWithPbkdf2(password, salt)
+
+                    // 4. Расшифровка
+                    val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding").apply {
+                        init(Cipher.DECRYPT_MODE, SecretKeySpec(key, "AES"), IvParameterSpec(iv))
+                    }
+
+                    CipherOutputStream(fileOut, cipher).use { cipherOut ->
+                        input.copyTo(cipherOut)
+                    }
+                }
+            }
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            throw IOException("Ошибка при обработке файла: ${ex.message}")
+        }
+    }
+}
+
+private fun deriveKeyAndIvWithPbkdf2(password: String, salt: ByteArray): Pair<ByteArray, ByteArray> {
+    val factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256")
+    val spec = PBEKeySpec(password.toCharArray(), salt, 100000, 384) // 384 бита = 48 байт
+    val key = factory.generateSecret(spec).encoded
+
+    val aesKey = ByteArray(32)
+    val iv = ByteArray(16)
+    System.arraycopy(key, 0, aesKey, 0, 32)
+    System.arraycopy(key, 32, iv, 0, 16)
+
+    return aesKey to iv
+}
+
+
+
 
 // Универсальный метод копирования профиля
 fun copyprofile(context: Context, appPackageName: String) {
