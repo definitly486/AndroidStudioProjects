@@ -212,6 +212,7 @@ fun CoroutineScope.decryptWithOpenSslFormat2(context: Context, archiveName: Stri
             println("Каталог shared не найден.")
         }
     }
+        //Функция копировая профиля.
     copyprofile(context,archiveName)
 
 }
