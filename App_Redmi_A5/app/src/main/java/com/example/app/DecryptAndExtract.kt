@@ -15,6 +15,9 @@ import kotlinx.coroutines.Dispatchers
 
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.apache.commons.compress.archivers.tar.TarArchiveEntry
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream
+import java.io.BufferedInputStream
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileInputStream
@@ -143,46 +146,77 @@ suspend fun decryptAndExtractArchive(context: Context, archiveName: String, pass
 fun CoroutineScope.decryptWithOpenSslFormat2(context: Context, archiveName: String, password: String) {
     launch(Dispatchers.IO) {
         val folder = context.getExternalFilesDir("shared")
-        val encryptedFilePath = "${folder?.absolutePath}/${archiveName}.tar.enc"
-        val decryptedFilePath = "${folder?.absolutePath}/${archiveName}.tar"
+        folder?.let { dir ->
+            val encryptedFilePath = "${dir.absolutePath}/${archiveName}.tar.enc"
+            val decryptedFilePath = "${dir.absolutePath}/${archiveName}.tar"
+            val appDirectoryPath = dir.absolutePath
 
-        if (!folder?.exists()!!) {
-            folder.mkdirs()
-        }
+            if (!dir.exists()) {
+                dir.mkdirs()
+            }
 
-        try {
-            // Используем FileInputStream для чтения файла по абсолютному пути
-            FileInputStream(File(encryptedFilePath)).use { input ->
-                FileOutputStream(decryptedFilePath).use { fileOut ->
+            try {
+                // Используем FileInputStream для чтения файла по абсолютному пути
+                FileInputStream(File(encryptedFilePath)).use { input ->
+                    FileOutputStream(decryptedFilePath).use { fileOut ->
 
-                    // 1. Чтение заголовка "Salted__"
-                    val header = ByteArray(8)
-                    if (input.read(header) != 8 || !header.contentEquals("Salted__".toByteArray())) {
-                        throw IllegalArgumentException("Файл не в формате OpenSSL (нет 'Salted__')")
-                    }
+                        // 1. Чтение заголовка "Salted__"
+                        val header = ByteArray(8)
+                        if (input.read(header) != 8 || !header.contentEquals("Salted__".toByteArray())) {
+                            throw IllegalArgumentException("Файл не в формате OpenSSL (нет 'Salted__')")
+                        }
 
-                    // 2. Чтение соли (8 байт)
-                    val salt = ByteArray(8)
-                    if (input.read(salt) != 8) throw IOException("Не удалось прочитать соль")
+                        // 2. Чтение соли (8 байт)
+                        val salt = ByteArray(8)
+                        if (input.read(salt) != 8) throw IOException("Не удалось прочитать соль")
 
-                    // 3. Генерация ключа (32 байта) и вектора инициализации (IV, 16 байт) через PBKDF2-HMAC-SHA256
-                    val (key, iv) = deriveKeyAndIvWithPbkdf2(password, salt)
+                        // 3. Генерация ключа (32 байта) и вектора инициализации (IV, 16 байт) через PBKDF2-HMAC-SHA256
+                        val (key, iv) = deriveKeyAndIvWithPbkdf2(password, salt)
 
-                    // 4. Расшифровка
-                    val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding").apply {
-                        init(Cipher.DECRYPT_MODE, SecretKeySpec(key, "AES"), IvParameterSpec(iv))
-                    }
+                        // 4. Расшифровка
+                        val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding").apply {
+                            init(Cipher.DECRYPT_MODE, SecretKeySpec(key, "AES"), IvParameterSpec(iv))
+                        }
 
-                    CipherOutputStream(fileOut, cipher).use { cipherOut ->
-                        input.copyTo(cipherOut)
+                        CipherOutputStream(fileOut, cipher).use { cipherOut ->
+                            input.copyTo(cipherOut)
+                        }
                     }
                 }
+
+                // Распаковка tar архива
+                TarArchiveInputStream(BufferedInputStream(FileInputStream(decryptedFilePath))).use { tarIn ->
+                    var entry: TarArchiveEntry? = tarIn.nextTarEntry
+                    while (entry != null) {
+                        val currentEntry = entry.name
+                        val file = File(appDirectoryPath, currentEntry)
+
+                        when {
+                            entry.isDirectory -> {
+                                if (!file.exists()) {
+                                    file.mkdirs()
+                                }
+                            }
+                            else -> {
+                                file.parentFile.mkdirs()
+                                FileOutputStream(file).use { out ->
+                                    tarIn.copyTo(out)
+                                }
+                            }
+                        }
+                        entry = tarIn.nextTarEntry
+                    }
+                }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                throw IOException("Ошибка при обработке файла: ${ex.message}")
             }
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-            throw IOException("Ошибка при обработке файла: ${ex.message}")
+        } ?: run {
+            println("Каталог shared не найден.")
         }
     }
+    copyprofile(context,archiveName)
+
 }
 
 private fun deriveKeyAndIvWithPbkdf2(password: String, salt: ByteArray): Pair<ByteArray, ByteArray> {
