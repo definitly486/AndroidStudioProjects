@@ -74,5 +74,6 @@
     <string name="btnDecrypt">Расшифровать файл </string>
     <string name="downloadtelegramprofile">Скачать org.thunderdog.challegram </string>
     <string name="installtelegramprofile">Установить org.thunderdog.challegram </string>
+    <string name="installvcore"> Установить vcore</string>
 
 </resources>
