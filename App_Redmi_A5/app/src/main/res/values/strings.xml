@@ -70,5 +70,6 @@
     <string name="enter_password">Enter password</string>
     <string name="decrypt_file">Decrypt File</string>
     <string name="btnSelectFile">Выбрать зашифрованый файл </string>
+    <string name="loading">Loading…</string>
 
 </resources>
