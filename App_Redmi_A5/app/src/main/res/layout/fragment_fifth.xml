@@ -54,29 +54,29 @@
                 android:backgroundTint="?attr/colorPrimary"
                 style="@style/Widget.MaterialComponents.Button" />
 
-    <Button
-        android:id="@+id/downloadtelegramprofile"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Скачать org.thunderdog.challegram"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/installplumaprofile"
-        app:layout_constraintVertical_bias="0.154" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/downloadtelegramprofile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/downloadtelegramprofile"
+                app:icon="@drawable/ic_telegramx"
+                app:iconGravity="start"
+                app:iconPadding="12dp"
+                app:iconTint="@null"
+                android:backgroundTint="?attr/colorPrimary"
+                style="@style/Widget.MaterialComponents.Button" />
 
-    <Button
-        android:id="@+id/installtelegramprofile"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Установить org.thunderdog.challegram"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.526"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.71" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/installtelegramprofile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/installtelegramprofile"
+                app:icon="@drawable/ic_telegramx"
+                app:iconGravity="start"
+                app:iconPadding="12dp"
+                app:iconTint="@null"
+                android:backgroundTint="?attr/colorPrimary"
+                style="@style/Widget.MaterialComponents.Button" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/downloadk9mailprofile"
