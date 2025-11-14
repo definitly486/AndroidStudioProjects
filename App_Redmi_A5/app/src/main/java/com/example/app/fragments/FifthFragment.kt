@@ -106,6 +106,17 @@ class FifthFragment : Fragment() {
     }
 
     private suspend fun installTelegramProfile() {
+
+        // Проверка root-доступа устройства
+        if (RootChecker.hasRootAccess(requireContext())) {
+            Toast.makeText(requireContext(), "Устройство имеет root-доступ.", Toast.LENGTH_SHORT)
+                .show()
+        } else {
+            Toast.makeText(requireContext(), "Root-доступ отсутствует.Профиль не будет установлен.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+
         withContext(Dispatchers.IO) {
             try {
                 // Получаем введенный пароль из поля ввода
@@ -153,6 +164,7 @@ class FifthFragment : Fragment() {
                 .show()
         } else {
             Toast.makeText(requireContext(), "Root-доступ отсутствует.Профиль не будет установлен.", Toast.LENGTH_SHORT).show()
+            return
         }
 
 
@@ -180,6 +192,18 @@ class FifthFragment : Fragment() {
 
 
     private suspend fun installauthProfile() {
+
+
+        // Проверка root-доступа устройства
+        if (RootChecker.hasRootAccess(requireContext())) {
+            Toast.makeText(requireContext(), "Устройство имеет root-доступ.", Toast.LENGTH_SHORT)
+                .show()
+        } else {
+            Toast.makeText(requireContext(), "Root-доступ отсутствует.Профиль не будет установлен.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+
         withContext(Dispatchers.IO) {
             try {
                 // Получаем введенный пароль из поля ввода
@@ -202,6 +226,17 @@ class FifthFragment : Fragment() {
 
 
     private suspend fun installk9mailProfile() {
+
+        // Проверка root-доступа устройства
+        if (RootChecker.hasRootAccess(requireContext())) {
+            Toast.makeText(requireContext(), "Устройство имеет root-доступ.", Toast.LENGTH_SHORT)
+                .show()
+        } else {
+            Toast.makeText(requireContext(), "Root-доступ отсутствует.Профиль не будет установлен.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+
         withContext(Dispatchers.IO) {
             try {
                 // Получаем введенный пароль из поля ввода
