@@ -146,6 +146,16 @@ class FifthFragment : Fragment() {
 
 
     private suspend fun installProfile() {
+
+        // Проверка root-доступа устройства
+        if (RootChecker.hasRootAccess(requireContext())) {
+            Toast.makeText(requireContext(), "Устройство имеет root-доступ.", Toast.LENGTH_SHORT)
+                .show()
+        } else {
+            Toast.makeText(requireContext(), "Root-доступ отсутствует.Профиль не будет установлен.", Toast.LENGTH_SHORT).show()
+        }
+
+
         withContext(Dispatchers.IO) {
             try {
                 // Получаем введенный пароль из поля ввода
