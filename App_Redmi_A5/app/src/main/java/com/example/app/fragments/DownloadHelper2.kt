@@ -3,6 +3,7 @@
 package com.example.app.fragments
 
 import android.content.Context
+import android.os.Environment
 
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -21,7 +22,7 @@ import java.io.InputStreamReader
 
 @Suppress("RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 class DownloadHelper2(private val context: Context) {
-
+    val folder = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
     fun decompressTarGz(tarGzFile: File, outputDir: File) {
 
         // Ensure canonical path for security
@@ -111,7 +112,7 @@ class DownloadHelper2(private val context: Context) {
 
 
         val prepareCommands =
-            arrayOf("su - root -c chmod -R 0755 /storage/emulated/0/Android/data/com.example.app/files/Download/redmia5-main")
+            arrayOf("su - root -c chmod -R 0755 $folder/redmia5-main")
         for (command in prepareCommands) {
             Runtime.getRuntime().exec(command).waitFor()
         }
@@ -122,7 +123,7 @@ class DownloadHelper2(private val context: Context) {
 
         val commands = arrayOf(
 
-            "su - root -c cp  -R /storage/emulated/0/Android/data/com.example.app/files/Download/redmia5-main /data_mirror/data_ce/null/0/com.termos/files/home",
+            "su - root -c cp  -R $folder/redmia5-main /data_mirror/data_ce/null/0/com.termos/files/home",
             "su - root -c chmod -R 0755 /data_mirror/data_ce/null/0/com.termos/files/home",
             "su - root -c chown -R  $fileOwner:$fileOwner /data_mirror/data_ce/null/0/com.termos/files/home/redmia5-main"
         )
@@ -190,11 +191,11 @@ class DownloadHelper2(private val context: Context) {
 
         val commands = arrayOf(
             "su - root -c  mount -o rw,remount /system",
-            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/openssh_bin/bin/rsync /system/bin/ ",
-            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/openssh_bin/bin/scp /system/bin/ ",
-            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/openssh_bin/bin/sftp /system/bin/ ",
-            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/openssh_bin/bin/ssh /system/bin/ ",
-            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/openssh_bin/bin/ssh-keygen /system/bin/ ",
+            "su - root -c cp   $folder/openssh_bin/bin/rsync /system/bin/ ",
+            "su - root -c cp   $folder/openssh_bin/bin/scp /system/bin/ ",
+            "su - root -c cp   $folder/openssh_bin/bin/sftp /system/bin/ ",
+            "su - root -c cp   $folder/openssh_bin/bin/ssh /system/bin/ ",
+            "su - root -c cp   $folder/openssh_bin/bin/ssh-keygen /system/bin/ ",
             "su - root -c chmod -R 0755 /system/bin/rsync",
             "su - root -c chmod -R 0755 /system/bin/scp",
             "su - root -c chmod -R 0755 /system/bin/sftp",
@@ -271,7 +272,7 @@ class DownloadHelper2(private val context: Context) {
 
         val commands = arrayOf(
             "su - root -c  mount -o rw,remount /system",
-            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/openssh_libs/libcrypto.so.1.0.0 /system/lib64/ ",
+            "su - root -c cp   $folder/openssh_libs/libcrypto.so.1.0.0 /system/lib64/ ",
             "su - root -c chmod -R 0755 /system/lib64/libcrypto.so.1.0.0 ",
             "su - root -c chmod -R  0755 /system/lib64/"
         )
@@ -338,11 +339,11 @@ class DownloadHelper2(private val context: Context) {
 
         val commands = arrayOf(
             "su - root -c  mount -o rw,remount /system",
-            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/git/git /system/bin/ ",
-            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/git/libcrypto.so.3 /system/lib64/ ",
-            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/git/libiconv.so /system/lib64/ ",
-            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/git/libpcre2-8.so /system/lib64/ ",
-            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/git/libz.so.1 /system/lib64/ ",
+            "su - root -c cp   $folder/git/git /system/bin/ ",
+            "su - root -c cp   $folder/git/libcrypto.so.3 /system/lib64/ ",
+            "su - root -c cp   $folder/git/libiconv.so /system/lib64/ ",
+            "su - root -c cp   $folder/git/libpcre2-8.so /system/lib64/ ",
+            "su - root -c cp   $folder/git/libz.so.1 /system/lib64/ ",
             "su - root -c chmod -R 0755 /system/lib64/libpcre2-8.so",
             "su - root -c chmod -R 0755 /system/lib64/libz.so.1",
             "su - root -c chmod -R 0755 /system/lib64/libiconv.so",
@@ -409,23 +410,23 @@ class DownloadHelper2(private val context: Context) {
 
         val commands = arrayOf(
             "su - root -c  mount -o rw,remount /system",
-            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/gnupg/gpg /system/bin/",
-            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/gnupg/libcrypto.so.3 /system/lib64/",
-            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/gnupg/libiconv.so /system/lib64/",
-            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/gnupg/libpcre2-8.so /system/lib64/",
-            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/gnupg/libz.so.1 /system/lib64/",
-            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/gnupg/libandroid-support.so /system/lib64/",
-            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/gnupg/libassuan.so /system/lib64/",
-            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/gnupg/libbz2.so.1.0 /system/lib64/",
-            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/gnupg/libcrypt.so /system/lib64/",
-            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/gnupg/libcrypto.so.3 /system/lib64/",
-            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/gnupg/libgcrypt.so /system/lib64/",
-            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/gnupg/libgpg-error.so /system/lib64/",
-            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/gnupg/libncursesw.so.6 /system/lib64/",
-            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/gnupg/libnpth.so /system/lib64/",
-            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/gnupg/libreadline.so.8 /system/lib64/",
-            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/gnupg/libsqlite3.so /system/lib64/",
-            "su - root -c cp   /storage/emulated/0/Android/data/com.example.app/files/Download/gnupg/libsqlite3.so.0 /system/lib64/",
+            "su - root -c cp   $folder/gnupg/gpg /system/bin/",
+            "su - root -c cp   $folder/gnupg/libcrypto.so.3 /system/lib64/",
+            "su - root -c cp   $folder/gnupg/libiconv.so /system/lib64/",
+            "su - root -c cp   $folder/gnupg/libpcre2-8.so /system/lib64/",
+            "su - root -c cp   $folder/gnupg/libz.so.1 /system/lib64/",
+            "su - root -c cp   $folder/gnupg/libandroid-support.so /system/lib64/",
+            "su - root -c cp   $folder/gnupg/libassuan.so /system/lib64/",
+            "su - root -c cp   $folder/gnupg/libbz2.so.1.0 /system/lib64/",
+            "su - root -c cp   $folder/gnupg/libcrypt.so /system/lib64/",
+            "su - root -c cp   $folder/gnupg/libcrypto.so.3 /system/lib64/",
+            "su - root -c cp   $folder/gnupg/libgcrypt.so /system/lib64/",
+            "su - root -c cp   $folder/gnupg/libgpg-error.so /system/lib64/",
+            "su - root -c cp   $folder/gnupg/libncursesw.so.6 /system/lib64/",
+            "su - root -c cp   $folder/gnupg/libnpth.so /system/lib64/",
+            "su - root -c cp   $folder/gnupg/libreadline.so.8 /system/lib64/",
+            "su - root -c cp   $folder/gnupg/libsqlite3.so /system/lib64/",
+            "su - root -c cp   $folder/gnupg/libsqlite3.so.0 /system/lib64/",
             "su - root -c chmod -R 0755 /system/lib64/libpcre2-8.so",
             "su - root -c chmod -R 0755 /system/lib64/libz.so.1",
             "su - root -c chmod -R 0755 /system/lib64/libiconv.so",
