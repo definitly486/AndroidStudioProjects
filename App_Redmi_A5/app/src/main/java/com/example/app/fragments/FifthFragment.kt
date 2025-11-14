@@ -107,14 +107,6 @@ class FifthFragment : Fragment() {
 
     private suspend fun installTelegramProfile() {
 
-        // Проверка root-доступа устройства
-        if (RootChecker.hasRootAccess(requireContext())) {
-            Toast.makeText(requireContext(), "Устройство имеет root-доступ.", Toast.LENGTH_SHORT)
-                .show()
-        } else {
-            Toast.makeText(requireContext(), "Root-доступ отсутствует.Профиль не будет установлен.", Toast.LENGTH_SHORT).show()
-            return
-        }
 
 
         withContext(Dispatchers.IO) {
@@ -129,7 +121,7 @@ class FifthFragment : Fragment() {
                 }
 
                 // Преобразование пароля и установка
-                decryptAndExtractArchive(requireContext(),"org.thunderdog.challegram" ,enteredPassword)
+                decryptWithOpenSslFormat2(requireContext(),"org.thunderdog.challegram" ,enteredPassword)
                 showToast("Архив успешно установлен и извлечён!")
             } catch (e: Exception) {
                 showToast("Ошибка при установке и извлечении архива: ${e.message}")
@@ -158,14 +150,6 @@ class FifthFragment : Fragment() {
 
     private suspend fun installProfile() {
 
-        // Проверка root-доступа устройства
-        if (RootChecker.hasRootAccess(requireContext())) {
-            Toast.makeText(requireContext(), "Устройство имеет root-доступ.", Toast.LENGTH_SHORT)
-                .show()
-        } else {
-            Toast.makeText(requireContext(), "Root-доступ отсутствует.Профиль не будет установлен.", Toast.LENGTH_SHORT).show()
-            return
-        }
 
 
         withContext(Dispatchers.IO) {
@@ -194,14 +178,7 @@ class FifthFragment : Fragment() {
     private suspend fun installauthProfile() {
 
 
-        // Проверка root-доступа устройства
-        if (RootChecker.hasRootAccess(requireContext())) {
-            Toast.makeText(requireContext(), "Устройство имеет root-доступ.", Toast.LENGTH_SHORT)
-                .show()
-        } else {
-            Toast.makeText(requireContext(), "Root-доступ отсутствует.Профиль не будет установлен.", Toast.LENGTH_SHORT).show()
-            return
-        }
+
 
 
         withContext(Dispatchers.IO) {
@@ -216,7 +193,7 @@ class FifthFragment : Fragment() {
                 }
 
                 // Преобразование пароля и установка
-                decryptAndExtractArchive(requireContext(),"com.google.android.apps.authenticator2" ,enteredPassword)
+                decryptWithOpenSslFormat2(requireContext(),"com.google.android.apps.authenticator2" ,enteredPassword)
                 showToast("Архив успешно установлен и извлечён!")
             } catch (e: Exception) {
                 showToast("Ошибка при установке и извлечении архива: ${e.message}")
@@ -227,15 +204,7 @@ class FifthFragment : Fragment() {
 
     private suspend fun installk9mailProfile() {
 
-        // Проверка root-доступа устройства
-        if (RootChecker.hasRootAccess(requireContext())) {
-            Toast.makeText(requireContext(), "Устройство имеет root-доступ.", Toast.LENGTH_SHORT)
-                .show()
-        } else {
-            Toast.makeText(requireContext(), "Root-доступ отсутствует.Профиль не будет установлен.", Toast.LENGTH_SHORT).show()
-            return
-        }
-
+     
 
         withContext(Dispatchers.IO) {
             try {
@@ -249,7 +218,7 @@ class FifthFragment : Fragment() {
                 }
 
                 // Преобразование пароля и установка
-                decryptAndExtractArchive(requireContext(),"com.fsck.k9" ,enteredPassword)
+                decryptWithOpenSslFormat2(requireContext(),"com.fsck.k9" ,enteredPassword)
                 showToast("Архив успешно установлен и извлечён!")
             } catch (e: Exception) {
                 showToast("Ошибка при установке и извлечении архива: ${e.message}")
