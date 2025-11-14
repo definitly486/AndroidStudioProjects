@@ -3,7 +3,6 @@
 package com.example.app.fragments
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,7 +11,6 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.app.R
-import com.example.app.decryptAndExtractArchive
 import com.example.app.decryptWithOpenSslFormat2
 import com.example.app.download
 import kotlinx.coroutines.CoroutineScope
