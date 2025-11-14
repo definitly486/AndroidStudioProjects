@@ -3,6 +3,7 @@
 package com.example.app.fragments
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +13,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.app.R
 import com.example.app.decryptAndExtractArchive
+import com.example.app.decryptWithOpenSslFormat2
 import com.example.app.download
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -156,13 +158,15 @@ class FifthFragment : Fragment() {
                 }
 
                 // Преобразование пароля и установка
-                decryptAndExtractArchive(requireContext(),"com.qflair.browserq" ,enteredPassword)
+                decryptWithOpenSslFormat2(requireContext(),"com.qflair.browserq" ,enteredPassword)
                 showToast("Архив успешно установлен и извлечён!")
             } catch (e: Exception) {
                 showToast("Ошибка при установке и извлечении архива: ${e.message}")
             }
         }
     }
+
+
 
 
     private suspend fun installauthProfile() {
