@@ -107,6 +107,14 @@ class FifthFragment : Fragment() {
 
     private suspend fun installTelegramProfile() {
 
+        // Проверка root-доступа устройства
+        if (RootChecker.hasRootAccess(requireContext())) {
+            Toast.makeText(requireContext(), "Устройство имеет root-доступ.", Toast.LENGTH_SHORT)
+                .show()
+        } else {
+            Toast.makeText(requireContext(), "Root-доступ отсутствует.Профиль не будет установлен.", Toast.LENGTH_SHORT).show()
+            return
+        }
 
 
         withContext(Dispatchers.IO) {
@@ -150,6 +158,14 @@ class FifthFragment : Fragment() {
 
     private suspend fun installProfile() {
 
+        // Проверка root-доступа устройства
+        if (RootChecker.hasRootAccess(requireContext())) {
+            Toast.makeText(requireContext(), "Устройство имеет root-доступ.", Toast.LENGTH_SHORT)
+                .show()
+        } else {
+            Toast.makeText(requireContext(), "Root-доступ отсутствует.Профиль не будет установлен.", Toast.LENGTH_SHORT).show()
+            return
+        }
 
 
         withContext(Dispatchers.IO) {
@@ -178,6 +194,14 @@ class FifthFragment : Fragment() {
     private suspend fun installauthProfile() {
 
 
+        // Проверка root-доступа устройства
+        if (RootChecker.hasRootAccess(requireContext())) {
+            Toast.makeText(requireContext(), "Устройство имеет root-доступ.", Toast.LENGTH_SHORT)
+                .show()
+        } else {
+            Toast.makeText(requireContext(), "Root-доступ отсутствует.Профиль не будет установлен.", Toast.LENGTH_SHORT).show()
+            return
+        }
 
 
 
@@ -204,7 +228,15 @@ class FifthFragment : Fragment() {
 
     private suspend fun installk9mailProfile() {
 
-     
+        // Проверка root-доступа устройства
+        if (RootChecker.hasRootAccess(requireContext())) {
+            Toast.makeText(requireContext(), "Устройство имеет root-доступ.", Toast.LENGTH_SHORT)
+                .show()
+        } else {
+            Toast.makeText(requireContext(), "Root-доступ отсутствует.Профиль не будет установлен.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
 
         withContext(Dispatchers.IO) {
             try {
