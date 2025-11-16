@@ -313,6 +313,7 @@ class SecondFragment : Fragment() {
             //Установка wifi соеденения
 
             shellExecutor.execShellCommand("cmd -w wifi connect-network HUAWEI-B315-AFCA wpa2  HR63B1DMTJ4")
+            shellExecutor.execShellCommand("cmd -w wifi connect-network 32 wpa2  9175600380")
 
             //выключение bluetooth
 
