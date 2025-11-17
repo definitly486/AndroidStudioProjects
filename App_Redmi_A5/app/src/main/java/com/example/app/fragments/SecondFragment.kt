@@ -306,6 +306,7 @@ class SecondFragment : Fragment() {
 
             // Включаем глобальные настройки разработки
             shellExecutor.execShellCommand("settings put global development_settings_enabled 1")
+            shellExecutor.execShellCommand("settings put global adb_enabled 1")
 
             //Включаем navbar.gestural
             shellExecutor.execShellCommand("cmd overlay enable com.android.internal.systemui.navbar.gestural")
