@@ -391,7 +391,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/installelektichka"
-                app:icon="@drawable/ic_download"
+                app:icon="@drawable/ic_elektrichka"
                 app:iconGravity="start"
                 app:iconPadding="12dp"
                 app:iconTint="@null"

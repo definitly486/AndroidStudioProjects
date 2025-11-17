@@ -25,8 +25,6 @@ class FirstFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_first, container, false)
 
-
-
         // Инициализация помощника для скачивания
         downloadHelper = DownloadHelper(requireContext())
 
