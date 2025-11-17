@@ -125,7 +125,8 @@ fun Context.savePackagesToFile(filename: String): Boolean {
         "com.android.virtualmachine.res",
         "com.android.systemui.accessibility.accessibilitymenu",
         "com.android.providers.settings.auto_generated_rro_product__",
-        "com.sprd.validationtools"
+        "com.sprd.validationtools",
+        "com.google.android.as.oss"
     ).joinToString("\n")
 
     val downloadFolder = this.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
