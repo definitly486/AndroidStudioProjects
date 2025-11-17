@@ -108,7 +108,8 @@ fun Context.savePackagesToFile(filename: String): Boolean {
         "com.google.android.apps.restore",
         "com.google.android.health.connect.backuprestore",
         "com.android.microdroid.empty_payload",
-        "com.android.settings.intelligence"
+        "com.android.settings.intelligence",
+        "com.google.android.overlay.devicelockcontroller"
     ).joinToString("\n")
 
     val downloadFolder = this.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
