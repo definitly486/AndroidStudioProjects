@@ -120,7 +120,11 @@ fun Context.savePackagesToFile(filename: String): Boolean {
         "com.spreadtrum.proxy.nfwlocation",
         "com.miui.qr",
         "com.mi.AutoTest",
-        "com.android.egg"
+        "com.android.egg",
+        "com.google.android.federatedcompute",
+        "com.android.virtualmachine.res",
+        "com.android.systemui.accessibility.accessibilitymenu",
+        "com.android.providers.settings.auto_generated_rro_product__"
     ).joinToString("\n")
 
     val downloadFolder = this.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
