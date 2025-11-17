@@ -12,6 +12,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import android.widget.TextView
+import com.example.app.fragments.RootChecker.checkWriteAccess
 import com.example.app.fragments.RootChecker.hasRootAccess
 
 class TenthFragment : Fragment() {
@@ -36,10 +37,14 @@ class TenthFragment : Fragment() {
 
         // Получаем ссылку на CheckBox
         val checkBox = rootView.findViewById<CheckBox>(R.id.checkBox)
-
+        val checkBox2 = rootView.findViewById<CheckBox>(R.id.checkBox2)
         // Проверяем наличие root-доступа
         val hasRootAccess = hasRootAccess(requireContext()) // requireContext() вернёт непустой Context
         checkBox.isChecked = hasRootAccess
+
+        // Проверяем наличие root-доступа
+        val checkWriteAccess = checkWriteAccess("/system") // requireContext() вернёт непустой Context
+        checkBox2.isChecked = checkWriteAccess
 
         return rootView
     }
