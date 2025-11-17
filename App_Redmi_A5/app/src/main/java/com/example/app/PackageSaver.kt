@@ -110,7 +110,10 @@ fun Context.savePackagesToFile(filename: String): Boolean {
         "com.android.microdroid.empty_payload",
         "com.android.settings.intelligence",
         "com.google.android.overlay.devicelockcontroller",
-        "com.google.android.devicelockcontroller"
+        "com.google.android.devicelockcontroller",
+        "com.android.wallpaper",
+        "com.android.wallpapercropper",
+        "com.android.overlay.wallpaperconfig"
     ).joinToString("\n")
 
     val downloadFolder = this.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
