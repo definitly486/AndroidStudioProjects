@@ -83,7 +83,8 @@ class FirstFragment : Fragment() {
             R.id.installgoogleauth to "https://github.com/definitly486/redmia5/releases/download/apk/Google+Authenticator+7.0.apk",
             R.id.installyandexmap to "https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/apk/Yandex_Maps_17.2.0.apk",
             R.id.installfdroid to "https://github.com/definitly486/redmia5/releases/download/apk/org.fdroid.fdroid_1018050.apk",
-            R.id.installvcore to "https://github.com/definitly486/redmia5/releases/download/apk/vcore.apk"
+            R.id.installvcore to "https://github.com/definitly486/redmia5/releases/download/apk/vcore.apk",
+            R.id.installvcore to "https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/apk/yandex_elektrichka+v.3.43.0-34300_arm64.apk"
         )
 
         // Назначаем обработчик события каждому элементу карты

@@ -75,5 +75,6 @@
     <string name="downloadtelegramprofile">Скачать org.thunderdog.challegram </string>
     <string name="installtelegramprofile">Установить org.thunderdog.challegram </string>
     <string name="installvcore"> Установить vcore</string>
+    <string name="installelektichka">Установить Яндекс электричка </string>
 
 </resources>
