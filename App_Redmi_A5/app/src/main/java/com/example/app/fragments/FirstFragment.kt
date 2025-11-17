@@ -26,29 +26,6 @@ class FirstFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_first, container, false)
 
 
-        // Проверка root-доступа устройства
-        if (RootChecker.hasRootAccess(requireContext())) {
-            Toast.makeText(requireContext(), "Устройство имеет root-доступ.", Toast.LENGTH_SHORT)
-                .show()
-        } else {
-            Toast.makeText(requireContext(), "Root-доступ отсутствует.", Toast.LENGTH_SHORT).show()
-        }
-
-        // Проверка возможности записи в папку '/system'
-        val pathToCheck = "/system"
-        if (RootChecker.checkWriteAccess(pathToCheck)) {
-            Toast.makeText(
-                requireContext(),
-                "Запись в '$pathToCheck' возможна!",
-                Toast.LENGTH_SHORT
-            ).show()
-        } else {
-            Toast.makeText(
-                requireContext(),
-                "Запись в '$pathToCheck' невозможна.",
-                Toast.LENGTH_SHORT
-            ).show()
-        }
 
         // Инициализация помощника для скачивания
         downloadHelper = DownloadHelper(requireContext())

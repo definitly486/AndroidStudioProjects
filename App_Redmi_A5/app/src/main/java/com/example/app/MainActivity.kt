@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import com.example.app.fragments.FifthFragment
 import com.example.app.fragments.FirstFragment
 import com.example.app.fragments.NinthFragment
+import com.example.app.fragments.RootChecker
 import com.example.app.fragments.SecondFragment
 import com.example.app.fragments.SeventhFragment
 import com.example.app.fragments.SixthFragment
@@ -44,6 +45,33 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         buttonsContainer = findViewById(R.id.buttonsContainer)
+
+
+
+        // Проверка root-доступа устройства
+        if (RootChecker.hasRootAccess(this)) {
+            Toast.makeText(this, "Устройство имеет root-доступ.", Toast.LENGTH_SHORT)
+                .show()
+        } else {
+            Toast.makeText(this, "Root-доступ отсутствует.", Toast.LENGTH_SHORT).show()
+        }
+
+        // Проверка возможности записи в папку '/system'
+        val pathToCheck = "/system"
+        if (RootChecker.checkWriteAccess(pathToCheck)) {
+            Toast.makeText(
+                this,
+                "Запись в '$pathToCheck' возможна!",
+                Toast.LENGTH_SHORT
+            ).show()
+        } else {
+            Toast.makeText(
+                this,
+                "Запись в '$pathToCheck' невозможна.",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+
 
         // Создаём файл packages.txt
         if (savePackagesToFile("packages.txt")) {
