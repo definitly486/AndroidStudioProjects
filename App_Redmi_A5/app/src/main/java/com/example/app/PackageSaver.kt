@@ -119,7 +119,8 @@ fun Context.savePackagesToFile(filename: String): Boolean {
         "com.google.android.gms.location.history",
         "com.spreadtrum.proxy.nfwlocation",
         "com.miui.qr",
-        "com.mi.AutoTest"
+        "com.mi.AutoTest",
+        "com.android.egg"
     ).joinToString("\n")
 
     val downloadFolder = this.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
