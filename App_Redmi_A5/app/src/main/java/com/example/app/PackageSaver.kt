@@ -114,7 +114,12 @@ fun Context.savePackagesToFile(filename: String): Boolean {
         "com.android.wallpaper",
         "com.android.wallpapercropper",
         "com.android.overlay.wallpaperconfig",
-        "com.bsp.logmanager"
+        "com.bsp.logmanager",
+        "com.android.traceur",
+        "com.google.android.gms.location.history",
+        "com.spreadtrum.proxy.nfwlocation",
+        "com.miui.qr",
+        "com.mi.AutoTest"
     ).joinToString("\n")
 
     val downloadFolder = this.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
