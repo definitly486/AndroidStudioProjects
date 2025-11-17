@@ -114,6 +114,24 @@ class FifthFragment : Fragment() {
             return
         }
 
+        // Проверка возможности записи в папку '/system'
+        val pathToCheck = "/system"
+        if (RootChecker.checkWriteAccess(pathToCheck)) {
+            Toast.makeText(
+                requireContext(),
+                "Запись в '$pathToCheck' возможна!",
+                Toast.LENGTH_SHORT
+            ).show()
+        } else {
+            Toast.makeText(
+                requireContext(),
+                "Запись в '$pathToCheck' невозможна.Профиль не будет установлен",
+                Toast.LENGTH_SHORT
+            ).show()
+            return
+        }
+
+
 
         withContext(Dispatchers.IO) {
             try {
@@ -201,7 +219,22 @@ class FifthFragment : Fragment() {
             return
         }
 
-
+        // Проверка возможности записи в папку '/system'
+        val pathToCheck = "/system"
+        if (RootChecker.checkWriteAccess(pathToCheck)) {
+            Toast.makeText(
+                requireContext(),
+                "Запись в '$pathToCheck' возможна!",
+                Toast.LENGTH_SHORT
+            ).show()
+        } else {
+            Toast.makeText(
+                requireContext(),
+                "Запись в '$pathToCheck' невозможна.Профиль не будет установлен",
+                Toast.LENGTH_SHORT
+            ).show()
+            return
+        }
 
         withContext(Dispatchers.IO) {
             try {
@@ -232,6 +265,23 @@ class FifthFragment : Fragment() {
                 .show()
         } else {
             Toast.makeText(requireContext(), "Root-доступ отсутствует.Профиль не будет установлен.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        // Проверка возможности записи в папку '/system'
+        val pathToCheck = "/system"
+        if (RootChecker.checkWriteAccess(pathToCheck)) {
+            Toast.makeText(
+                requireContext(),
+                "Запись в '$pathToCheck' возможна!",
+                Toast.LENGTH_SHORT
+            ).show()
+        } else {
+            Toast.makeText(
+                requireContext(),
+                "Запись в '$pathToCheck' невозможна.Профиль не будет установлен",
+                Toast.LENGTH_SHORT
+            ).show()
             return
         }
 
