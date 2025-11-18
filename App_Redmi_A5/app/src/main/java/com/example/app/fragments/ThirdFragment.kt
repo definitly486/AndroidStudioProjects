@@ -301,12 +301,11 @@ fun isGnupgBinaryExists(): Boolean {
             false
         }
         !file.isFile -> {
-         
             showToast("$gnupgPath существует, но это не обычный файл")
             false
         }
         !file.canExecute() -> {
-            Log.d(TAG, "$gnupgPath существует, но не имеет права на выполнение")
+            showToast("$gnupgPath существует, но не имеет права на выполнение")
             true // всё равно возвращаем true — сам бинарник присутствует
         }
         else -> {
