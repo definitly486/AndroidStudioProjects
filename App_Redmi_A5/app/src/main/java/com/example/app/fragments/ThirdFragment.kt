@@ -5,7 +5,6 @@ package com.example.app.fragments
 import DownloadHelper
 import android.os.Bundle
 import android.os.Environment
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -289,7 +288,6 @@ class ThirdFragment : Fragment() {
         }
     }
 
-    private val TAG = "GnupgCheck"
 
 fun isGnupgBinaryExists(): Boolean {
     val gnupgPath = "/system/bin/gpg"
@@ -309,7 +307,7 @@ fun isGnupgBinaryExists(): Boolean {
             true // всё равно возвращаем true — сам бинарник присутствует
         }
         else -> {
-            Log.d(TAG, "GnuPG бинарник найден и готов к использованию: $gnupgPath")
+               showToast("GnuPG бинарник найден и готов к использованию: $gnupgPath")
             true
         }
     }
