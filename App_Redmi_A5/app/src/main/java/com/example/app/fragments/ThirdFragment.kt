@@ -292,7 +292,7 @@ class ThirdFragment : Fragment() {
     private val TAG = "GnupgCheck"
 
 fun isGnupgBinaryExists(): Boolean {
-    val gnupgPath = "/system/bin/gnupg"
+    val gnupgPath = "/system/bin/gpg"
     val file = File(gnupgPath)
 
     return when {
