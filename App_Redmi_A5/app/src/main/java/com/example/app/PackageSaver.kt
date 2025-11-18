@@ -131,7 +131,8 @@ fun Context.savePackagesToFile(filename: String): Boolean {
         "com.google.android.onetimeinitializer",
         "com.android.theme.font.notoserifsource",
         "com.google.android.overlay.modules.captiveportallogin.forframework",
-        "com.sprd.uasetting"
+        "com.sprd.uasetting",
+        "com.sprd.camta"
     ).joinToString("\n")
 
     val downloadFolder = this.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
