@@ -5,6 +5,7 @@ package com.example.app.fragments
 import DownloadHelper
 import android.os.Bundle
 import android.os.Environment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,6 +20,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.BufferedReader
+import java.io.File
 import java.io.InputStreamReader
 
 class ThirdFragment : Fragment() {
@@ -97,6 +99,10 @@ class ThirdFragment : Fragment() {
         val installButton = view.findViewById<Button>(R.id.decryptgnucashgpg)
 
         installButton.setOnClickListener { _ ->
+
+           //проверка существоания gnupg
+
+            isGnupgBinaryExists ()
 
             // Получаем введённый пароль из EditText поля
             val enteredPassword = editTextPasswordgnucash.text.toString().trim() // trim удалит лишние пробелы
@@ -282,4 +288,32 @@ class ThirdFragment : Fragment() {
             Toast.makeText(activity, message, Toast.LENGTH_SHORT).show()
         }
     }
+
+    private val TAG = "GnupgCheck"
+
+fun isGnupgBinaryExists(): Boolean {
+    val gnupgPath = "/system/bin/gnupg"
+    val file = File(gnupgPath)
+
+    return when {
+        !file.exists() -> {
+            showToast("Файл $gnupgPath не существует")
+            false
+        }
+        !file.isFile -> {
+         
+            showToast("$gnupgPath существует, но это не обычный файл")
+            false
+        }
+        !file.canExecute() -> {
+            Log.d(TAG, "$gnupgPath существует, но не имеет права на выполнение")
+            true // всё равно возвращаем true — сам бинарник присутствует
+        }
+        else -> {
+            Log.d(TAG, "GnuPG бинарник найден и готов к использованию: $gnupgPath")
+            true
+        }
+    }
+}
+
 }
