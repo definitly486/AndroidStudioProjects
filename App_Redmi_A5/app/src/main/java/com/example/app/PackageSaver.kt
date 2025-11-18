@@ -128,7 +128,8 @@ fun Context.savePackagesToFile(filename: String): Boolean {
         "com.sprd.validationtools",
         "com.google.android.as.oss",
         "com.sprd.logmanager",
-        "com.google.android.onetimeinitializer"
+        "com.google.android.onetimeinitializer",
+        "com.android.theme.font.notoserifsource"
     ).joinToString("\n")
 
     val downloadFolder = this.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
