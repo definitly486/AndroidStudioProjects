@@ -3,6 +3,10 @@
 package com.example.app.fragments
 
 import DownloadHelper
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.view.LayoutInflater
@@ -10,8 +14,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
+import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import com.example.app.R
+import java.io.DataOutputStream
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -24,6 +30,13 @@ class SeventhFragment  : Fragment()  {
     fun getDownloadFolder(): File? {
         return context?.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
     }
+
+    fun getDownloadFolder2(): File? {
+        val dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+        if (dir?.exists() == false) dir.mkdirs()
+        return dir
+    }
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_seventh, container, false)
@@ -63,23 +76,43 @@ class SeventhFragment  : Fragment()  {
         downloadHelper.installApk("gate.apk")
     }
 
-    private fun installBINANCE(){
-   //     downloadHelper.downloadapk("https://github.com/definitly486/redmia5/releases/download/apk/com.binance.dev-100300004.xapk") { file ->
-    //        if (file != null) {
-    //            Toast.makeText(
-    //                requireContext(),
-    //                "Файл загружен: ${file.name}",
-    //                Toast.LENGTH_SHORT
-    //            ).show()
-    //        } else {
-    //            Toast.makeText(requireContext(), "Ошибка загрузки", Toast.LENGTH_SHORT)
-    //                .show()
-    //        }
-    //    }
+    private fun installBINANCE() {
+        val folder = getDownloadFolder2() ?: return
+        val apkFile = File(folder, "com.binance.dev-100300004.xapk")
 
+        // Начинаем скачивание
         downloadHelper.download2("https://github.com/definitly486/redmia5/releases/download/apk/com.binance.dev-100300004.xapk")
-
+        fixApkPermissions(apkFile.absolutePath)
     }
+
+    // Перегружаем функцию, чтобы принимать как String, так и File
+    private fun fixApkPermissions(file: File) {
+        fixApkPermissions(file.absolutePath)
+    }
+
+    private fun fixApkPermissions(filePath: String) {
+        try {
+            val process = Runtime.getRuntime().exec("su")
+            val writer = DataOutputStream(process.outputStream)
+
+            writer.writeBytes("chown 1000:1000 \"$filePath\"\n")
+            writer.writeBytes("chmod 644 \"$filePath\"\n")
+            writer.writeBytes("exit\n")
+            writer.flush()
+            writer.close()
+
+            val exitCode = process.waitFor()
+            if (exitCode == 0) {
+                Toast.makeText(requireContext(), "Права успешно исправлены (644, system:system)", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(requireContext(), "Root выполнен, но команда завершилась с ошибкой", Toast.LENGTH_LONG).show()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(requireContext(), "Нет root-доступа или ошибка: ${e.message}", Toast.LENGTH_LONG).show()
+        }
+    }
+
 
 
     private fun handleDownloadResult(file: File?, @Suppress("SameParameterValue") name: String) {
