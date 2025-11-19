@@ -64,18 +64,21 @@ class SeventhFragment  : Fragment()  {
     }
 
     private fun installBINANCE(){
-        downloadHelper.downloadapk("https://github.com/definitly486/redmia5/releases/download/apk/com.binance.dev-100300004.xapk") { file ->
-            if (file != null) {
-                Toast.makeText(
-                    requireContext(),
-                    "Файл загружен: ${file.name}",
-                    Toast.LENGTH_SHORT
-                ).show()
-            } else {
-                Toast.makeText(requireContext(), "Ошибка загрузки", Toast.LENGTH_SHORT)
-                    .show()
-            }
-        }
+   //     downloadHelper.downloadapk("https://github.com/definitly486/redmia5/releases/download/apk/com.binance.dev-100300004.xapk") { file ->
+    //        if (file != null) {
+    //            Toast.makeText(
+    //                requireContext(),
+    //                "Файл загружен: ${file.name}",
+    //                Toast.LENGTH_SHORT
+    //            ).show()
+    //        } else {
+    //            Toast.makeText(requireContext(), "Ошибка загрузки", Toast.LENGTH_SHORT)
+    //                .show()
+    //        }
+    //    }
+
+        downloadHelper.download2("https://github.com/definitly486/redmia5/releases/download/apk/com.binance.dev-100300004.xapk")
+
     }
 
 
