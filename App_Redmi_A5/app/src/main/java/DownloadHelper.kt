@@ -441,7 +441,7 @@ class DownloadHelper(private val context: Context) {
     }
 
     // === ПРОЧИЕ МЕТОДЫ ===
-
+ //загрузка в общую download папку
     fun download2(url: String) {
         val folder = getDownloadFolder2() ?: return
         if (!folder.exists()) folder.mkdirs()
