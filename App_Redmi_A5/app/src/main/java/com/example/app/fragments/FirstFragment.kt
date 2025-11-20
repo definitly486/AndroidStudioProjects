@@ -66,7 +66,7 @@ class FirstFragment : Fragment() {
         installButtons.forEach { (buttonId, url) ->
             view.findViewById<Button>(buttonId)?.apply {
                 setOnClickListener { _: View -> // явное указание типа View
-                    downloadHelper.downloadApk(url) { file ->
+                    downloadHelper.download(url) { file ->
                         if (file != null) {
                             Toast.makeText(
                                 requireContext(),

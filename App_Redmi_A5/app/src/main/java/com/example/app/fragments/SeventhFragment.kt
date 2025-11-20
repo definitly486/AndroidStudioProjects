@@ -3,6 +3,10 @@
 package com.example.app.fragments
 
 import DownloadHelper
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.view.LayoutInflater
@@ -10,6 +14,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
+import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import com.example.app.R
 import java.io.DataOutputStream
@@ -68,8 +73,7 @@ class SeventhFragment  : Fragment()  {
 
     private fun installGATE(){
         unzipgate("gate.base.zip")
-        val publicDownloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-        downloadHelper.installApk( publicDownloadsDir,"gate.apk")
+        downloadHelper.installApk("gate.apk")
     }
 
     private fun installBINANCE() {
@@ -77,7 +81,7 @@ class SeventhFragment  : Fragment()  {
         val apkFile = File(folder, "com.binance.dev-100300004.xapk")
 
         // Начинаем скачивание
-        downloadHelper.downloadToPublic("https://github.com/definitly486/redmia5/releases/download/apk/com.binance.dev-100300004.xapk")
+        downloadHelper.download2("https://github.com/definitly486/redmia5/releases/download/apk/com.binance.dev-100300004.xapk")
         fixApkPermissions(apkFile.absolutePath)
     }
 
