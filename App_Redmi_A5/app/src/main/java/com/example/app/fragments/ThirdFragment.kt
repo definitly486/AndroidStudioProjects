@@ -54,7 +54,7 @@ class ThirdFragment : Fragment() {
         val installButton = view.findViewById<Button>(R.id.downloadgnucashgpg)
         installButton.setOnClickListener {
             val apkUrl1 = "https://github.com/xinitronix/gnucash/raw/refs/heads/main/definitly.gnucash.gpg"
-            downloadHelper.download2(apkUrl1)
+            downloadHelper.downloadToPublic(apkUrl1)
 
         }
     }
@@ -139,7 +139,7 @@ class ThirdFragment : Fragment() {
         val downloadnote = view.findViewById<Button>(R.id.downloadnote)
         downloadnote.setOnClickListener {
             val apkUrl1 = "https://raw.githubusercontent.com/definitly486/definitly486/refs/heads/main/note"
-            downloadHelper.download2(apkUrl1)
+            downloadHelper.downloadToPublic(apkUrl1)
         }
     }
 
