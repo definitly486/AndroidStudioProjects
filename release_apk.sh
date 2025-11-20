@@ -12,7 +12,7 @@ fi
 GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 
 APK_PATH="$HOME/AndroidStudioProjects/App_Redmi_A5/app/build/outputs/apk/debug"
-cd $HOME/redmia5
+cd $HOME/AndroidStudioProjects
 mv $APK_PATH/app-debug.apk  $APK_PATH/app_redmi_a5-$GIT_BRANCH.apk
 echo "Y" | gh release  delete-asset apk app_redmi_a5-$GIT_BRANCH.apk
 gh release  upload apk $APK_PATH/app_redmi_a5-$GIT_BRANCH.apk
