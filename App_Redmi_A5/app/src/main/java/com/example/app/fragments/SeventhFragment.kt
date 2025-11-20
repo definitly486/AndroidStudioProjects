@@ -3,10 +3,6 @@
 package com.example.app.fragments
 
 import DownloadHelper
-import android.content.ActivityNotFoundException
-import android.content.Intent
-import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.view.LayoutInflater
@@ -14,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
-import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import com.example.app.R
 import java.io.DataOutputStream
@@ -23,6 +18,7 @@ import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
+
 class SeventhFragment  : Fragment()  {
 
     private lateinit var downloadHelper: DownloadHelper
