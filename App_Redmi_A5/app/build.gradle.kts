@@ -16,6 +16,14 @@ android {
         versionCode = 1
         versionName = "1.0"
         buildConfigField("long", "BUILD_TIME", "${System.currentTimeMillis()}L")
+        versionNameSuffix = "-${gitBranch()}"
+        buildConfigField("String", "GIT_BRANCH", "\"${gitBranch()}\"")
+        buildConfigField("String", "GIT_COMMIT", "\"${gitCommit()}\"")
+        buildConfigField("String", "VERSION_NAME_SUFFIX", "\"${gitBranch()}\"")
+
+        // По желанию можно ещё и полное versionName закинуть
+        buildConfigField("String", "FULL_VERSION_NAME", "\"${defaultConfig.versionName}${versionNameSuffix ?: ""}\"")
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         android.buildFeatures.buildConfig = true
     }
@@ -41,7 +49,23 @@ android {
     }
 }
 
+fun gitBranch(): String = try {
+    providers.exec {
+        commandLine("git", "rev-parse", "--abbrev-ref", "HEAD")
+    }.standardOutput.asText.get().trim().let { branch ->
+        if (branch.isEmpty() || branch == "HEAD") "detached" else branch
+    }
+} catch (e: Exception) {
+    "unknown"
+}
 
+fun gitCommit(): String = try {
+    providers.exec {
+        commandLine("git", "rev-parse", "--short", "HEAD")
+    }.standardOutput.asText.get().trim()
+} catch (e: Exception) {
+    "unknown"
+}
 
 dependencies {
 

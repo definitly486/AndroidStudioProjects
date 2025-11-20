@@ -24,27 +24,32 @@ class TenthFragment : Fragment() {
     ): View? {
         val rootView = inflater.inflate(R.layout.fragment_tenth, container, false)
 
-        // 1. Преобразуем миллисекунды в дату
+        // Дата сборки (у вас уже есть)
         val buildDate = Date(BuildConfig.BUILD_TIME)
-
-        // 2. Форматируем в человекочитаемый вид
         val formatter = SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.getDefault())
-        val formattedTime = formatter.format(buildDate)
+        rootView.findViewById<TextView>(R.id.buildTimeText).text =
+            "APK создан: ${formatter.format(buildDate)}"
 
-        // 3. Выводим в TextView
-        val buildTimeText = rootView.findViewById<TextView>(R.id.buildTimeText)
-        buildTimeText.text = "APK создан: $formattedTime"
+        // ========== НОВОЕ: версия и ветка ==========
+        val versionNameText = rootView.findViewById<TextView>(R.id.versionNameText)
+        val branchText      = rootView.findViewById<TextView>(R.id.branchText)
 
-        // Получаем ссылку на CheckBox
-        val checkBox = rootView.findViewById<CheckBox>(R.id.checkBox)
-        val checkBox2 = rootView.findViewById<CheckBox>(R.id.checkBox2)
-        // Проверяем наличие root-доступа
-        val hasRootAccess = hasRootAccess(requireContext()) // requireContext() вернёт непустой Context
-        checkBox.isChecked = hasRootAccess
+        // Самый надёжный способ — берём из PackageInfo (то, что видит система и пользователь)
+        val packageInfo = requireContext().packageManager
+            .getPackageInfo(requireContext().packageName, 0)
 
-        // Проверяем наличие root-доступа
-        val checkWriteAccess = checkWriteAccess("/system") // requireContext() вернёт непустой Context
-        checkBox2.isChecked = checkWriteAccess
+        val fullVersion = packageInfo.versionName ?: "unknown"
+        versionNameText.text = "Версия приложения: $fullVersion"
+
+        // Суффикс берём из BuildConfig (то, что мы сами положили в Gradle)
+        val suffix = BuildConfig.VERSION_NAME_SUFFIX
+        branchText.text = if (suffix.isNotEmpty()) "Ветка Git: $suffix" else "Ветка: release"
+
+        // Root-чекбоксы (у вас уже есть)
+        rootView.findViewById<CheckBox>(R.id.checkBox).isChecked =
+            hasRootAccess(requireContext())
+        rootView.findViewById<CheckBox>(R.id.checkBox2).isChecked =
+            checkWriteAccess("/system")
 
         return rootView
     }
