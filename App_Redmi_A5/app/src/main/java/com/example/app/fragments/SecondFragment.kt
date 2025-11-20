@@ -240,7 +240,7 @@ class SecondFragment : Fragment() {
     }
 
     private fun downloadMain() {
-        downloadHelper.downloadApk("https://github.com/definitly486/redmia5/archive/main.tar.gz")
+        downloadHelper.downloadfile("https://github.com/definitly486/redmia5/archive/main.tar.gz")
     }
 
     private fun installAPK() {

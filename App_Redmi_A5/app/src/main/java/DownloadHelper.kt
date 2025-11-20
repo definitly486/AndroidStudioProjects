@@ -46,6 +46,16 @@ class DownloadHelper(private val context: Context) {
         )
     }
 
+    fun downloadfile(url: String, onComplete: ((File?) -> Unit)? = null) {
+        downloadFile(
+            url = url,
+            destinationDir = appDownloadsDir(),
+
+            onComplete = onComplete
+        )
+    }
+
+
     /** Загрузка APK в специальную папку /Android/data/.../files/APK/ */
     fun downloadApkToApkFolder(url: String, onComplete: ((File?) -> Unit)? = null) {
         downloadFile(
