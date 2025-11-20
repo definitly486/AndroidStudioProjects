@@ -215,7 +215,7 @@ class SecondFragment : Fragment() {
 
     suspend fun downloadSingleAPK(url: String): File? {
         return suspendCancellableCoroutine { continuation ->
-            downloadHelper.downloadApkToApkFolder(url) { file ->
+            downloadHelper.downloadapk(url) { file ->
                 continuation.resumeWith(Result.success(file))
             }
         }
@@ -235,12 +235,12 @@ class SecondFragment : Fragment() {
     }
 
     private fun downloadKSUZip() {
-        downloadHelper.downloadToPublic("https://github.com/definitly486/redmia5/releases/download/root/APatch-KSU.zip")
+        downloadHelper.download2("https://github.com/definitly486/redmia5/releases/download/root/APatch-KSU.zip")
 
     }
 
     private fun downloadMain() {
-        downloadHelper.downloadApk("https://github.com/definitly486/redmia5/archive/main.tar.gz")
+        downloadHelper.downloadgpg("https://github.com/definitly486/redmia5/archive/main.tar.gz")
     }
 
     private fun installAPK() {
@@ -257,8 +257,7 @@ class SecondFragment : Fragment() {
         )
 
         for (url in urls) {
-val appApkDir  = context?.getExternalFilesDir("APK")?.also { it.mkdirs() }
-            downloadHelper.installApk(appApkDir, url)
+            downloadHelper.installApk2(url)
         }
     }
 
@@ -371,7 +370,7 @@ val appApkDir  = context?.getExternalFilesDir("APK")?.also { it.mkdirs() }
         val outputDir = File(folder, "")
         if (!tarGzFile.exists()) {
             Toast.makeText(requireContext(), "Файл git_aarch64.tar.xz не существует", Toast.LENGTH_SHORT).show()
-            downloadHelper.downloadApk("https://github.com/definitly486/redmia5/releases/download/git/git_aarch64.tar.xz")
+            downloadHelper.downloadgpg("https://github.com/definitly486/redmia5/releases/download/git/git_aarch64.tar.xz")
             return
         }
         downloadHelper2 = DownloadHelper2(requireContext())
@@ -386,7 +385,7 @@ val appApkDir  = context?.getExternalFilesDir("APK")?.also { it.mkdirs() }
         val outputDir = File(folder, "")
         if (!tarGzFile.exists()) {
             Toast.makeText(requireContext(), "Файл openssh_bin.tar.xz не существует", Toast.LENGTH_SHORT).show()
-            downloadHelper.downloadApk("https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/openssh/openssh_bin.tar.xz")
+            downloadHelper.downloadgpg("https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/openssh/openssh_bin.tar.xz")
 
             return
         }
@@ -402,7 +401,7 @@ val appApkDir  = context?.getExternalFilesDir("APK")?.also { it.mkdirs() }
         val outputDir = File(folder, "")
         if (!tarGzFile.exists()) {
             Toast.makeText(requireContext(), "Файл openssh_libs.tar.xz не существует", Toast.LENGTH_SHORT).show()
-            downloadHelper.downloadApk("https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/openssh/openssh_libs.tar.xz")
+            downloadHelper.downloadgpg("https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/openssh/openssh_libs.tar.xz")
 
             return
         }
@@ -418,7 +417,7 @@ val appApkDir  = context?.getExternalFilesDir("APK")?.also { it.mkdirs() }
         val outputDir = File(folder, "")
         if (!tarGzFile.exists()) {
             Toast.makeText(requireContext(), "Файл gnupg_aarch64.tar.xz не существует", Toast.LENGTH_SHORT).show()
-            downloadHelper.downloadApk("https://github.com/definitly486/redmia5/releases/download/gnupg/gnupg_aarch64.tar.xz")
+            downloadHelper.downloadgpg("https://github.com/definitly486/redmia5/releases/download/gnupg/gnupg_aarch64.tar.xz")
             return
         }
         downloadHelper2 = DownloadHelper2(requireContext())
