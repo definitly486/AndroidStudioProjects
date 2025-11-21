@@ -135,7 +135,18 @@ class SecondFragment : Fragment() {
     }
 
     private fun installPYTHON3(context: Context) {
-
+        val folder = getDownloadFolder() ?: return
+        val tarGzFile = File(folder, "")
+        val outputDir = File(folder, "")
+        if (!tarGzFile.exists()) {
+            Toast.makeText(requireContext(), "Файл python-3.13-android-aarch64.tar.gz не существует", Toast.LENGTH_SHORT).show()
+            downloadHelper.downloadfile("https://github.com/definitly486/redmia5/releases/download/python3/python-3.13-android-aarch64.tar.gz")
+            return
+        }
+        downloadHelper2 = DownloadHelper2(requireContext())
+        downloadHelper2.decompressTarGz(tarGzFile, outputDir)
+        Thread.sleep(3000L)
+        
         
     }
 
