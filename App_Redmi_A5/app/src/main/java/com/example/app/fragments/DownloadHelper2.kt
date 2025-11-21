@@ -142,6 +142,11 @@ class DownloadHelper2(private val context: Context) {
         Toast.makeText(context, "Копирование  main завершенo", Toast.LENGTH_SHORT).show()
     }
 
+    fun copypython3() {
+
+        
+    }
+
 
     fun copyssh() {
 
