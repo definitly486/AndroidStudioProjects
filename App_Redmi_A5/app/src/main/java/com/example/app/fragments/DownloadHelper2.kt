@@ -188,6 +188,7 @@ class DownloadHelper2(private val context: Context) {
             "su - root -c cp  -R  $folder/python-android-aarch64 /data/local/tmp/ ",
             "su - root -c cp  -R  $folder/python-android-aarch64/python3 /system/bin ",
             "su - root -c chmod -R 0755 /system/bin/python3",
+            "su - root -c chnod +x /data/local/tmp/python-android-aarch64/bin/python3.13",
             "su - root -c chmod +x /system/bin/python3"
 
         )
