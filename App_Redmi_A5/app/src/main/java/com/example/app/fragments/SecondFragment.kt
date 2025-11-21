@@ -118,7 +118,7 @@ class SecondFragment : Fragment() {
 
         //Кнопка установки python3
         val installPython = view.findViewById<Button>(R.id.installpython3)
-        installPython.setOnClickListener {  installPYTHON3() }
+        installPython.setOnClickListener {  installPYTHON3(context = requireContext()) }
 
     }
 
@@ -134,7 +134,7 @@ class SecondFragment : Fragment() {
         }
     }
 
-    private fun installPYTHON3() {
+    private fun installPYTHON3(context: Context) {
         val folder = getDownloadFolder() ?: return
         val tarGzFile = File(folder, "python-3.13-android-aarch64.tar.gz")
         val outputDir = File(folder, "")
@@ -146,7 +146,7 @@ class SecondFragment : Fragment() {
         downloadHelper2 = DownloadHelper2(requireContext())
         downloadHelper2.decompressTarGz(tarGzFile, outputDir)
         Thread.sleep(3000L)
-
+        downloadHelper2.copypython3()
     }
 
     private fun deleteMAIN(context: Context) {
