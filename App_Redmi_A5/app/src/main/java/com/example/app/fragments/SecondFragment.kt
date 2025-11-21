@@ -116,6 +116,10 @@ class SecondFragment : Fragment() {
         val deleteMain = view.findViewById<Button>(R.id.deletemain)
         deleteMain.setOnClickListener {  deleteMAIN(requireContext()) }
 
+        //Кнопка установки python3
+        val installPython = view.findViewById<Button>(R.id.installpython3)
+        installPython.setOnClickListener {  installPYTHON3(requireContext()) }
+
     }
 
     private fun downloadBusyBox() {
@@ -130,7 +134,10 @@ class SecondFragment : Fragment() {
         }
     }
 
+    private fun installPYTHON3(context: Context) {
 
+        
+    }
 
     private fun deleteMAIN(context: Context) {
         // Получаем приватный каталог "Загрузки"
