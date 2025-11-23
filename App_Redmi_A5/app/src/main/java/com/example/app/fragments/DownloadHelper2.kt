@@ -182,12 +182,7 @@ class DownloadHelper2(private val context: Context) {
         Toast.makeText(context, "Установка pip Python3 ...", Toast.LENGTH_SHORT).show()
         val commands = arrayOf(
             "su - root -c  mount -o rw,remount /system",
-            "su - root -c cp  -R  $folder/python-android-aarch64 /data/local/tmp/ ",
-            "su - root -c cp  -R  $folder/python-android-aarch64/python3 /system/bin ",
-            "su - root -c chmod -R 0755 /system/bin/python3",
-            "su - root -c chmod +x /data/local/tmp/python-android-aarch64/bin/python3.13",
-            "su - root -c chmod  -R 0755 /data/local/tmp/",
-            "su - root -c chmod +x /system/bin/python3"
+
 
         )
 
@@ -204,8 +199,6 @@ class DownloadHelper2(private val context: Context) {
         }
         Toast.makeText(context, "Создание pip Python3 завершенo", Toast.LENGTH_SHORT).show()
     }
-
-
 
     fun installenvpython3(){
 
@@ -231,6 +224,9 @@ class DownloadHelper2(private val context: Context) {
         Toast.makeText(context, "Устанваливаем виртальное окружение Python3 ...", Toast.LENGTH_SHORT).show()
         val commands = arrayOf(
             "su - root -c python3  -m venv /data/local/tmp/env",
+            "su  - root -c 'cat <<EOF > /system/bin/pip\n#!/system/bin/sh\nsource /data/local/tmp/env/bin/activate\npip \"\$@\"\nEOF'", // Создание скрипта pip
+            "su - root -c chmod +x /system/bin/pip",// Установка разрешения на выполнение
+            "su - root -c chmod 0755 /system/bin/pip"
             )
 
         var process: Process?
