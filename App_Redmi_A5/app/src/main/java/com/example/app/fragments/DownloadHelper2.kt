@@ -197,11 +197,10 @@ try {
 
         Toast.makeText(context, "Установка pip Python3 ...", Toast.LENGTH_SHORT).show()
         val commands = arrayOf(
-          //  "su - root -c mount -o rw,remount /system",
-"su echo"
-         //"su - root -c cp /data/local/tmp/pip /system/bin",
-            //"su - root -c chmod +x /system/bin/pip",
-            //"su - root -c chmod 0755 /system/bin/pip"
+           "su - root -c mount -o rw,remount /system",
+         "su - root -c cp $folder/pip /system/bin",
+            "su - root -c chmod +x /system/bin/pip",
+            "su - root -c chmod 0755 /system/bin/pip"
 
         )
 
