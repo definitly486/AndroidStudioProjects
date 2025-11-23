@@ -26,6 +26,7 @@ class PythonFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_python, container, false)
         // Инициализация DownloadHelper
         downloadHelper = DownloadHelper(requireContext())
+        downloadHelper2 = DownloadHelper2(requireContext())
         setupButtons(view)
         return view
     }
