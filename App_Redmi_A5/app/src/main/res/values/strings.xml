@@ -78,6 +78,6 @@
     <string name="installelektichka">Установить Яндекс электричка </string>
     <string name="installpython3">Установить python3  </string>
     <string name="installenvpython3"> Создание виртуального окружения python3 </string>
-    <string name="installpippython3">Утсавновка PIP </string>
+    <string name="installpippython3">Установка PIP </string>
 
 </resources>
