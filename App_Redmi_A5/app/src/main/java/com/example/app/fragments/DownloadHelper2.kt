@@ -4,10 +4,8 @@ package com.example.app.fragments
 
 import android.content.Context
 import android.os.Environment
-
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream
 import org.apache.commons.compress.compressors.xz.XZCompressorInputStream
@@ -142,6 +140,72 @@ class DownloadHelper2(private val context: Context) {
         Toast.makeText(context, "Копирование  main завершенo", Toast.LENGTH_SHORT).show()
     }
 
+    fun installpippython3(){
+        fun showCompletionDialoginstall() {
+            val builder = AlertDialog.Builder(context)
+            builder.setTitle("Проверка root")
+            builder.setMessage("Root доступ отсуствует,pip не будет установлен")
+            builder.setPositiveButton("Продолжить") { dialog, _ ->
+                dialog.dismiss()
+            }
+            builder.show()
+        }
+
+
+        if (RootChecker.hasRootAccess(context)) {
+
+            Toast.makeText(context, "Устройство имеет root-доступ.", Toast.LENGTH_SHORT)
+                .show()
+        } else {
+            showCompletionDialoginstall()
+            return
+        }
+
+
+        fun showCompletionDialogsystem() {
+            val builder = AlertDialog.Builder(context)
+            builder.setTitle("Проверка записи в system")
+            builder.setMessage("Запись в system не возможна, pip не будут установлен")
+            builder.setPositiveButton("Продолжить") { dialog, _ ->
+                dialog.dismiss()
+            }
+            builder.show()
+        }
+
+        // Проверка возможности записи в папку '/system'
+        val pathToCheck = "/system"
+        if (!RootChecker.checkWriteAccess(pathToCheck)) {
+            showCompletionDialogsystem()
+            return
+        }
+
+        Toast.makeText(context, "Установка pip Python3 ...", Toast.LENGTH_SHORT).show()
+        val commands = arrayOf(
+            "su - root -c  mount -o rw,remount /system",
+            "su - root -c cp  -R  $folder/python-android-aarch64 /data/local/tmp/ ",
+            "su - root -c cp  -R  $folder/python-android-aarch64/python3 /system/bin ",
+            "su - root -c chmod -R 0755 /system/bin/python3",
+            "su - root -c chmod +x /data/local/tmp/python-android-aarch64/bin/python3.13",
+            "su - root -c chmod  -R 0755 /data/local/tmp/",
+            "su - root -c chmod +x /system/bin/python3"
+
+        )
+
+        var process: Process?
+
+        for (command in commands) {
+            process = Runtime.getRuntime().exec(command)
+            process.waitFor() // Wait for the command to finish
+            if (process.exitValue() != 0) {
+                Toast.makeText(context, "Ошибка при создание pip Python3: $command", Toast.LENGTH_LONG)
+                    .show()
+                return
+            }
+        }
+        Toast.makeText(context, "Создание pip Python3 завершенo", Toast.LENGTH_SHORT).show()
+    }
+
+
 
     fun installenvpython3(){
 
@@ -186,7 +250,6 @@ class DownloadHelper2(private val context: Context) {
 
 
     fun copypython3() {
-
 
         fun showCompletionDialoginstall() {
             val builder = AlertDialog.Builder(context)

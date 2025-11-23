@@ -39,12 +39,21 @@ class PythonFragment : Fragment() {
         val installEnvPython = view.findViewById<Button>(R.id.installenvpython3)
         installEnvPython.setOnClickListener { installENVPYTHON3() }
 
+        val installPIPPython = view.findViewById<Button>(R.id.installpippython3)
+        installPIPPython.setOnClickListener { installPIPPYTHON3() }
 
     }
+
+    private fun  installPIPPYTHON3() {
+        downloadHelper2.installpippython3()
+    }
+
 
     private fun  installENVPYTHON3() {
         downloadHelper2.installenvpython3()
     }
+
+
     private fun installPYTHON3() {
         val folder = getDownloadFolder() ?: return
         val tarGzFile = File(folder, "python-3.13-android-aarch64.tar.gz")
