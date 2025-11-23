@@ -142,6 +142,49 @@ class DownloadHelper2(private val context: Context) {
         Toast.makeText(context, "Копирование  main завершенo", Toast.LENGTH_SHORT).show()
     }
 
+
+    fun installenvpython3(){
+
+        fun showCompletionDialoginstall() {
+            val builder = AlertDialog.Builder(context)
+            builder.setTitle("Проверка root")
+            builder.setMessage("Root доступ отсуствует,окружение  не будут установлено")
+            builder.setPositiveButton("Продолжить") { dialog, _ ->
+                dialog.dismiss()
+            }
+            builder.show()
+        }
+
+        if (RootChecker.hasRootAccess(context)) {
+
+            Toast.makeText(context, "Устройство имеет root-доступ.", Toast.LENGTH_SHORT)
+                .show()
+        } else {
+            showCompletionDialoginstall()
+            return
+        }
+
+        Toast.makeText(context, "Устанваливаем виртальное окружение Python3 ...", Toast.LENGTH_SHORT).show()
+        val commands = arrayOf(
+            "su - root -c python3  -m venv /data/local/tmp/env",
+            )
+
+        var process: Process?
+
+        for (command in commands) {
+            process = Runtime.getRuntime().exec(command)
+            process.waitFor() // Wait for the command to finish
+            if (process.exitValue() != 0) {
+                Toast.makeText(context, "Ошибка при установке виртуального окружения Python3: $command", Toast.LENGTH_LONG)
+                    .show()
+                return
+            }
+        }
+        Toast.makeText(context, "Устанвка виртуального окружения  Python3 завершенo", Toast.LENGTH_SHORT).show()
+
+    }
+
+
     fun copypython3() {
 
 
@@ -182,6 +225,7 @@ class DownloadHelper2(private val context: Context) {
             showCompletionDialogsystem()
             return
         }
+
         Toast.makeText(context, "Копируем Python3 ...", Toast.LENGTH_SHORT).show()
         val commands = arrayOf(
             "su - root -c  mount -o rw,remount /system",

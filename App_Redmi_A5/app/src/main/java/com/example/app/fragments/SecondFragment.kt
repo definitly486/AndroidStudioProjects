@@ -116,10 +116,6 @@ class SecondFragment : Fragment() {
         val deleteMain = view.findViewById<Button>(R.id.deletemain)
         deleteMain.setOnClickListener {  deleteMAIN(requireContext()) }
 
-        //Кнопка установки python3
-        val installPython = view.findViewById<Button>(R.id.installpython3)
-        installPython.setOnClickListener {  installPYTHON3(context = requireContext()) }
-
     }
 
     private fun downloadBusyBox() {
@@ -134,20 +130,6 @@ class SecondFragment : Fragment() {
         }
     }
 
-    private fun installPYTHON3(context: Context) {
-        val folder = getDownloadFolder() ?: return
-        val tarGzFile = File(folder, "python-3.13-android-aarch64.tar.gz")
-        val outputDir = File(folder, "")
-        if (!tarGzFile.exists()) {
-            Toast.makeText(requireContext(), "Файл python-3.13-android-aarch64.tar.gz не существует", Toast.LENGTH_SHORT).show()
-            downloadHelper.downloadfile("https://github.com/definitly486/redmia5/releases/download/python3/python-3.13-android-aarch64.tar.gz")
-            return
-        }
-        downloadHelper2 = DownloadHelper2(requireContext())
-        downloadHelper2.decompressTarGz(tarGzFile, outputDir)
-        Thread.sleep(3000L)
-        downloadHelper2.copypython3()
-    }
 
     private fun deleteMAIN(context: Context) {
         // Получаем приватный каталог "Загрузки"
@@ -276,7 +258,7 @@ class SecondFragment : Fragment() {
         for (url in urls) {
         val appApkDir  = context?.getExternalFilesDir("APK")?.also { it.mkdirs() }
 
-            downloadHelper.installApk(appApkDir, url)
+            downloadHelper.installApk(appApkDir, url,useApkFolder = true)
         }
     }
 

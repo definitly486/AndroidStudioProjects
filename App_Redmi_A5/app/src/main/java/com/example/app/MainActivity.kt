@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import com.example.app.fragments.FifthFragment
 import com.example.app.fragments.FirstFragment
 import com.example.app.fragments.NinthFragment
+import com.example.app.fragments.PythonFragment
 import com.example.app.fragments.RootChecker
 import com.example.app.fragments.SecondFragment
 import com.example.app.fragments.SeventhFragment
@@ -30,11 +31,12 @@ class MainActivity : AppCompatActivity() {
         SixthFragment(),
         SeventhFragment(),
         NinthFragment(),
-        TenthFragment()
+        TenthFragment(),
+        PythonFragment()
     )
 
     private val buttonTitles = listOf(
-        "Первая", "Вторая", "Третья", "Пятая", "Шестая", "Седьмая" ,"Восьмая","Десятая"
+        "Первая", "Вторая", "Третья", "Пятая", "Шестая", "Седьмая" ,"Восьмая","Десятая","Python3"
     )
 
     private var selectedButton: Button? = null
