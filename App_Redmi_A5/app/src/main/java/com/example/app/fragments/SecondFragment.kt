@@ -274,7 +274,8 @@ class SecondFragment : Fragment() {
         )
 
         for (url in urls) {
-val appApkDir  = context?.getExternalFilesDir("APK")?.also { it.mkdirs() }
+        val appApkDir  = context?.getExternalFilesDir("APK")?.also { it.mkdirs() }
+
             downloadHelper.installApk(appApkDir, url)
         }
     }
@@ -333,6 +334,8 @@ val appApkDir  = context?.getExternalFilesDir("APK")?.also { it.mkdirs() }
 
             shellExecutor.execShellCommand("cmd -w wifi connect-network HUAWEI-B315-AFCA wpa2  HR63B1DMTJ4")
             shellExecutor.execShellCommand("cmd -w wifi connect-network 32 wpa2  9175600380")
+            //включение темной темы
+            shellExecutor.execShellCommand("cmd uimode night yes")
 
             //выключение bluetooth
 
