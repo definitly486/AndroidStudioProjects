@@ -49,10 +49,19 @@ class PythonFragment : Fragment() {
     }
 
 
-    private fun  installENVPYTHON3() {
-        downloadHelper2.installenvpython3()
+   private  fun  installENVPYTHON3() {
+       if (isPythonFolderExists()) {
+           downloadHelper2.installenvpython3()
+       } else {
+           Toast.makeText(requireContext(), "Python3 не установлен", Toast.LENGTH_SHORT).show()
+       }
     }
 
+    fun isPythonFolderExists(): Boolean {
+        val path = "/data/local/tmp/python-android-aarch64"
+        val folder = File(path)
+        return folder.exists() && folder.isDirectory
+    }
 
     private fun installPYTHON3() {
         val folder = getDownloadFolder() ?: return
