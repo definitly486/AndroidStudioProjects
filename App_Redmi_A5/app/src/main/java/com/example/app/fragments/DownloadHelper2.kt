@@ -181,10 +181,14 @@ class DownloadHelper2(private val context: Context) {
 
         Toast.makeText(context, "Установка pip Python3 ...", Toast.LENGTH_SHORT).show()
         val commands = arrayOf(
-            "su - root -c  mount -o rw,remount /system",
-            "su  - root -c 'cat <<EOF > /system/bin/pip\n#!/system/bin/sh\nsource /data/local/tmp/env/bin/activate\npip \"\$@\"\nEOF'", // Создание скрипта pip
-            "su - root -c chmod +x /system/bin/pip",// Установка разрешения на выполнение
-            "su - root -c chmod 0755 /system/bin/pip"
+            "su - root -c 'mount -o rw,remount /system'",
+            """su - root -c 'cat <<EOF > /system/bin/pip
+       |#!/system/bin/sh
+       |source /data/local/tmp/env/bin/activate
+       |pip "\$@"
+       |EOF'""".trimMargin(),
+            "su - root -c 'chmod +x /system/bin/pip'",
+            "su - root -c 'chmod 0755 /system/bin/pip'"
 
         )
 
