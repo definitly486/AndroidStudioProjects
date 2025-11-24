@@ -194,10 +194,6 @@
             android:backgroundTint="?attr/colorPrimary"
             style="@style/Widget.MaterialComponents.Button" />
 
-
-       
-
-
            </LinearLayout>
     </ScrollView>
 </FrameLayout>
