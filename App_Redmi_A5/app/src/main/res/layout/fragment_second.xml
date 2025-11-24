@@ -32,7 +32,8 @@
             app:iconPadding="12dp"
             app:iconTint="@null"
             android:backgroundTint="?attr/colorPrimary"
-            style="@style/Widget.MaterialComponents.Button" />
+            style="@style/Widget.MaterialComponents.Button"
+            tools:ignore="VisualLintButtonSize" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/downloadbusybox"
@@ -44,7 +45,8 @@
             app:iconPadding="12dp"
             app:iconTint="@null"
             android:backgroundTint="?attr/colorPrimary"
-            style="@style/Widget.MaterialComponents.Button" />
+            style="@style/Widget.MaterialComponents.Button"
+            tools:ignore="VisualLintButtonSize" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/installgh"
@@ -56,7 +58,8 @@
             app:iconPadding="12dp"
             app:iconTint="@null"
             android:backgroundTint="?attr/colorPrimary"
-            style="@style/Widget.MaterialComponents.Button" />
+            style="@style/Widget.MaterialComponents.Button"
+            tools:ignore="VisualLintButtonSize" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/downloadksuzip"
@@ -68,7 +71,8 @@
             app:iconPadding="12dp"
             app:iconTint="@null"
             android:backgroundTint="?attr/colorPrimary"
-            style="@style/Widget.MaterialComponents.Button" />
+            style="@style/Widget.MaterialComponents.Button"
+            tools:ignore="VisualLintButtonSize" />
 
 
         <com.google.android.material.button.MaterialButton
@@ -81,7 +85,8 @@
             app:iconPadding="12dp"
             app:iconTint="@null"
             android:backgroundTint="?attr/colorPrimary"
-            style="@style/Widget.MaterialComponents.Button" />
+            style="@style/Widget.MaterialComponents.Button"
+            tools:ignore="VisualLintButtonSize" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/unpackmain"
@@ -93,7 +98,8 @@
             app:iconPadding="12dp"
             app:iconTint="@null"
             android:backgroundTint="?attr/colorPrimary"
-            style="@style/Widget.MaterialComponents.Button" />
+            style="@style/Widget.MaterialComponents.Button"
+            tools:ignore="VisualLintButtonSize" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/deletemain"
@@ -105,7 +111,8 @@
             app:iconPadding="12dp"
             app:iconTint="@null"
             android:backgroundTint="?attr/colorPrimary"
-            style="@style/Widget.MaterialComponents.Button" />
+            style="@style/Widget.MaterialComponents.Button"
+            tools:ignore="VisualLintButtonSize" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/installgit"
@@ -117,7 +124,8 @@
             app:iconPadding="12dp"
             app:iconTint="@null"
             android:backgroundTint="?attr/colorPrimary"
-            style="@style/Widget.MaterialComponents.Button" />
+            style="@style/Widget.MaterialComponents.Button"
+            tools:ignore="VisualLintButtonSize" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/installgnupg"
@@ -129,7 +137,8 @@
             app:iconPadding="12dp"
             app:iconTint="@null"
             android:backgroundTint="?attr/colorPrimary"
-            style="@style/Widget.MaterialComponents.Button" />
+            style="@style/Widget.MaterialComponents.Button"
+            tools:ignore="VisualLintButtonSize" />
 
 
         <com.google.android.material.button.MaterialButton
@@ -142,7 +151,8 @@
             app:iconPadding="12dp"
             app:iconTint="@null"
             android:backgroundTint="?attr/colorPrimary"
-            style="@style/Widget.MaterialComponents.Button" />
+            style="@style/Widget.MaterialComponents.Button"
+            tools:ignore="VisualLintButtonSize" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/installsshlibs"
@@ -154,7 +164,8 @@
             app:iconPadding="12dp"
             app:iconTint="@null"
             android:backgroundTint="?attr/colorPrimary"
-            style="@style/Widget.MaterialComponents.Button" />
+            style="@style/Widget.MaterialComponents.Button"
+            tools:ignore="VisualLintButtonSize" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/setsettings"
@@ -166,7 +177,8 @@
             app:iconPadding="12dp"
             app:iconTint="@null"
             android:backgroundTint="?attr/colorPrimary"
-            style="@style/Widget.MaterialComponents.Button" />
+            style="@style/Widget.MaterialComponents.Button"
+            tools:ignore="VisualLintButtonSize" />
 
 
         <com.google.android.material.button.MaterialButton
@@ -179,20 +191,22 @@
             app:iconPadding="12dp"
             app:iconTint="@null"
             android:backgroundTint="?attr/colorPrimary"
-            style="@style/Widget.MaterialComponents.Button" />
+            style="@style/Widget.MaterialComponents.Button"
+            tools:ignore="VisualLintButtonSize" />
 
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/installapk"
+            style="@style/Widget.MaterialComponents.Button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:backgroundTint="?attr/colorPrimary"
             android:text="@string/installapk"
             app:icon="@drawable/ic_install"
             app:iconGravity="start"
             app:iconPadding="12dp"
             app:iconTint="@null"
-            android:backgroundTint="?attr/colorPrimary"
-            style="@style/Widget.MaterialComponents.Button" />
+            tools:ignore="TouchTargetSizeCheck,VisualLintButtonSize" />
 
            </LinearLayout>
     </ScrollView>
