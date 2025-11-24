@@ -49,6 +49,36 @@ class PythonFragment : Fragment() {
     }
 
     private fun installYTDLP() {
+
+        val pathToCheck = "/data/local/tmp/env/bin/yt-dlp"
+        if (checkFileExists(pathToCheck)) {
+            println("Файл существует")
+            Toast.makeText(context, "yt-dlp существует", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(context, "yt-dlp не существует", Toast.LENGTH_SHORT).show()
+
+            val commands = arrayOf(
+                "su - root -c  pip  install yt-dlp",
+                )
+
+            var process: Process?
+
+            for (command in commands) {
+                process = Runtime.getRuntime().exec(command)
+                process.waitFor() // Wait for the command to finish
+                if (process.exitValue() != 0) {
+                    Toast.makeText(context, "Ошибка при установке yt-dlp: $command", Toast.LENGTH_LONG)
+                        .show()
+                    return
+                }
+            }
+            Toast.makeText(context, "Устанвка yt-dlp завершенo", Toast.LENGTH_SHORT).show()
+
+
+        }
+
+
+
         val pipScript = """
     #!/system/bin/sh
 if [ "$(id -u)" -ne 0 ]; then
@@ -91,6 +121,12 @@ fi
         }
         Toast.makeText(context, "Создание pip Python3 завершенo", Toast.LENGTH_SHORT).show()
     }
+
+    fun checkFileExists(filePath: String): Boolean {
+        val file = File(filePath)
+        return file.exists()
+    }
+
 
 
     private fun  installPIPPYTHON3() {
