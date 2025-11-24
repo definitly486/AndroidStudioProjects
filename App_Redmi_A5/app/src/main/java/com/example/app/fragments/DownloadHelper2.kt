@@ -219,7 +219,7 @@ try {
                 return
             }
         }
-        Toast.makeText(context, "Создание yt-dlp завершено", Toast.LENGTH_LONG)
+        Toast.makeText(context, "Создание yt-dlp завершено", Toast.LENGTH_SHORT)
     }
 
     fun installenvpython3(){
