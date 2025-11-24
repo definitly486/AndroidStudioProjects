@@ -141,12 +141,12 @@ class SecondFragment : Fragment() {
             val firstFile = privateDownloadsDir.resolve("main.tar.gz")
             if (firstFile.exists()) {
                 if (firstFile.delete()) {
-                    Log.d("MainActivity", "Архив main.tar.gz успешно удалён!")
+                    Toast.makeText(requireContext(), "Архив main.tar.gz успешно удалён!", Toast.LENGTH_SHORT)
                 } else {
-                    Log.e("MainActivity", "Ошибка при удалении архива main.tar.gz.")
+                    Toast.makeText(requireContext(), "Ошибка при удалении архива main.tar.gz.", Toast.LENGTH_SHORT)
                 }
             } else {
-                Log.w("MainActivity", "Архив main.tar.gz не найден.")
+                Toast.makeText(requireContext(), "Архив main.tar.gz не найден.", Toast.LENGTH_SHORT)
             }
 
             // Папка redmia5-main
