@@ -13,8 +13,10 @@ import android.os.Looper
 import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.FileProvider
 import com.example.app.fragments.RootChecker
+import com.example.app.getDownloadFolder
 import java.io.File
 
 class DownloadHelper(private val context: Context) {
@@ -22,6 +24,12 @@ class DownloadHelper(private val context: Context) {
     private val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
     private var currentDownloadId: Long = -1L
     private var downloadReceiver: BroadcastReceiver? = null
+
+    // Папка приложения APK: /Android/data/com.example.app/files/APK/
+    fun getDownloadFolderapk(): File? {
+        return context.getExternalFilesDir("APK")
+    }
+
 
     // region === Папки ===
 
@@ -279,6 +287,95 @@ class DownloadHelper(private val context: Context) {
         }
     }
 
+
+    // === УСТАНОВКА APK ===
+    fun installgate(filename: String) {
+        val folder = appDownloadsDir()
+
+        val apkFile = File(folder, filename)
+
+        if (!apkFile.exists()) {
+            Toast.makeText(context, "Файл не найден: $filename", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val apkUri = FileProvider.getUriForFile(
+            context,
+            "${context.packageName}.fileprovider",
+            apkFile
+        )
+
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            setDataAndType(apkUri, "application/vnd.android.package-archive")
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val canInstall = context.packageManager.canRequestPackageInstalls()
+            if (!canInstall) {
+                val installIntent = Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES).apply {
+                    data = Uri.parse("package:${context.packageName}")
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                }
+                context.startActivity(installIntent)
+                Toast.makeText(context, "Разрешите установку из неизвестных источников", Toast.LENGTH_LONG).show()
+                return
+            }
+        }
+
+        try {
+            context.startActivity(intent)
+        } catch (_: Exception) {
+            Toast.makeText(context, "Не удалось открыть установщик", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+
+    // === УСТАНОВКА APK находящихся в папке /Android/data/com.example.app/files/APK/ ===
+    fun installApk2(filename: String) {
+        val folder = getDownloadFolderapk() ?: return
+        val apkFile = File(folder, filename)
+
+        if (!apkFile.exists()) {
+            Toast.makeText(context, "Файл не найден: $filename", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val apkUri = FileProvider.getUriForFile(
+            context,
+            "${context.packageName}.fileprovider",
+            apkFile
+        )
+
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            setDataAndType(apkUri, "application/vnd.android.package-archive")
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val canInstall = context.packageManager.canRequestPackageInstalls()
+            if (!canInstall) {
+                val installIntent = Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES).apply {
+                    data = Uri.parse("package:${context.packageName}")
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                }
+                context.startActivity(installIntent)
+                Toast.makeText(context, "Разрешите установку из неизвестных источников", Toast.LENGTH_LONG).show()
+                return
+            }
+        }
+
+        try {
+            context.startActivity(intent)
+        } catch (_: Exception) {
+            Toast.makeText(context, "Не удалось открыть установщик", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+
+
     // endregion
 
     // region === Установка инструментов через root ===
@@ -342,7 +439,7 @@ class DownloadHelper(private val context: Context) {
     }
 
     private fun alert(message: String) {
-        androidx.appcompat.app.AlertDialog.Builder(context)
+        AlertDialog.Builder(context)
             .setTitle("Ошибка")
             .setMessage(message)
             .setPositiveButton("OK") { d, _ -> d.dismiss() }

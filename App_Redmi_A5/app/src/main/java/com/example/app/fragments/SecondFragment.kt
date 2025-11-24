@@ -258,7 +258,7 @@ class SecondFragment : Fragment() {
         for (url in urls) {
         val appApkDir  = context?.getExternalFilesDir("APK")?.also { it.mkdirs() }
 
-            downloadHelper.installApk(appApkDir, url,useApkFolder = true)
+            downloadHelper.installApk2(url)
         }
     }
 
