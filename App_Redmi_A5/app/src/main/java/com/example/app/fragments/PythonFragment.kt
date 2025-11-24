@@ -51,6 +51,10 @@ class PythonFragment : Fragment() {
     private fun installYTDLP() {
         val pipScript = """
     #!/system/bin/sh
+if [ "$(id -u)" -ne 0 ]; then
+    echo "Ошибка: этот скрипт должен запускаться от root" >&2
+    exit 1
+fi
     source /data/local/tmp/env/bin/activate
     yt-dlp "$@"
 """.trimIndent()
@@ -70,8 +74,9 @@ class PythonFragment : Fragment() {
             "su - root -c mount -o rw,remount /system",
             "su - root -c cp $downloadFolder/yt-dlp /system/bin",
             "su - root -c chmod +x /system/bin/yt-dlp",
-            "su - root -c chmod 0755 /system/bin/yt-dlp",
-            )
+            "su - root -c chmod 0755 /system/bin/yt-dlp"
+
+        )
 
         var process: Process?
 
