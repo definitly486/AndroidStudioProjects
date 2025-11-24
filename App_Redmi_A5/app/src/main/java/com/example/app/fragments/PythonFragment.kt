@@ -70,9 +70,8 @@ class PythonFragment : Fragment() {
             "su - root -c mount -o rw,remount /system",
             "su - root -c cp $downloadFolder/yt-dlp /system/bin",
             "su - root -c chmod +x /system/bin/yt-dlp",
-            "su - root -c chmod 0755 /system/bin/yt-dlp"
-
-        )
+            "su - root -c chmod 0755 /system/bin/yt-dlp",
+            )
 
         var process: Process?
 
