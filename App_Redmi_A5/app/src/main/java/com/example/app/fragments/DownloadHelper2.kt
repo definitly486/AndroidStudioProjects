@@ -181,6 +181,10 @@ class DownloadHelper2(private val context: Context) {
 
 val pipScript = """
     #!/system/bin/sh
+if [ "${'$'}(id -u)" -ne 0 ]; then
+    echo "Ошибка: этот скрипт должен запускаться от root" >&2
+    exit 1
+fi
     source /data/local/tmp/env/bin/activate
     pip "$@"
 """.trimIndent()
