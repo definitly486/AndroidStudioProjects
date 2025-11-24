@@ -51,10 +51,6 @@ class PythonFragment : Fragment() {
     private fun installYTDLP() {
         val pipScript = """
     #!/system/bin/sh
-if [ "$(id -u)" -ne 0 ]; then
-    echo "Ошибка: этот скрипт должен запускаться от root" >&2
-    exit 1
-fi
     source /data/local/tmp/env/bin/activate
     yt-dlp "$@"
 """.trimIndent()

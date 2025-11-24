@@ -181,10 +181,6 @@ class DownloadHelper2(private val context: Context) {
 
 val pipScript = """
     #!/system/bin/sh
-if [ "${'$'}(id -u)" -ne 0 ]; then
-    echo "Ошибка: этот скрипт должен запускаться от root" >&2
-    exit 1
-fi
     source /data/local/tmp/env/bin/activate
     pip "$@"
 """.trimIndent()
@@ -201,10 +197,11 @@ try {
 
         Toast.makeText(context, "Установка pip Python3 ...", Toast.LENGTH_SHORT).show()
         val commands = arrayOf(
-           "su - root -c mount -o rw,remount /system",
-         "su - root -c cp $folder/pip /system/bin",
+            "su - root -c mount -o rw,remount /system",
+            "su - root -c cp $folder/pip /system/bin",
             "su - root -c chmod +x /system/bin/pip",
-            "su - root -c chmod 0755 /system/bin/pip"
+            "su - root -c chmod 0755 /system/bin/pip",
+            "su - root -c  chcon u:object_r:system_file:s0 /system/bin/pip"
 
         )
 
@@ -311,8 +308,11 @@ try {
             "su - root -c cp  -R  $folder/python-android-aarch64/python3 /system/bin ",
             "su - root -c chmod -R 0755 /system/bin/python3",
             "su - root -c chmod +x /data/local/tmp/python-android-aarch64/bin/python3.13",
+            "su - root -c chcon u:object_r:system_file:s0  /data/local/tmp/python-android-aarch64/bin/python3.13",
+            "su - root -c chcon -R  u:object_r:system_file:s0 /data/local/tmp/python-android-aarch64",
             "su - root -c chmod  -R 0755 /data/local/tmp/",
-            "su - root -c chmod +x /system/bin/python3"
+            "su - root -c chmod +x /system/bin/python3",
+            "su - root -c  chcon u:object_r:system_file:s0 /system/bin/python3"
 
         )
 
