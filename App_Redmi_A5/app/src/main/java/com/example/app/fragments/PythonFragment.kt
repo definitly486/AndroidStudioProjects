@@ -16,7 +16,7 @@ class PythonFragment : Fragment() {
 
     private lateinit var downloadHelper: DownloadHelper
     private lateinit var downloadHelper2: DownloadHelper2
-
+    private var downloadFolder: File? = null
     fun getDownloadFolder(): File? {
         return context?.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
     }
@@ -27,6 +27,7 @@ class PythonFragment : Fragment() {
         // Инициализация DownloadHelper
         downloadHelper = DownloadHelper(requireContext())
         downloadHelper2 = DownloadHelper2(requireContext())
+        downloadFolder = requireContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
         setupButtons(view)
         return view
     }
@@ -42,7 +43,55 @@ class PythonFragment : Fragment() {
         val installPIPPython = view.findViewById<Button>(R.id.installpippython3)
         installPIPPython.setOnClickListener { installPIPPYTHON3() }
 
+        val installytDLP = view.findViewById<Button>(R.id.installytdlp)
+        installytDLP.setOnClickListener { installYTDLP() }
+
     }
+
+    private fun installYTDLP() {
+        val pipScript = """
+    #!/system/bin/sh
+if [ "$(id -u)" -ne 0 ]; then
+    echo "Ошибка: этот скрипт должен запускаться от root" >&2
+    exit 1
+fi
+    source /data/local/tmp/env/bin/activate
+    yt-dlp "$@"
+""".trimIndent()
+
+        try {
+            val file = File("$downloadFolder/yt-dlp")
+            file.writeText(pipScript)
+            file.setExecutable(true)  // chmod +x
+            Toast.makeText(context, "yt-dlp успешно создан!", Toast.LENGTH_SHORT).show()
+        } catch (e: Exception) {
+            Toast.makeText(context, "Ошибка: ${e.message}", Toast.LENGTH_LONG).show()
+        }
+
+
+        Toast.makeText(context, "Установка yt-dlp ...", Toast.LENGTH_SHORT).show()
+        val commands = arrayOf(
+            "su - root -c mount -o rw,remount /system",
+            "su - root -c cp $downloadFolder/yt-dlp /system/bin",
+            "su - root -c chmod +x /system/bin/yt-dlp",
+            "su - root -c chmod 0755 /system/bin/yt-dlp"
+
+        )
+
+        var process: Process?
+
+        for (command in commands) {
+            process = Runtime.getRuntime().exec(command)
+            process.waitFor() // Wait for the command to finish
+            if (process.exitValue() != 0) {
+                Toast.makeText(context, "Ошибка при создание pip Python3: $command", Toast.LENGTH_LONG)
+                    .show()
+                return
+            }
+        }
+        Toast.makeText(context, "Создание pip Python3 завершенo", Toast.LENGTH_SHORT).show()
+    }
+
 
     private fun  installPIPPYTHON3() {
         downloadHelper2.installpippython3()
