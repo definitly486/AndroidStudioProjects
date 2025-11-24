@@ -69,7 +69,7 @@ class SeventhFragment  : Fragment()  {
     private fun installGATE(){
         unzipgate("gate.base.zip")
         val publicDownloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-        downloadHelper.installgate( "gate.apk")
+        downloadHelper.installGate( "gate.apk")
     }
 
     private fun installBINANCE() {

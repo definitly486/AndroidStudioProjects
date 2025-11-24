@@ -69,7 +69,7 @@ class PythonFragment : Fragment() {
         val outputDir = File(folder, "")
         if (!tarGzFile.exists()) {
             Toast.makeText(requireContext(), "Файл python-3.13-android-aarch64.tar.gz не существует", Toast.LENGTH_SHORT).show()
-            downloadHelper.downloadfile("https://github.com/definitly486/redmia5/releases/download/python3/python-3.13-android-aarch64.tar.gz")
+            downloadHelper.downloadFileSimple("https://github.com/definitly486/redmia5/releases/download/python3/python-3.13-android-aarch64.tar.gz")
             return
         }
         downloadHelper2 = DownloadHelper2(requireContext())
