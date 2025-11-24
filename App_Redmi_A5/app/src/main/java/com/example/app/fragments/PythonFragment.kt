@@ -50,12 +50,11 @@ class PythonFragment : Fragment() {
 
     private fun installYTDLP() {
 
-        val pathToCheck = "/data/local/tmp/env/bin/yt-dlp"
-        if (checkFileExists(pathToCheck)) {
-            println("Файл существует")
-            Toast.makeText(context, "yt-dlp существует", Toast.LENGTH_SHORT).show()
+        val pathToCheck = "/data/local/tmp/env/lib/python3.13/site-packages//yt_dlp-2025.11.12.dist-info"
+        if (checkDirectoryExists(pathToCheck)) {
+            Toast.makeText(context, "Директория ${pathToCheck} существует", Toast.LENGTH_SHORT).show()
         } else {
-            Toast.makeText(context, "yt-dlp не существует", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Директория ${pathToCheck} не существует", Toast.LENGTH_SHORT).show()
 
             val commands = arrayOf(
                 "su - root -c  pip  install yt-dlp",
@@ -127,7 +126,11 @@ fi
         return file.exists()
     }
 
-
+    // Проверяем существование директории
+    fun checkDirectoryExists(directoryPath: String): Boolean {
+        val directory = File(directoryPath)
+        return directory.exists() && directory.isDirectory
+    }
 
     private fun  installPIPPYTHON3() {
         downloadHelper2.installpippython3()
