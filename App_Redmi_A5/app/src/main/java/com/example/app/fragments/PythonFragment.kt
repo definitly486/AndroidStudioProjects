@@ -114,12 +114,12 @@ fi
             process = Runtime.getRuntime().exec(command)
             process.waitFor() // Wait for the command to finish
             if (process.exitValue() != 0) {
-                Toast.makeText(context, "Ошибка при создание pip Python3: $command", Toast.LENGTH_LONG)
+                Toast.makeText(context, "Ошибка при создание yt-dlp: $command", Toast.LENGTH_LONG)
                     .show()
                 return
             }
         }
-        Toast.makeText(context, "Создание pip Python3 завершенo", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, "Создание yt-dlp  завершенo", Toast.LENGTH_SHORT).show()
     }
 
     fun checkFileExists(filePath: String): Boolean {
