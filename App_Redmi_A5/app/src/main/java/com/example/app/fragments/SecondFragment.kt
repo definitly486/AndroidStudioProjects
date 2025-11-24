@@ -153,15 +153,19 @@ class SecondFragment : Fragment() {
             val folderToDelete = privateDownloadsDir.resolve("redmia5-main")
             if (folderToDelete.exists()) {
                 if (deleteDirectory(folderToDelete)) {
-                    Log.d("MainActivity", "Папка 'redmia5-main' успешно удалена!")
+                    Toast.makeText(requireContext(), "Папка 'redmia5-main' успешно удалена!", Toast.LENGTH_SHORT)
+
                 } else {
-                    Log.e("MainActivity", "Ошибка при удалении папки 'redmia5-main'.")
+                    Toast.makeText(requireContext(), "Ошибка при удалении папки 'redmia5-main'.", Toast.LENGTH_SHORT)
+
                 }
             } else {
-                Log.w("MainActivity", "Папка 'redmia5-main' не найдена.")
+                Toast.makeText(requireContext(), "Папка 'redmia5-main' не найдена.", Toast.LENGTH_SHORT)
+
             }
         } else {
-            Log.e("MainActivity", "Приватный каталог 'Загрузки' не найден.")
+            Toast.makeText(requireContext(), "Приватный каталог 'Загрузки' не найден.", Toast.LENGTH_SHORT)
+
         }
     }
 
