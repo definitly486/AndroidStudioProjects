@@ -141,30 +141,30 @@ class SecondFragment : Fragment() {
             val firstFile = privateDownloadsDir.resolve("main.tar.gz")
             if (firstFile.exists()) {
                 if (firstFile.delete()) {
-                    Toast.makeText(requireContext(), "Архив main.tar.gz успешно удалён!", Toast.LENGTH_SHORT)
+                    Toast.makeText(requireContext(), "Архив main.tar.gz успешно удалён!", Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(requireContext(), "Ошибка при удалении архива main.tar.gz.", Toast.LENGTH_SHORT)
+                    Toast.makeText(requireContext(), "Ошибка при удалении архива main.tar.gz.", Toast.LENGTH_SHORT).show()
                 }
             } else {
-                Toast.makeText(requireContext(), "Архив main.tar.gz не найден.", Toast.LENGTH_SHORT)
+                Toast.makeText(requireContext(), "Архив main.tar.gz не найден.", Toast.LENGTH_SHORT).show()
             }
 
             // Папка redmia5-main
             val folderToDelete = privateDownloadsDir.resolve("redmia5-main")
             if (folderToDelete.exists()) {
                 if (deleteDirectory(folderToDelete)) {
-                    Toast.makeText(requireContext(), "Папка 'redmia5-main' успешно удалена!", Toast.LENGTH_SHORT)
+                    Toast.makeText(requireContext(), "Папка 'redmia5-main' успешно удалена!", Toast.LENGTH_SHORT).show()
 
                 } else {
-                    Toast.makeText(requireContext(), "Ошибка при удалении папки 'redmia5-main'.", Toast.LENGTH_SHORT)
+                    Toast.makeText(requireContext(), "Ошибка при удалении папки 'redmia5-main'.", Toast.LENGTH_SHORT).show()
 
                 }
             } else {
-                Toast.makeText(requireContext(), "Папка 'redmia5-main' не найдена.", Toast.LENGTH_SHORT)
+                Toast.makeText(requireContext(), "Папка 'redmia5-main' не найдена.", Toast.LENGTH_SHORT).show()
 
             }
         } else {
-            Toast.makeText(requireContext(), "Приватный каталог 'Загрузки' не найден.", Toast.LENGTH_SHORT)
+            Toast.makeText(requireContext(), "Приватный каталог 'Загрузки' не найден.", Toast.LENGTH_SHORT).show()
 
         }
     }
