@@ -214,12 +214,12 @@ try {
             process = Runtime.getRuntime().exec(command)
             process.waitFor() // Wait for the command to finish
             if (process.exitValue() != 0) {
-                Toast.makeText(context, "Ошибка при создание pip Python3: $command", Toast.LENGTH_LONG)
+                Toast.makeText(context, "Ошибка при создание yt-dlp: $command", Toast.LENGTH_LONG)
                     .show()
                 return
             }
         }
-        Toast.makeText(context, "Создание pip Python3 завершенo", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, "Создание yt-dlp завершено", Toast.LENGTH_LONG)
     }
 
     fun installenvpython3(){
@@ -245,7 +245,10 @@ try {
 
         Toast.makeText(context, "Устанваливаем виртальное окружение Python3 ...", Toast.LENGTH_SHORT).show()
         val commands = arrayOf(
-            "su - root -c python3  -m venv /data/local/tmp/env",
+            "su - root -c python3  -m venv  /data/local/tmp/env",
+            "su - root -c chmod +x /data/local/tmp/env/bin/pip",
+            "su - root -c chmod  -R 0755 /data/local/tmp/env/bin/pip",
+            "su - root -c chcon -R  u:object_r:system_file:s0 /data/local/tmp/env/bin/pip"
             )
 
         var process: Process?
