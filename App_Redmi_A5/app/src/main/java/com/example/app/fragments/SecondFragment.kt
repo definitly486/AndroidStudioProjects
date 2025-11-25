@@ -116,6 +116,11 @@ class SecondFragment : Fragment() {
         val deleteMain = view.findViewById<Button>(R.id.deletemain)
         deleteMain.setOnClickListener {  deleteMAIN(requireContext()) }
 
+        //Кнопка автоматической установке apk
+
+        val installAutoApk = view.findViewById<Button>(R.id.installautoapk)
+        installAutoApk .setOnClickListener { installautoAPK(requireContext()) }
+
     }
 
     private fun downloadBusyBox() {
@@ -571,6 +576,49 @@ class SecondFragment : Fragment() {
         // Показываем диалог
         val dialog = alertBuilder.create()
         dialog.show()
+    }
+
+    private fun installautoAPK(context: Context?) {
+        // Список APK-файлов для установки
+        val apks = listOf(
+            "Total_Commander_v.3.50d.apk",
+            "k9mail-13.0.apk",
+            "Google+Authenticator+7.0.apk",
+            "Pluma_.private_fast.browser_1.80_APKPure.apk",
+            "com.aurora.store_70.apk",
+            "KernelSU_v1.0.5_12081-release.apk",
+            "ByeByeDPI-arm64-v8a-release.apk",
+            "Telegram+X+0.27.5.1747-arm64-v8a.apk",
+            "Core+Music+Player_1.0.apk"
+        )
+
+        // Определяем каталог для хранения APK-файлов
+        val appApkDir = File(Environment.getExternalStorageDirectory(), "/Android/data/${context?.packageName}/files/APK")
+        if (!appApkDir.exists()) {
+            appApkDir.mkdirs()
+        }
+
+        // Перебираем каждый APK-файл и устанавливаем его командой 'pm install'
+        for (apkFile in apks) {
+            val filePath = "${appApkDir.absolutePath}/${apkFile}"
+
+            // Проверяем наличие файла перед попыткой установки
+            if (File(filePath).exists()) {
+                // Используем Runtime.exec для запуска команды 'pm install' через shell
+                try {
+                    val process = Runtime.getRuntime().exec(arrayOf("su", "-c", "pm install ${filePath}"))
+
+                    // Получение результата операции установки
+                    val resultCode = process.waitFor()
+                    println("Installation of $apkFile completed with code: $resultCode")
+
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            } else {
+                println("$apkFile not found at path: $filePath")
+            }
+        }
     }
 
 }

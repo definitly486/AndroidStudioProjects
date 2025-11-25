@@ -80,5 +80,6 @@
     <string name="installenvpython3"> Создание виртуального окружения python3 </string>
     <string name="installpippython3">Установка PIP </string>
     <string name="installytdlp">Установка yt-dlp </string>
+    <string name="installautoapk">Автоматическая установка APK </string>
 
 </resources>
