@@ -327,6 +327,12 @@ class SecondFragment : Fragment() {
             //включение темной темы
             shellExecutor.execShellCommand("cmd uimode night yes")
 
+            //разрешить изменть системные настройки
+
+            shellExecutor.execShellCommand("pm grant com.example.app android.permission.WRITE_SECURE_SETTINGS")
+            shellExecutor.execShellCommand("pm grant com.example.app android.permission.WRITE_SETTINGS")
+           
+
             //Установка 120 гц
 
             shellExecutor.execShellCommand("settings put system min_refresh_rate 120.0")
