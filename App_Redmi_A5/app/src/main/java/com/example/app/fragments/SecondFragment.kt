@@ -325,9 +325,13 @@ class SecondFragment : Fragment() {
 
             //Установка 120 гц
 
-            shellExecutor.execShellCommand("settings put system min_refresh_rate 120.0 ")
+            shellExecutor.execShellCommand("settings put system min_refresh_rate 120.0")
             shellExecutor.execShellCommand("settings put system peak_refresh_rate 120.0")
 
+            //Разрешить установку из неизвестных источников
+
+            shellExecutor.execShellCommand("pm grant android.permission.REQUEST_INSTALL_PACKAGES --user 0")
+            shellExecutor.execShellCommand("settings put secure install_non_market_apps 1")
 
             //выключение bluetooth
 
