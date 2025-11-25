@@ -32,7 +32,6 @@ import java.io.File
 import java.io.FileReader
 import java.io.IOException
 
-
 @Suppress("DEPRECATION")
 class SecondFragment : Fragment() {
 
@@ -578,6 +577,11 @@ class SecondFragment : Fragment() {
         dialog.show()
     }
 
+
+
+    // Лог-тег, используемый для идентификации сообщений нашего приложения
+    private val LOG_TAG = "InstallAutoAPK"
+
     private fun installautoAPK(context: Context?) {
         // Список APK-файлов для установки
         val apks = listOf(
@@ -592,31 +596,42 @@ class SecondFragment : Fragment() {
             "Core+Music+Player_1.0.apk"
         )
 
-        // Определяем каталог для хранения APK-файлов
+        // Определение каталога для хранения APK файлов
         val appApkDir = File(Environment.getExternalStorageDirectory(), "/Android/data/${context?.packageName}/files/APK")
+
+        Log.i(LOG_TAG, "Checking directory existence and creating it if necessary.")
         if (!appApkDir.exists()) {
             appApkDir.mkdirs()
+            Log.i(LOG_TAG, "Directory created successfully: ${appApkDir.absolutePath}")
         }
 
-        // Перебираем каждый APK-файл и устанавливаем его командой 'pm install'
+        // Перебор каждого APK-файла и установка
         for (apkFile in apks) {
             val filePath = "${appApkDir.absolutePath}/${apkFile}"
 
-            // Проверяем наличие файла перед попыткой установки
+            Log.i(LOG_TAG, "Processing APK file: $apkFile at path: $filePath")
+
+            // Проверка наличия файла перед попыткой установки
             if (File(filePath).exists()) {
-                // Используем Runtime.exec для запуска команды 'pm install' через shell
+                Log.i(LOG_TAG, "$apkFile exists. Attempting installation...")
+
+                // Использование Runtime.exec для запуска команды 'pm install' через shell
                 try {
-                    val process = Runtime.getRuntime().exec(arrayOf("su", "-c", "pm install ${filePath}"))
+                     Runtime.getRuntime().exec(arrayOf("su","-c","setenforce 0" ))
+                    val process = Runtime.getRuntime().exec(arrayOf("su","-c","pm install ${filePath}"))
+                    Runtime.getRuntime().exec(arrayOf("su","-c","setenforce 1" ))
 
-                    // Получение результата операции установки
+                    // Ожидание завершения процесса установки
                     val resultCode = process.waitFor()
-                    println("Installation of $apkFile completed with code: $resultCode")
-
+                    when(resultCode){
+                        0 -> Log.i(LOG_TAG, "Installation of $apkFile succeeded!")
+                        else -> Log.e(LOG_TAG, "Installation failed for $apkFile with error code: $resultCode")
+                    }
                 } catch (e: Exception) {
-                    e.printStackTrace()
+                    Log.e(LOG_TAG, "Error during installation of $apkFile: ", e)
                 }
             } else {
-                println("$apkFile not found at path: $filePath")
+                Log.w(LOG_TAG, "$apkFile not found at path: $filePath")
             }
         }
     }
