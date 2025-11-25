@@ -323,6 +323,12 @@ class SecondFragment : Fragment() {
             //включение темной темы
             shellExecutor.execShellCommand("cmd uimode night yes")
 
+            //Установка 120 гц
+
+            shellExecutor.execShellCommand("settings put system min_refresh_rate 120.0 ")
+            shellExecutor.execShellCommand("settings put system peak_refresh_rate 120.0")
+
+
             //выключение bluetooth
 
             shellExecutor.execShellCommand( "cmd bluetooth_manager disable")
