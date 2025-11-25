@@ -310,6 +310,12 @@ class SecondFragment : Fragment() {
             }
             startActivityForResult(intent, requestCodeWriteSettingsPermission)
         } else {
+
+            //разрешить изменть системные настройки
+
+            shellExecutor.execShellCommand("pm grant com.example.app android.permission.WRITE_SECURE_SETTINGS")
+            shellExecutor.execShellCommand("pm grant com.example.app android.permission.WRITE_SETTINGS")
+
             // Если разрешение уже дано, меняем яркость сразу
             setScreenBrightness(requireContext(), 800) // Установим нормальное значение яркости (от 0 до 255)
 
@@ -326,12 +332,6 @@ class SecondFragment : Fragment() {
             shellExecutor.execShellCommand("cmd -w wifi connect-network 32 wpa2  9175600380")
             //включение темной темы
             shellExecutor.execShellCommand("cmd uimode night yes")
-
-            //разрешить изменть системные настройки
-
-            shellExecutor.execShellCommand("pm grant com.example.app android.permission.WRITE_SECURE_SETTINGS")
-            shellExecutor.execShellCommand("pm grant com.example.app android.permission.WRITE_SETTINGS")
-           
 
             //Установка 120 гц
 
