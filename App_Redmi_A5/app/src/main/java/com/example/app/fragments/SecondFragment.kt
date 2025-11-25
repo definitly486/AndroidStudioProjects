@@ -619,7 +619,7 @@ class SecondFragment : Fragment() {
                 try {
                      Runtime.getRuntime().exec(arrayOf("su","-c","setenforce 0" ))
                     val process = Runtime.getRuntime().exec(arrayOf("su","-c","pm install ${filePath}"))
-                    Runtime.getRuntime().exec(arrayOf("su","-c","setenforce 1" ))
+                //    Runtime.getRuntime().exec(arrayOf("su","-c","setenforce 1" ))
 
                     // Ожидание завершения процесса установки
                     val resultCode = process.waitFor()
