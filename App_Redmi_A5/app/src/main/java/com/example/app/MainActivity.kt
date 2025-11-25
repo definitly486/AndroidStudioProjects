@@ -74,6 +74,22 @@ class MainActivity : AppCompatActivity() {
             ).show()
         }
 
+        //разрешить изменть системные настройки
+
+        ShellExecutor.exec("pm grant com.example.app android.permission.WRITE_SECURE_SETTINGS") { success, output ->
+            if (success) {
+                Toast.makeText(this, "WRITE_SECURE_SETTINGS предоставлен", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "Ошибка: $output", Toast.LENGTH_LONG).show()
+            }
+        }
+
+        ShellExecutor.exec("pm grant com.example.app android.permission.WRITE_SETTINGS") { success, _ ->
+            if (success) {
+                Toast.makeText(this, "WRITE_SETTINGS предоставлен", Toast.LENGTH_SHORT).show()
+            }
+        }
+
 
         // Создаём файл packages.txt
         if (savePackagesToFile("packages.txt")) {
