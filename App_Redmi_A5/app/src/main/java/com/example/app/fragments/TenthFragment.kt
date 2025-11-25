@@ -1,7 +1,7 @@
 package com.example.app.fragments
 
-import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -87,21 +87,44 @@ class TenthFragment : Fragment() {
     private suspend fun deleteAllData() {
         withContext(Dispatchers.IO) {
             try {
-                btnFactoryReset.isEnabled = false
-                btnFactoryReset.text = "Выполняется сброс…"
+                Log.i("FactoryReset", "Начат процесс сброса данных…")
 
-                // Выполнение команды для сброса всех данных кроме SD-карты
-                val command = "su - root -c am broadcast -p android -a android.intent.action.FACTORY_RESET --receiver-foreground --ez android.intent.extra.WIPE_EXTERNAL_STORAGE false"
-                Runtime.getRuntime().exec(command).waitFor()
+                withContext(Dispatchers.Main) {
+                    btnFactoryReset.isEnabled = false
+                    btnFactoryReset.text = "Выполняется сброс…"
+                }
+
+                val command = arrayOf(
+                    "su", "-c",
+                    "am broadcast -p android -a android.intent.action.FACTORY_RESET " +
+                            "--receiver-foreground --ez android.intent.extra.WIPE_EXTERNAL_STORAGE false"
+                )
+
+                Log.d("FactoryReset", "Выполняем команду: ${command.joinToString(" ")}")
+
+                val process = Runtime.getRuntime().exec(command)
+
+                // === Чтение stdout ===
+                val output = process.inputStream.bufferedReader().readText()
+                if (output.isNotEmpty())
+                    Log.i("FactoryReset", "STDOUT:\n$output")
+
+                // === Чтение stderr ===
+                val errors = process.errorStream.bufferedReader().readText()
+                if (errors.isNotEmpty())
+                    Log.e("FactoryReset", "STDERR:\n$errors")
+
+                val exitCode = process.waitFor()
+                Log.i("FactoryReset", "Команда завершилась с кодом: $exitCode")
 
             } catch (e: Exception) {
-                e.printStackTrace()
+                Log.e("FactoryReset", "Ошибка выполнения сброса", e)
+
             } finally {
                 withContext(Dispatchers.Main) {
                     btnFactoryReset.isEnabled = true
                     btnFactoryReset.text = "СБРОСИТЬ ВСЁ НА ТЕЛЕФОНЕ"
 
-                    // Сообщение пользователю
                     MaterialAlertDialogBuilder(requireContext())
                         .setTitle("Заводской сброс выполнен!")
                         .setMessage("Ваш телефон успешно сброшен до заводских настроек. Данные на SD-карте сохранены.")
@@ -111,4 +134,5 @@ class TenthFragment : Fragment() {
             }
         }
     }
+
 }
