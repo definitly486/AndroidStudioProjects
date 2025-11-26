@@ -5,7 +5,7 @@ import java.io.File
 object KernelSUInstaller {
 
     private const val MODULE_NAME = "APatch-KSU.zip"
-    private const val DOWNLOAD_PATH = "/sdcard/Download"
+    private const val DOWNLOAD_PATH = "/storage/emulated/0/Download"
 
     fun installAPatchKSU(): Boolean {
         val moduleFile = File("$DOWNLOAD_PATH/$MODULE_NAME")
