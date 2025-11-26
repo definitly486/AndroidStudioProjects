@@ -6,18 +6,17 @@ import androidx.activity.ComponentActivity
 import java.io.File
 
 /**
- * Установка APatch/KSU + автогрант разрешений через root.
+ * Установка APatch/KSU с правильным ID = read-write.
  */
 class KernelSetupScript(private val activity: ComponentActivity) {
 
     companion object {
         const val MODULE_FILE_NAME = "APatch-KSU.zip"
+        const val MODULE_ID = "read-write"   // <<< ВАЖНО: правильный id для модуля
     }
 
     /**
      * Главный запуск.
-     * 1) Автовыдача разрешений через root
-     * 2) Установка из папки Загрузки
      */
     fun startInstall() {
         autoGrantPermissions()
@@ -25,7 +24,7 @@ class KernelSetupScript(private val activity: ComponentActivity) {
     }
 
     /**
-     * Автоматическая выдача разрешений через pm grant + root
+     * Авто-выдача разрешений через root.
      */
     private fun autoGrantPermissions() {
         val pkg = activity.packageName
@@ -56,9 +55,10 @@ class KernelSetupScript(private val activity: ComponentActivity) {
             val output = p.inputStream.bufferedReader().readText()
 
             if (output.contains("PERM_DONE")) {
-                Toast.makeText(activity, "Все разрешения выданы автоматически (root)", Toast.LENGTH_SHORT).show()
+                Toast.makeText(activity, "Разрешения автоматически выданы", Toast.LENGTH_SHORT)
+                    .show()
             } else {
-                Toast.makeText(activity, "Разрешения не удалось выдать автоматически", Toast.LENGTH_SHORT).show()
+                Toast.makeText(activity, "Не удалось выдать разрешения", Toast.LENGTH_SHORT).show()
             }
 
         } catch (e: Exception) {
@@ -67,7 +67,7 @@ class KernelSetupScript(private val activity: ComponentActivity) {
     }
 
     /**
-     * Ищет ZIP в папке Загрузки и запускает root-установку.
+     * Ищет ZIP в Загрузках.
      */
     private fun installFromDownload() {
         val downloadDir =
@@ -78,7 +78,7 @@ class KernelSetupScript(private val activity: ComponentActivity) {
         if (!zipFile.exists()) {
             Toast.makeText(
                 activity,
-                "Файл «$MODULE_FILE_NAME» не найден в Загрузках!",
+                "Файл «$MODULE_FILE_NAME» не найден!",
                 Toast.LENGTH_LONG
             ).show()
             return
@@ -88,28 +88,42 @@ class KernelSetupScript(private val activity: ComponentActivity) {
     }
 
     /**
-     * Выполняет установку через root.
+     * Установка модуля через root.
      */
     private fun installViaRoot(zipFile: File) {
-        val moduleId = MODULE_FILE_NAME.removeSuffix(".zip")
+        val moduleDir = "/data/adb/modules/$MODULE_ID"
         val zipPathEscaped = zipFile.absolutePath.replace("\"", "\\\"")
 
         val cmd = """
-            rm -rf /data/adb/modules/$moduleId
-            mkdir -p /data/adb/modules/$moduleId
+        rm -rf "$moduleDir"
+        mkdir -p "$moduleDir"
 
-            if command -v unzip >/dev/null 2>&1; then
-                unzip -o "$zipPathEscaped" -d /data/adb/modules/$moduleId
-            elif command -v busybox >/dev/null 2>&1 && busybox unzip >/dev/null 2>&1; then
-                busybox unzip -o "$zipPathEscaped" -d /data/adb/modules/$moduleId
-            else
-                echo "NO_UNZIP"
-            fi
+        # Распаковка ZIP
+        if command -v unzip >/dev/null 2>&1; then
+            unzip -o "$zipPathEscaped" -d "$moduleDir"
+        elif command -v busybox >/dev/null 2>&1 && busybox unzip >/dev/null 2>&1; then
+            busybox unzip -o "$zipPathEscaped" -d "$moduleDir"
+        else
+            echo "NO_UNZIP"
+        fi
 
-            touch /data/adb/modules/$moduleId/module.prop 2>/dev/null
+        # Удаление META-INF (обязательно)
+        rm -rf "$moduleDir/META-INF"
 
-            chmod -R 755 /data/adb/modules/$moduleId 2>/dev/null
-            echo "END_OF_INSTALL"
+        # Создаём правильный module.prop
+        cat <<EOF > "$moduleDir/module.prop"
+id=read-write
+name=APatch-KSU可读写
+version=2.0
+versionCode=1
+author=idyll™2018
+description=[运行中😊]📲APatch与KSU通过OverlayFS实现分区可读写，通过删除/data/adb/modules/.rw文件夹恢复！
+EOF
+
+        chmod -R 755 "$moduleDir"
+        chmod 644 "$moduleDir/module.prop"
+
+        echo "END_OF_INSTALL"
         """.trimIndent()
 
         try {
@@ -128,13 +142,13 @@ class KernelSetupScript(private val activity: ComponentActivity) {
 
             when {
                 exit == 0 && stdout.contains("END_OF_INSTALL") ->
-                    Toast.makeText(activity, "Модуль установлен! Перезагрузка обязательна.", Toast.LENGTH_LONG).show()
+                    Toast.makeText(activity, "Модуль установлен! Требуется перезагрузка.", Toast.LENGTH_LONG).show()
 
                 stdout.contains("NO_UNZIP") ->
-                    Toast.makeText(activity, "Ошибка: unzip отсутствует. Установите busybox.", Toast.LENGTH_LONG).show()
+                    Toast.makeText(activity, "Ошибка: отсутствует unzip/busybox.", Toast.LENGTH_LONG).show()
 
                 stderr.isNotEmpty() ->
-                    Toast.makeText(activity, "Ошибка root: $stderr", Toast.LENGTH_LONG).show()
+                    Toast.makeText(activity, "Root ошибка: $stderr", Toast.LENGTH_LONG).show()
 
                 else ->
                     Toast.makeText(activity, "Неизвестная ошибка root (код $exit)", Toast.LENGTH_LONG).show()

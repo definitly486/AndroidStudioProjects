@@ -1,5 +1,6 @@
 package com.example.app.fragments
 
+import DownloadHelper
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,8 @@ import com.example.app.KernelSetupScript
 import com.example.app.R
 
 class KernelSuFragment : Fragment() {
+
+    private lateinit var downloadHelper: DownloadHelper
 
     private lateinit var kernelScript: KernelSetupScript
 
@@ -24,7 +27,8 @@ class KernelSuFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
+        // Инициализация DownloadHelper
+        downloadHelper = DownloadHelper(requireContext())
         val view = inflater.inflate(R.layout.fragment_kernelsu, container, false)
         setupButtons(view)
         return view
@@ -47,5 +51,14 @@ class KernelSuFragment : Fragment() {
             // Реальный запуск установки
             kernelScript.startInstall()
         }
+
+        // Кнопка скачивания ksuzip
+        val downloadksuzip = view.findViewById<Button>(R.id.downloadksuzip)
+        downloadksuzip.setOnClickListener { downloadKSUZip() }
+    }
+
+    private fun downloadKSUZip() {
+        downloadHelper.downloadToPublic("https://github.com/definitly486/redmia5/releases/download/root/APatch-KSU.zip")
+
     }
 }
