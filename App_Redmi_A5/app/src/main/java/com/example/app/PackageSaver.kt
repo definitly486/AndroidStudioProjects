@@ -133,7 +133,9 @@ fun Context.savePackagesToFile(filename: String): Boolean {
         "com.google.android.overlay.modules.captiveportallogin.forframework",
         "com.sprd.uasetting",
         "com.sprd.camta",
-        "com.android.rkpdapp"
+        "com.android.rkpdapp",
+        "com.google.android.ondevicepersonalization.services",
+        "com.android.overlay.gmssettings"
     ).joinToString("\n")
 
     val downloadFolder = this.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
