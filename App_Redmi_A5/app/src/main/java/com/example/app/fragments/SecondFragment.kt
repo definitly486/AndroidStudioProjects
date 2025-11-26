@@ -7,6 +7,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -464,28 +465,8 @@ class SecondFragment : Fragment() {
         }
     }
 
-    suspend fun deletePackage(packageName: String) {
 
-        withContext(Dispatchers.IO) {
-            // Показываем сообщение о текущем процессе
-            withContext(Dispatchers.Main) {
-                Toast.makeText(context, "Удаляется пакет: $packageName", Toast.LENGTH_SHORT).show()
-            }
-            try {
-                val process = Runtime.getRuntime().exec("su -c pm uninstall --user 0 $packageName")
-                val exitCode = process.waitFor()
-                // Можно проверить exitCode, чтобы убедиться, что команда завершилась успешно
-                if (exitCode == 0) {
-                    // Успешно
-                } else {
-                    // Ошибка
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
-
+    private val TAG = "PkgDeleter"  // Твоя метка для фильтрации в Logcat
 
     fun Fragment.deletePkgFromFile(fileName: String) {
         if (!RootChecker.hasRootAccess(requireContext())) {
@@ -498,40 +479,124 @@ class SecondFragment : Fragment() {
                 Toast.makeText(requireContext(), "Начинается удаление пакетов...", Toast.LENGTH_SHORT).show()
             }
 
-            // Получаем внутреннюю директорию нашего приложения
-            val appPrivateDirectory = requireContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
-            val filePath = "$appPrivateDirectory/$fileName"
+            Log.i(TAG, "Начало массового удаления из файла: $fileName")
 
-            try {
-                val file = File(filePath)
-                if (!file.exists()) {
+            val appPrivateDirectory = requireContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
+                ?: run {
+                    val error = "Не удалось получить папку для файлов"
+                    Log.e(TAG, error)
                     withContext(Dispatchers.Main) {
-                        Toast.makeText(requireContext(), "Файл не найден!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), error, Toast.LENGTH_LONG).show()
                     }
                     return@launch
                 }
 
-                val reader = BufferedReader(FileReader(file))
-                var line: String?
-                while (reader.readLine().also { line = it } != null) {
-                    if (line.isNullOrBlank()) continue
-                    deletePackage(line.trim())
-                    delay(500) // Пауза между командами
+            val file = File(appPrivateDirectory, fileName)
+            if (!file.exists()) {
+                Log.w(TAG, "Файл не найден: $fileName")
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(requireContext(), "Файл не найден: $fileName", Toast.LENGTH_SHORT).show()
                 }
-                reader.close()
+                return@launch
+            }
+
+            Log.i(TAG, "Найден файл: ${file.absolutePath}, строк: ${file.readLines().size}")
+
+            var processedCount = 0
+            var successCount = 0
+            var skippedCount = 0
+
+            try {
+                val lines = file.readLines()
+
+                for ((index, rawLine) in lines.withIndex()) {
+                    val packageName = rawLine.trim()
+                    if (packageName.isBlank()) {
+                        Log.v(TAG, "Пропущена пустая строка #${index + 1}")
+                        continue
+                    }
+
+                    processedCount++
+                    Log.i(TAG, "Обработка [$processedCount/${lines.size}]: $packageName")
+
+                    // Проверка установки
+                    val isInstalled = withContext(Dispatchers.Main) {
+                        isPackageInstalled(packageName)
+                    }
+
+                    if (!isInstalled) {
+                        Log.w(TAG, "Пропущен (не установлен): $packageName")
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(requireContext(), "Пропущен: $packageName", Toast.LENGTH_SHORT).show()
+                        }
+                        skippedCount++
+                        continue
+                    }
+
+                    // Удаление
+                    val deleted = deletePackageRoot(packageName)
+
+                    if (deleted) {
+                        Log.i(TAG, "УСПЕШНО удалён: $packageName")
+                        successCount++
+                    } else {
+                        Log.e(TAG, "ОШИБКА при удалении: $packageName")
+                    }
+
+                    delay(500) // Пауза для стабильности
+                }
+
+                // Итог
+                val summary = "Завершено! Обработано: $processedCount | Удалено: $successCount | Пропущено: $skippedCount"
+                Log.i(TAG, summary)
 
                 withContext(Dispatchers.Main) {
+                    Toast.makeText(requireContext(), summary, Toast.LENGTH_LONG).show()
                     showCompletionDialog(requireContext())
-                    Toast.makeText(requireContext(), "Удаление завершено!", Toast.LENGTH_SHORT).show()
                     createReloadDialog()
                 }
-            } catch (e: IOException) {
+
+            } catch (e: Exception) {
+                Log.e(TAG, "Критическая ошибка при обработке файла", e)
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(requireContext(), "Ошибка чтения файла: ${e.message}", Toast.LENGTH_LONG).show()
+                    Toast.makeText(requireContext(), "Ошибка: ${e.message}", Toast.LENGTH_LONG).show()
                 }
             }
         }
     }
+
+    // Проверка установки пакета
+    private fun Fragment.isPackageInstalled(packageName: String): Boolean {
+        return try {
+            requireContext().packageManager.getPackageInfo(packageName, 0)
+            true
+        } catch (e: PackageManager.NameNotFoundException) {
+            false
+        } catch (e: Exception) {
+            Log.e(TAG, "Ошибка PackageManager для $packageName", e)
+            false
+        }
+    }
+
+    // Удаление через root
+    private suspend fun deletePackageRoot(packageName: String): Boolean {
+        return try {
+            Log.d(TAG, "Выполняется: su -c pm uninstall $packageName")
+            val process = Runtime.getRuntime().exec(arrayOf("su", "-c", "pm uninstall $packageName"))
+            val exitCode = process.waitFor()
+            val success = exitCode == 0
+            if (success) {
+                Log.i(TAG, "Команда выполнена успешно (exit code: $exitCode)")
+            } else {
+                Log.e(TAG, "Команда завершилась с ошибкой (exit code: $exitCode)")
+            }
+            success
+        } catch (e: Exception) {
+            Log.e(TAG, "Исключение при выполнении su-команды для $packageName", e)
+            false
+        }
+    }
+
     fun showCompletionDialogroot(context: Context) {
         val builder = AlertDialog.Builder(context)
         builder.setTitle("Проверка root")
