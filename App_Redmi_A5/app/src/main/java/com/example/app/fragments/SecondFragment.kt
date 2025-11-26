@@ -80,7 +80,6 @@ class SecondFragment : Fragment() {
         val installApatchKsu = view.findViewById<Button>(R.id.install_apatch_ksu_zip)
 
         installApatchKsu.setOnClickListener {
-            kernelScript.startInstall()
         }
 
 
