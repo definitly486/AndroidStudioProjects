@@ -570,17 +570,32 @@ class SecondFragment : Fragment() {
     private fun Fragment.isPackageInstalled(packageName: String): Boolean {
         val pm = requireContext().packageManager
         return try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                pm.getPackageInfo(packageName, PackageManager.PackageInfoFlags.of(PackageManager.MATCH_ALL.toLong()))
-            } else {
-                @Suppress("DEPRECATION")
-                pm.getPackageInfo(packageName, PackageManager.MATCH_ALL)
+            when {
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
+                    // API 33+: используем MATCH_ALL через флаги
+                    pm.getPackageInfo(
+                        packageName,
+                        PackageManager.PackageInfoFlags.of(PackageManager.MATCH_ALL.toLong())
+                    )
+                    true
+                }
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> { // API 30+
+                    // На API 30–32 используем новый метод с int-флагами
+                    pm.getPackageInfo(packageName, PackageManager.MATCH_ALL)
+                    true
+                }
+                else -> {
+                    // До API 30: старый способ (депрекейтед, но работает)
+                    @Suppress("DEPRECATION")
+                    pm.getPackageInfo(packageName, PackageManager.GET_ACTIVITIES or PackageManager.GET_SERVICES)
+                    // Или просто 0 — но с 0 системные тоже могут не находиться на некоторых устройствах
+                    true
+                }
             }
-            true
         } catch (e: PackageManager.NameNotFoundException) {
             false
         } catch (e: Exception) {
-            Log.e(TAG, "Package check error for $packageName", e)
+            Log.e(TAG, "Ошибка при проверке пакета $packageName", e)
             false
         }
     }
