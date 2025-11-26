@@ -43,7 +43,7 @@ class SecondFragment : Fragment() {
     private lateinit var downloadHelper: DownloadHelper
     private lateinit var downloadHelper2: DownloadHelper2
 
-    private lateinit var kernelSetup: KernelSetupScript
+    private var kernelSetup: KernelSetupScript? = null
 
     fun getDownloadFolder(): File? {
         return context?.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
@@ -78,12 +78,6 @@ class SecondFragment : Fragment() {
 
         //кнопка установки apatch_ksu.zip
 
-        kernelSetup = KernelSetupScript(requireActivity() as ComponentActivity)
-
-        view.findViewById<Button>(R.id.kernelsetup)?.setOnClickListener {
-            kernelSetup?.installFromDownload()
-        }
-    
 
         // Кнопка скачивания ksuzip
         val downloadksuzip = view.findViewById<Button>(R.id.downloadksuzip)
