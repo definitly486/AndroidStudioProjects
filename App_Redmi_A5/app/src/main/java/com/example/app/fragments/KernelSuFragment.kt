@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import com.example.app.KernelSetupScript
 import com.example.app.R
 
+@Suppress("SpellCheckingInspection")
 class KernelSuFragment : Fragment() {
 
     private lateinit var downloadHelper: DownloadHelper
