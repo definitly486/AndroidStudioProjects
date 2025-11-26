@@ -11,8 +11,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.setPadding
 import androidx.fragment.app.Fragment
 import com.example.app.fragments.FifthFragment
-import com.example.app.fragments.FirstFragment
 import com.example.app.fragments.KernelSuFragment
+import com.example.app.fragments.FirstFragment
 import com.example.app.fragments.NinthFragment
 import com.example.app.fragments.PythonFragment
 import com.example.app.fragments.RootChecker
