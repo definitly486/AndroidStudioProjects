@@ -43,7 +43,7 @@ class SecondFragment : Fragment() {
     private lateinit var downloadHelper: DownloadHelper
     private lateinit var downloadHelper2: DownloadHelper2
 
-    private var kernelSetup: KernelSetupScript? = null
+ 
 
     fun getDownloadFolder(): File? {
         return context?.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
