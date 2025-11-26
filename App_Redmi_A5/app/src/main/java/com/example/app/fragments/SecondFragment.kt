@@ -568,21 +568,19 @@ class SecondFragment : Fragment() {
 
     // Проверка установки пакета
     private fun Fragment.isPackageInstalled(packageName: String): Boolean {
+        val pm = requireContext().packageManager
         return try {
-            val pm = requireContext().packageManager
-            val packageInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                // API 33+: Новый способ с флагами
-                pm.getPackageInfo(packageName, PackageManager.PackageInfoFlags.of(0))
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                pm.getPackageInfo(packageName, PackageManager.PackageInfoFlags.of(PackageManager.MATCH_ALL.toLong()))
             } else {
-                // Старые API: Депрекация подавлена
                 @Suppress("DEPRECATION")
-                pm.getPackageInfo(packageName, 0)
+                pm.getPackageInfo(packageName, PackageManager.MATCH_ALL)
             }
-            true  // Если дошли сюда — пакет найден
+            true
         } catch (e: PackageManager.NameNotFoundException) {
-            false  // Не установлен или не видим
+            false
         } catch (e: Exception) {
-            Log.e(TAG, "Ошибка PackageManager для $packageName", e)
+            Log.e(TAG, "Package check error for $packageName", e)
             false
         }
     }
