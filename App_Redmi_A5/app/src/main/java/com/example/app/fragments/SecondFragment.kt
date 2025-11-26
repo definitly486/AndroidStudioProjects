@@ -700,6 +700,14 @@ class SecondFragment : Fragment() {
     private val LOG_TAG = "InstallAutoAPK"
 
     private fun installAutoAPK(context: Context?) {
+        if (context == null) {
+            Log.e(LOG_TAG, "Context is null → автоустановка отменена")
+            return
+        }
+
+        val packageManager = context.packageManager
+
+        // Список APK-файлов (можно менять как угодно)
         val apks = listOf(
             "Total_Commander_v.3.50d.apk",
             "k9mail-13.0.apk",
@@ -712,57 +720,99 @@ class SecondFragment : Fragment() {
             "Core+Music+Player_1.0.apk"
         )
 
+        // Путь к папке с APK (оставил твой оригинальный, но с безопасным созданием)
         val appApkDir = File(
             Environment.getExternalStorageDirectory(),
-            "/Android/data/${context?.packageName}/files/APK"
-        )
-
-        Log.i(LOG_TAG, "Проверка и создание директории: ${appApkDir.absolutePath}")
-        if (!appApkDir.exists()) {
-            appApkDir.mkdirs()
-            Log.i(LOG_TAG, "Директория создана: ${appApkDir.absolutePath}")
+            "/Android/data/${context.packageName}/files/APK"
+        ).also { dir ->
+            if (!dir.exists()) {
+                val created = dir.mkdirs()
+                Log.i(LOG_TAG, if (created) "Директория создана: ${dir.absolutePath}"
+                else "Не удалось создать директорию: ${dir.absolutePath}")
+            }
         }
 
-        for (apkFile in apks) {
-            val filePath = File(appApkDir, apkFile).absolutePath
+        Log.i(LOG_TAG, "Запуск автоустановки APK из: ${appApkDir.absolutePath}")
 
-            Log.i(LOG_TAG, "Обрабатывается: $apkFile")
+        for (apkFileName in apks) {
+            val apkFile = File(appApkDir, apkFileName)
 
-            val apkFileObj = File(filePath)
-            if (!apkFileObj.exists()) {
-                Log.w(LOG_TAG, "Файл не найден: $filePath")
+            if (!apkFile.exists()) {
+                Log.w(LOG_TAG, "Файл не найден → пропуск: $apkFileName")
                 continue
             }
 
-            Log.i(LOG_TAG, "Установка $apkFile через root...")
+            // Автоматически получаем package name из APK
+            val packageName = getPackageNameFromApk(context, apkFile)
+            if (packageName == null) {
+                Log.e(LOG_TAG, "Не удалось прочитать package name из APK → пропуск: $apkFileName")
+                continue
+            }
+
+            // Проверяем, установлен ли уже пакет
+            val alreadyInstalled = isPackageInstalled(packageManager, packageName)
+
+            if (alreadyInstalled) {
+                Log.i(LOG_TAG, "Уже установлен → пропуск: $apkFileName [$packageName]")
+                continue
+            }
+
+            Log.i(LOG_TAG, "Установка: $apkFileName → $packageName")
 
             try {
-                // Отключаем SELinux только если нужно (можно закомментировать, если не требуется)
+                // Временно отключаем SELinux (если нужно на твоём устройстве)
                 Runtime.getRuntime().exec(arrayOf("su", "-c", "setenforce 0"))
 
-                val process = Runtime.getRuntime().exec(arrayOf("su", "-c", "pm install \"$filePath\""))
+                // pm install -r = переустановка, если вдруг старая версия есть (на всякий случай)
+                val cmd = "pm install -r \"${apkFile.absolutePath}\""
+                val process = Runtime.getRuntime().exec(arrayOf("su", "-c", cmd))
+
                 val exitCode = process.waitFor()
 
                 if (exitCode == 0) {
-                    Log.i(LOG_TAG, "Успешно установлен: $apkFile")
+                    Log.i(LOG_TAG, "Успешно установлен: $apkFileName → $packageName")
                 } else {
-                    // Читаем ошибку из stderr, если нужно
-                    val error = process.errorStream.bufferedReader().use { it.readText() }
-                    Log.e(LOG_TAG, "Ошибка установки $apkFile (код $exitCode): $error")
+                    val error = process.errorStream.bufferedReader().use { it.readText() }.trim()
+                    Log.e(LOG_TAG, "Ошибка установки $apkFileName (код $exitCode): $error")
                 }
 
-                // Возвращаем SELinux в enforcing (по желанию)
-                // Runtime.getRuntime().exec(arrayOf("su", "-c", "setenforce 1"))
+                // Возвращаем SELinux в безопасное состояние
+                Runtime.getRuntime().exec(arrayOf("su", "-c", "setenforce 1")).waitFor()
 
             } catch (e: Exception) {
-                Log.e(LOG_TAG, "Исключение при установке $apkFile", e)
+                Log.e(LOG_TAG, "Исключение при установке $apkFileName", e)
             }
 
-            // Добавляем задержку 500 мс между установками
-            Thread.sleep(500)
+            // Задержка между установками (чтобы система не захлебнулась)
+            Thread.sleep(700)
         }
 
         Log.i(LOG_TAG, "Автоустановка APK завершена.")
+    }
+
+    // Вспомогательная функция: получить package name из APK
+    private fun getPackageNameFromApk(context: Context, apkFile: File): String? {
+        return try {
+            val pm = context.packageManager
+            val archiveInfo = pm.getPackageArchiveInfo(apkFile.absolutePath, 0)
+            archiveInfo?.packageName?.takeIf { it.isNotBlank() }
+        } catch (e: Exception) {
+            Log.w(LOG_TAG, "Ошибка чтения package name из ${apkFile.name}", e)
+            null
+        }
+    }
+
+    // Вспомогательная функция: проверка установки пакета
+    private fun isPackageInstalled(pm: PackageManager, packageName: String): Boolean {
+        return try {
+            pm.getPackageInfo(packageName, 0)
+            true
+        } catch (e: PackageManager.NameNotFoundException) {
+            false
+        } catch (e: Exception) {
+            Log.w(LOG_TAG, "Ошибка проверки установки пакета $packageName", e)
+            false
+        }
     }
 
 }
