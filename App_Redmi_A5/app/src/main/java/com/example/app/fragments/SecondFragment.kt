@@ -329,6 +329,10 @@ class SecondFragment : Fragment() {
             shellExecutor.execShellCommand("settings put global development_settings_enabled 1")
             shellExecutor.execShellCommand("settings put global adb_enabled 1")
 
+            //включить wifi debug
+
+            shellExecutor.execShellCommand("settings put global adb_wifi_enabled 1")
+
             //Включаем navbar.gestural
             shellExecutor.execShellCommand("cmd overlay enable com.android.internal.systemui.navbar.gestural")
 
@@ -343,10 +347,6 @@ class SecondFragment : Fragment() {
 
             shellExecutor.execShellCommand("settings put system min_refresh_rate 120.0")
             shellExecutor.execShellCommand("settings put system peak_refresh_rate 120.0")
-
-            //включить wifi debug
-
-            shellExecutor.execShellCommand("settings put global adb_wifi_enabled 1")
 
             //Разрешить установку из неизвестных источников
 
