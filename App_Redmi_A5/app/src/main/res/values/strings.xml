@@ -81,5 +81,6 @@
     <string name="installpippython3">Установка PIP </string>
     <string name="installytdlp">Установка yt-dlp </string>
     <string name="installautoapk">Автоматическая установка APK </string>
+    <string name="kernelsetup">Установить  APatch-KSU.zip</string>
 
 </resources>

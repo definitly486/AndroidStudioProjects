@@ -21,6 +21,7 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import com.example.app.KernelSetupScript
 import com.example.app.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -40,6 +41,8 @@ class SecondFragment : Fragment() {
     private val requestCodeWriteSettingsPermission = 1001
     private lateinit var downloadHelper: DownloadHelper
     private lateinit var downloadHelper2: DownloadHelper2
+
+    private lateinit var kernelSetup: KernelSetupScript
 
     fun getDownloadFolder(): File? {
         return context?.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
@@ -71,6 +74,11 @@ class SecondFragment : Fragment() {
         // Кнопка установки gh
         val installgh = view.findViewById<Button>(R.id.installgh)
         installgh.setOnClickListener { downloadGH() }
+
+        //кнопка установки apatch_ksu.zip
+
+        val kernelSetupp= view.findViewById<Button>(R.id.kernelsetup)
+        kernelSetup.setOnClickListener { installFromDownload() }
 
         // Кнопка скачивания ksuzip
         val downloadksuzip = view.findViewById<Button>(R.id.downloadksuzip)
