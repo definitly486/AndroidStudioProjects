@@ -16,6 +16,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.File
 
 class SixthFragment : Fragment() {
 
@@ -41,6 +42,13 @@ class SixthFragment : Fragment() {
 
     // Корутинный метод для клонирования репозитория
     private fun cloneGIT(repoUrl: String) {
+
+
+        //проверка существоания git
+
+        isGitBinaryExists ()
+
+
         CoroutineScope(Dispatchers.Main).launch {
             val gitCloneInstance = GitClone2(null)
 
@@ -73,6 +81,31 @@ class SixthFragment : Fragment() {
     // Вспомогательная функция для извлечения имени репозитория из URL
     fun extractRepoNameFromURL(url: String): String {
         return url.substringBeforeLast(".git").substringAfterLast("/")
+    }
+
+    fun isGitBinaryExists(): Boolean {
+        val gitPath = "/system/bin/git"
+        val file = File(gitPath)
+
+        return when {
+            !file.exists() -> {
+                Toast.makeText(requireContext(), "Файл $gitPath не существует", Toast.LENGTH_SHORT).show()
+
+                false
+            }
+            !file.isFile -> {
+                Toast.makeText(requireContext(), "$gitPath существует, но это не обычный файл", Toast.LENGTH_SHORT).show()
+                false
+            }
+            !file.canExecute() -> {
+                Toast.makeText(requireContext(), "$gitPath существует, но не имеет права на выполнение", Toast.LENGTH_SHORT).show()
+                true // всё равно возвращаем true — сам бинарник присутствует
+            }
+            else -> {
+                Toast.makeText(requireContext(), "Git бинарник найден и готов к использованию: $gitPath", Toast.LENGTH_SHORT).show()
+                true
+            }
+        }
     }
 
 
