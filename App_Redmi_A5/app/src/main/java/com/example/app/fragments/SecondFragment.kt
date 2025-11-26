@@ -116,9 +116,6 @@ class SecondFragment : Fragment() {
             // Если разрешие уже есть, kernelScript.startInstall сразу вызовет installFromDownload()
         }
 
-        // Кнопка скачивания ksuzip
-        val downloadksuzip = view.findViewById<Button>(R.id.downloadksuzip)
-        downloadksuzip.setOnClickListener { downloadKSUZip() }
 
         // Кнопка скачивания main
         val button6 = view.findViewById<Button>(R.id.downloadmain)
@@ -264,9 +261,6 @@ class SecondFragment : Fragment() {
         }
     }
 
-    private fun downloadKSUZip() {
-        downloadHelper.downloadToPublic("https://github.com/definitly486/redmia5/releases/download/root/APatch-KSU.zip")
-    }
 
     private fun downloadMain() {
         downloadHelper.downloadFileSimple("https://github.com/definitly486/redmia5/archive/main.tar.gz")

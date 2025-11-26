@@ -61,7 +61,7 @@
             style="@style/Widget.MaterialComponents.Button"
             tools:ignore="VisualLintButtonSize" />
 
-      
+
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/downloadmain"
