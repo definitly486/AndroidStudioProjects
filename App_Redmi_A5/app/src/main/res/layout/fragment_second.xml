@@ -75,7 +75,7 @@
             tools:ignore="VisualLintButtonSize" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/kernelsetup"
+            android:id="@+id/install_apatch_ksu_zip"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/kernelsetup"

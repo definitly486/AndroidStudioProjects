@@ -77,6 +77,11 @@ class SecondFragment : Fragment() {
         installgh.setOnClickListener { downloadGH() }
 
         //кнопка установки apatch_ksu.zip
+        val installApatchKsu = view.findViewById<Button>(R.id.install_apatch_ksu_zip)
+
+        installApatchKsu.setOnClickListener {
+            kernelScript.startInstall()
+        }
 
 
         // Кнопка скачивания ksuzip
