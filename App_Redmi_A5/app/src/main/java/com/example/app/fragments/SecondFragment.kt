@@ -9,6 +9,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.Settings
@@ -568,10 +569,18 @@ class SecondFragment : Fragment() {
     // Проверка установки пакета
     private fun Fragment.isPackageInstalled(packageName: String): Boolean {
         return try {
-            requireContext().packageManager.getPackageInfo(packageName, 0)
-            true
+            val pm = requireContext().packageManager
+            val packageInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                // API 33+: Новый способ с флагами
+                pm.getPackageInfo(packageName, PackageManager.PackageInfoFlags.of(0))
+            } else {
+                // Старые API: Депрекация подавлена
+                @Suppress("DEPRECATION")
+                pm.getPackageInfo(packageName, 0)
+            }
+            true  // Если дошли сюда — пакет найден
         } catch (e: PackageManager.NameNotFoundException) {
-            false
+            false  // Не установлен или не видим
         } catch (e: Exception) {
             Log.e(TAG, "Ошибка PackageManager для $packageName", e)
             false
