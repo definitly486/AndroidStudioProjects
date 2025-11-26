@@ -104,6 +104,7 @@ class SecondFragment : Fragment() {
         val setting = view.findViewById<Button>(R.id.setsettings)
         setting.setOnClickListener { setSettings() }
 
+
         // Кнопка установки OpenSSH
         val installssh = view.findViewById<Button>(R.id.installssh)
         installssh.setOnClickListener { installSSH() }
@@ -342,6 +343,10 @@ class SecondFragment : Fragment() {
 
             shellExecutor.execShellCommand("settings put system min_refresh_rate 120.0")
             shellExecutor.execShellCommand("settings put system peak_refresh_rate 120.0")
+
+            //включить wifi debug
+
+            shellExecutor.execShellCommand("settings put global adb_wifi_enabled 1")
 
             //Разрешить установку из неизвестных источников
 
