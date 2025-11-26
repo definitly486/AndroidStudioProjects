@@ -311,6 +311,9 @@ class SecondFragment : Fragment() {
             startActivityForResult(intent, requestCodeWriteSettingsPermission)
         } else {
 
+            //разрешить установку из этого приложения
+            shellExecutor.execShellCommand("appops set com.example.app REQUEST_INSTALL_PACKAGES allow")
+
             //разрешить изменть системные настройки
 
             shellExecutor.execShellCommand("pm grant com.example.app android.permission.WRITE_SECURE_SETTINGS")

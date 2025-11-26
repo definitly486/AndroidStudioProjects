@@ -90,6 +90,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        //разрешить установку из этого приложения
 
         // Создаём файл packages.txt
         if (savePackagesToFile("packages.txt")) {
