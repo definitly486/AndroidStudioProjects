@@ -12,6 +12,7 @@ import androidx.core.view.setPadding
 import androidx.fragment.app.Fragment
 import com.example.app.fragments.FifthFragment
 import com.example.app.fragments.FirstFragment
+import com.example.app.fragments.KernelSuFragment
 import com.example.app.fragments.NinthFragment
 import com.example.app.fragments.PythonFragment
 import com.example.app.fragments.RootChecker
@@ -32,11 +33,12 @@ class MainActivity : AppCompatActivity() {
         SeventhFragment(),
         NinthFragment(),
         TenthFragment(),
-        PythonFragment()
+        PythonFragment(),
+        KernelSuFragment()
     )
 
     private val buttonTitles = listOf(
-        "Первая", "Вторая", "Третья", "Профили", "Git Clone", "Седьмая" ,"Восьмая","Десятая","Python3"
+        "Первая", "Вторая", "Третья", "Профили", "Git Clone", "Седьмая" ,"Восьмая","Десятая","Python3","KernelSu"
     )
 
     private var selectedButton: Button? = null
