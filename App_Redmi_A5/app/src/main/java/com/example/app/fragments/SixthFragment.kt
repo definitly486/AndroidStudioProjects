@@ -45,9 +45,10 @@ class SixthFragment : Fragment() {
 
 
         //проверка существоания git
-
-        isGitBinaryExists ()
-
+        if (!isGitBinaryExists()) {
+            Toast.makeText(requireContext(), "Клонирование невозможно: Git не установлен на устройстве", Toast.LENGTH_LONG).show()
+            return
+        }
 
         CoroutineScope(Dispatchers.Main).launch {
             val gitCloneInstance = GitClone2(null)
