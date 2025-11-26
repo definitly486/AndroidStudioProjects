@@ -76,13 +76,6 @@ class SecondFragment : Fragment() {
         val installgh = view.findViewById<Button>(R.id.installgh)
         installgh.setOnClickListener { downloadGH() }
 
-        //кнопка установки apatch_ksu.zip
-        
-
-        // Кнопка скачивания ksuzip
-        val downloadksuzip = view.findViewById<Button>(R.id.downloadksuzip)
-        downloadksuzip.setOnClickListener { downloadKSUZip() }
-
         // Кнопка скачивания main
         val button6 = view.findViewById<Button>(R.id.downloadmain)
         button6.setOnClickListener { downloadMain() }
