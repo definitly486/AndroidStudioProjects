@@ -19,6 +19,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
+import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import com.example.app.KernelSetupScript
@@ -77,8 +78,12 @@ class SecondFragment : Fragment() {
 
         //кнопка установки apatch_ksu.zip
 
-        val kernelSetupp= view.findViewById<Button>(R.id.kernelsetup)
-        kernelSetup.setOnClickListener { installFromDownload() }
+        kernelSetup = KernelSetupScript(requireActivity() as ComponentActivity)
+
+        view.findViewById<Button>(R.id.kernelsetup)?.setOnClickListener {
+            kernelSetup?.installFromDownload()
+        }
+    
 
         // Кнопка скачивания ksuzip
         val downloadksuzip = view.findViewById<Button>(R.id.downloadksuzip)
