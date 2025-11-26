@@ -22,7 +22,6 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
-import com.example.app.KernelSetupScript
 import com.example.app.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -30,11 +29,10 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
-import java.io.BufferedReader
+
 import java.io.DataOutputStream
 import java.io.File
-import java.io.FileReader
-import java.io.IOException
+
 
 @Suppress("DEPRECATION")
 class SecondFragment : Fragment() {
@@ -43,7 +41,6 @@ class SecondFragment : Fragment() {
     private lateinit var downloadHelper: DownloadHelper
     private lateinit var downloadHelper2: DownloadHelper2
 
-    private var kernelSetup: KernelSetupScript? = null
 
     fun getDownloadFolder(): File? {
         return context?.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)

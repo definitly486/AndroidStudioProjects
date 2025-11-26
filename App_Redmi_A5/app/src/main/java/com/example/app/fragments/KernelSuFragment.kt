@@ -2,25 +2,24 @@ package com.example.app.fragments
 
 import DownloadHelper
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import com.example.app.KernelSetupScript
+import com.example.app.KernelSUInstaller
 import com.example.app.R
+import java.text.SimpleDateFormat
+import java.util.*
 
-@Suppress("SpellCheckingInspection")
 class KernelSuFragment : Fragment() {
 
     private lateinit var downloadHelper: DownloadHelper
 
-    private lateinit var kernelScript: KernelSetupScript
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        kernelScript = KernelSetupScript(requireActivity())
     }
 
     override fun onCreateView(
@@ -28,7 +27,6 @@ class KernelSuFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Инициализация DownloadHelper
         downloadHelper = DownloadHelper(requireContext())
         val view = inflater.inflate(R.layout.fragment_kernelsu, container, false)
         setupButtons(view)
@@ -36,30 +34,49 @@ class KernelSuFragment : Fragment() {
     }
 
     private fun setupButtons(view: View) {
-        val installApatchKsu = view.findViewById<Button>(R.id.install_apatch_ksu_zip)
+        val installButton = view.findViewById<Button>(R.id.install_apatch_ksu_zip)
 
-        installApatchKsu.setOnClickListener {
+        installButton.setOnClickListener {
+            val time = SimpleDateFormat("HH:mm:ss.SSS", Locale.getDefault()).format(Date())
+            Log.d("KernelInstaller", "[$time] Нажата кнопка установки APatch-KSU.zip")
 
-            // Метка времени для логов
-            val timeStamp = System.currentTimeMillis()
+            Toast.makeText(requireContext(), "Установка APatch-KSU…", Toast.LENGTH_LONG).show()
 
-            // Логируем нажатие кнопки
-            android.util.Log.d("KernelInstaller", "[$timeStamp] Нажата кнопка установки APatch-KSU.zip")
+            // Выполняем установку в отдельном потоке (чтобы не зависал UI)
+            Thread {
+                val success = KernelSUInstaller.installAPatchKSU()
 
-            // Покажем пользователю, что процесс начат
-            Toast.makeText(requireContext(), "[$timeStamp] Запуск установки…", Toast.LENGTH_SHORT).show()
+                activity?.runOnUiThread {
+                    if (success) {
+                        Toast.makeText(
+                            requireContext(),
+                            "APatch-KSU успешно установлен!\nПерезагружаю устройство…",
+                            Toast.LENGTH_LONG
+                        ).show()
 
-            // Реальный запуск установки
-            kernelScript.startInstall()
+                        // Автоматическая перезагрузка
+                        try {
+                            Runtime.getRuntime().exec("su -mm -c reboot")
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                    } else {
+                        Toast.makeText(
+                            requireContext(),
+                            "Ошибка: APatch-KSU.zip не найден в папке Download\nили установка провалилась",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
+            }.start()
         }
 
-        // Кнопка скачивания ksuzip
-        val downloadksuzip = view.findViewById<Button>(R.id.downloadksuzip)
-        downloadksuzip.setOnClickListener { downloadKSUZip() }
-    }
-
-    private fun downloadKSUZip() {
-        downloadHelper.downloadToPublic("https://github.com/definitly486/redmia5/releases/download/root/APatch-KSU.zip")
-
+        // Кнопка скачивания APatch-KSU.zip
+        view.findViewById<Button>(R.id.downloadksuzip).setOnClickListener {
+            downloadHelper.downloadToPublic(
+                "https://github.com/definitly486/redmia5/releases/download/root/APatch-KSU.zip"
+            )
+            Toast.makeText(requireContext(), "Скачивание APatch-KSU.zip начато…", Toast.LENGTH_SHORT).show()
+        }
     }
 }
