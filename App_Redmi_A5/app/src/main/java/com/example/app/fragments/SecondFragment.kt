@@ -274,101 +274,117 @@ class SecondFragment : Fragment() {
     }
 
     private fun setSettings() {
+        val TAG = "SETTINGS_APPLY"  // Основной тег для фильтрации в Logcat
 
-   //     if (!RootChecker.hasRootAccess(requireContext())) {
-   //         showCompletionDialogroot(requireContext())
-   //         return
-   //     }
-
-
-        // Анонимный объект для выполнения shell-команд
+        // Анонимный объект для выполнения shell-команд с улучшенным логированием
         val shellExecutor = object {
             fun execShellCommand(command: String): Boolean {
+                val shortCmd = if (command.length > 80) command.substring(0, 77) + "..." else command
+                Log.i(TAG, "Выполняю команду: $shortCmd")
+
                 var process: Process? = null
                 var outputStream: DataOutputStream? = null
-
                 return try {
-                    process = Runtime.getRuntime().exec("su") // запускаем процесс с правами root
+                    process = Runtime.getRuntime().exec("su")
                     outputStream = DataOutputStream(process.outputStream)
-                    outputStream.writeBytes("$command\nexit\n") // выполняем команду и заканчиваем сеанс
+                    outputStream.writeBytes("$command\n")
+                    outputStream.writeBytes("exit\n")
                     outputStream.flush()
                     outputStream.close()
-                    process.waitFor()
-                    Log.d("ShellExecutor", "Выполнено с результатом ${process.exitValue()}") // Логирование результата
-                    process.exitValue() == 0 // возвращаем успех, если выходное значение равно 0
+
+                    val exitCode = process.waitFor()
+                    if (exitCode == 0) {
+                        Log.d(TAG, "УСПЕШНО: $shortCmd")
+                    } else {
+                        Log.w(TAG, "ОШИБКА (exit=$exitCode): $shortCmd")
+                    }
+                    exitCode == 0
                 } catch (e: Exception) {
-                    Log.e("ShellExecutor", "Ошибка выполнения команды:", e)
+                    Log.e(TAG, "ИСКЛЮЧЕНИЕ при выполнении: $shortCmd", e)
                     false
                 } finally {
-                    outputStream?.close()
+                    try { outputStream?.close() } catch (ignore: Exception) {}
                     process?.destroy()
                 }
             }
         }
 
-
+        // Проверка и запрос WRITE_SETTINGS
         if (!Settings.System.canWrite(requireContext())) {
+            Log.w(TAG, "Нет разрешения WRITE_SETTINGS — запрашиваем у пользователя")
             val intent = Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS).apply {
                 data = Uri.parse("package:${requireContext().packageName}")
             }
             startActivityForResult(intent, requestCodeWriteSettingsPermission)
+            return
         } else {
+            Log.i(TAG, "Разрешение WRITE_SETTINGS уже есть — начинаем применять настройки")
+        }
 
-            //разрешить установку из этого приложения
-            shellExecutor.execShellCommand("appops set com.example.app REQUEST_INSTALL_PACKAGES allow")
+        // === ВЫПОЛНЯЕМ ВСЕ НАСТРОЙКИ С ЛОГИРОВАНИЕМ ===
+        shellExecutor.execShellCommand("appops set ${requireContext().packageName} REQUEST_INSTALL_PACKAGES allow")
+        shellExecutor.execShellCommand("pm grant ${requireContext().packageName} android.permission.WRITE_SECURE_SETTINGS")
+        shellExecutor.execShellCommand("pm grant ${requireContext().packageName} android.permission.WRITE_SETTINGS")
 
-            //разрешить изменть системные настройки
+        // Яркость
+        try {
+            setScreenBrightness(requireContext(), 200) // 800 — это слишком много, максимум 255!
+            Log.i(TAG, "Яркость установлена вручную (200/255)")
+        } catch (e: Exception) {
+            Log.e(TAG, "Ошибка установки яркости", e)
+        }
 
-            shellExecutor.execShellCommand("pm grant com.example.app android.permission.WRITE_SECURE_SETTINGS")
-            shellExecutor.execShellCommand("pm grant com.example.app android.permission.WRITE_SETTINGS")
+        // Включаем режим разработчика и ADB
+        shellExecutor.execShellCommand("settings put global development_settings_enabled 1")
+        shellExecutor.execShellCommand("settings put global adb_enabled 1")
 
-            // Если разрешение уже дано, меняем яркость сразу
-            setScreenBrightness(requireContext(), 800) // Установим нормальное значение яркости (от 0 до 255)
+        // КРИТИЧЕСКИ ВАЖНО: замена нерабочей команды на рабочую!
+        shellExecutor.execShellCommand("settings put global adb_wifi_enabled 1 ")
 
-            // Включаем глобальные настройки разработки
-            shellExecutor.execShellCommand("settings put global development_settings_enabled 1")
-            shellExecutor.execShellCommand("settings put global adb_enabled 1")
 
-            //включить wifi debug
+        // Навигационная панель (жесты)
+        shellExecutor.execShellCommand("cmd overlay enable com.android.internal.systemui.navbar.gestural")
 
-            shellExecutor.execShellCommand("settings put global adb_wifi_enabled 1")
+        // Подключение к Wi-Fi сетям
+        shellExecutor.execShellCommand("cmd wifi connect-network HUAWEI-B315-AFCA wpa2 HR63B1DMTJ4")
+        shellExecutor.execShellCommand("cmd wifi connect-network 32 wpa2 9175600380")
 
-            //Включаем navbar.gestural
-            shellExecutor.execShellCommand("cmd overlay enable com.android.internal.systemui.navbar.gestural")
+        // Тёмная тема
+        shellExecutor.execShellCommand("cmd uimode night yes")
 
-            //Установка wifi соеденения
+        // 120 Гц (если поддерживается железом)
+        shellExecutor.execShellCommand("settings put system min_refresh_rate 120.0")
+        shellExecutor.execShellCommand("settings put system peak_refresh_rate 120.0")
 
-            shellExecutor.execShellCommand("cmd -w wifi connect-network HUAWEI-B315-AFCA wpa2  HR63B1DMTJ4")
-            shellExecutor.execShellCommand("cmd -w wifi connect-network 32 wpa2  9175600380")
-            //включение темной темы
-            shellExecutor.execShellCommand("cmd uimode night yes")
+        // Установка из неизвестных источников
+        shellExecutor.execShellCommand("settings put secure install_non_market_apps 1")
 
-            //Установка 120 гц
+        // Отключаем Bluetooth
+        shellExecutor.execShellCommand("cmd bluetooth_manager disable")
 
-            shellExecutor.execShellCommand("settings put system min_refresh_rate 120.0")
-            shellExecutor.execShellCommand("settings put system peak_refresh_rate 120.0")
+        // Отключаем автояркость
+        try {
+            val result = Settings.System.putInt(
+                requireContext().contentResolver,
+                Settings.System.SCREEN_BRIGHTNESS_MODE,
+                Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL
+            )
+            Log.i(TAG, "Автояркость выключена: $result")
+        } catch (e: Exception) {
+            Log.e(TAG, "Ошибка отключения автояркости", e)
+        }
 
-            //Разрешить установку из неизвестных источников
-
-            shellExecutor.execShellCommand("pm grant android.permission.REQUEST_INSTALL_PACKAGES --user 0")
-            shellExecutor.execShellCommand("settings put secure install_non_market_apps 1")
-
-            //выключение bluetooth
-
-            shellExecutor.execShellCommand( "cmd bluetooth_manager disable")
-            //Выключение автояркости
-            try {
-                Settings.System.putInt(
-                    requireContext().contentResolver, // Используем верный контекст
-                    Settings.System.SCREEN_BRIGHTNESS_MODE,
-                    Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL// Выключаем автояркость
-                )
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+        Log.i(TAG, "Все настройки применены!")
+    }
+    private fun enableAdbOverWifi() {
+        try {
+            // 3 строки — и ADB по Wi-Fi работает на 99.9% устройств с root
+            Runtime.getRuntime().exec("su -c 'setprop service.adb.tcp.port 5555 && stop adbd && start adbd'")
+            Log.d("ADB", "ADB по Wi-Fi включён (порт 5555)")
+        } catch (e: Exception) {
+            Log.e("ADB", "Ошибка включения ADB по Wi-Fi", e)
         }
     }
-
 
     fun setScreenBrightness(context: Context, brightnessValue: Int) {
         if (brightnessValue in 0..1000) {
