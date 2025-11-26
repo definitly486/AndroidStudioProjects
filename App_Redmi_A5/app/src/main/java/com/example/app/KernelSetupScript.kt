@@ -6,8 +6,7 @@ import androidx.activity.ComponentActivity
 import java.io.File
 
 /**
- * Установка модуля APatch/KSU из публичной папки "Загрузки".
- * Полностью удалена логика проверки разрешений — установка запускается всегда.
+ * Установка APatch/KSU + автогрант разрешений через root.
  */
 class KernelSetupScript(private val activity: ComponentActivity) {
 
@@ -16,16 +15,61 @@ class KernelSetupScript(private val activity: ComponentActivity) {
     }
 
     /**
-     * Старт установки без каких-либо проверок разрешений.
+     * Главный запуск.
+     * 1) Автовыдача разрешений через root
+     * 2) Установка из папки Загрузки
      */
     fun startInstall() {
+        autoGrantPermissions()
         installFromDownload()
     }
 
     /**
-     * Ищет ZIP в папке "Загрузки" и запускает root-установку.
+     * Автоматическая выдача разрешений через pm grant + root
      */
-    fun installFromDownload() {
+    private fun autoGrantPermissions() {
+        val pkg = activity.packageName
+
+        val permissions = listOf(
+            "android.permission.READ_EXTERNAL_STORAGE",
+            "android.permission.WRITE_EXTERNAL_STORAGE",
+            "android.permission.READ_MEDIA_IMAGES",
+            "android.permission.READ_MEDIA_VIDEO",
+            "android.permission.READ_MEDIA_AUDIO",
+            "android.permission.POST_NOTIFICATIONS"
+        )
+
+        val cmds = permissions.joinToString("\n") { perm ->
+            "pm grant $pkg $perm 2>/dev/null"
+        } + "\necho PERM_DONE"
+
+        try {
+            val p = Runtime.getRuntime().exec("su")
+            p.outputStream.bufferedWriter().use {
+                it.write(cmds)
+                it.newLine()
+                it.write("exit")
+                it.newLine()
+                it.flush()
+            }
+
+            val output = p.inputStream.bufferedReader().readText()
+
+            if (output.contains("PERM_DONE")) {
+                Toast.makeText(activity, "Все разрешения выданы автоматически (root)", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(activity, "Разрешения не удалось выдать автоматически", Toast.LENGTH_SHORT).show()
+            }
+
+        } catch (e: Exception) {
+            Toast.makeText(activity, "Root недоступен: ${e.message}", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    /**
+     * Ищет ZIP в папке Загрузки и запускает root-установку.
+     */
+    private fun installFromDownload() {
         val downloadDir =
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
 
@@ -34,7 +78,7 @@ class KernelSetupScript(private val activity: ComponentActivity) {
         if (!zipFile.exists()) {
             Toast.makeText(
                 activity,
-                "Файл «$MODULE_FILE_NAME» не найден в папке Загрузки!",
+                "Файл «$MODULE_FILE_NAME» не найден в Загрузках!",
                 Toast.LENGTH_LONG
             ).show()
             return
@@ -53,6 +97,7 @@ class KernelSetupScript(private val activity: ComponentActivity) {
         val cmd = """
             rm -rf /data/adb/modules/$moduleId
             mkdir -p /data/adb/modules/$moduleId
+
             if command -v unzip >/dev/null 2>&1; then
                 unzip -o "$zipPathEscaped" -d /data/adb/modules/$moduleId
             elif command -v busybox >/dev/null 2>&1 && busybox unzip >/dev/null 2>&1; then
@@ -61,9 +106,7 @@ class KernelSetupScript(private val activity: ComponentActivity) {
                 echo "NO_UNZIP"
             fi
 
-            if [ ! -f /data/adb/modules/$moduleId/module.prop ]; then
-                touch /data/adb/modules/$moduleId/module.prop 2>/dev/null
-            fi
+            touch /data/adb/modules/$moduleId/module.prop 2>/dev/null
 
             chmod -R 755 /data/adb/modules/$moduleId 2>/dev/null
             echo "END_OF_INSTALL"
@@ -88,13 +131,13 @@ class KernelSetupScript(private val activity: ComponentActivity) {
                     Toast.makeText(activity, "Модуль установлен! Перезагрузка обязательна.", Toast.LENGTH_LONG).show()
 
                 stdout.contains("NO_UNZIP") ->
-                    Toast.makeText(activity, "Ошибка: unzip отсутствует. Установи busybox.", Toast.LENGTH_LONG).show()
+                    Toast.makeText(activity, "Ошибка: unzip отсутствует. Установите busybox.", Toast.LENGTH_LONG).show()
 
                 stderr.isNotEmpty() ->
-                    Toast.makeText(activity, "Ошибка установки: $stderr", Toast.LENGTH_LONG).show()
+                    Toast.makeText(activity, "Ошибка root: $stderr", Toast.LENGTH_LONG).show()
 
                 else ->
-                    Toast.makeText(activity, "Неизвестная ошибка root (код $exit).", Toast.LENGTH_LONG).show()
+                    Toast.makeText(activity, "Неизвестная ошибка root (код $exit)", Toast.LENGTH_LONG).show()
             }
 
         } catch (e: Exception) {
