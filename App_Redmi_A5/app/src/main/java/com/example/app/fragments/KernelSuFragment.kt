@@ -24,7 +24,7 @@ class KernelSuFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        val view = inflater.inflate(R.layout.fragment_second, container, false)
+        val view = inflater.inflate(R.layout.fragment_kernelsu, container, false)
         setupButtons(view)
         return view
     }
