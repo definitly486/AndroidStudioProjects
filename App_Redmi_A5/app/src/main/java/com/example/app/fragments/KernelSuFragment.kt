@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.app.KernelSetupScript
 import com.example.app.R
@@ -33,6 +34,17 @@ class KernelSuFragment : Fragment() {
         val installApatchKsu = view.findViewById<Button>(R.id.install_apatch_ksu_zip)
 
         installApatchKsu.setOnClickListener {
+
+            // Метка времени для логов
+            val timeStamp = System.currentTimeMillis()
+
+            // Логируем нажатие кнопки
+            android.util.Log.d("KernelInstaller", "[$timeStamp] Нажата кнопка установки APatch-KSU.zip")
+
+            // Покажем пользователю, что процесс начат
+            Toast.makeText(requireContext(), "[$timeStamp] Запуск установки…", Toast.LENGTH_SHORT).show()
+
+            // Реальный запуск установки
             kernelScript.startInstall()
         }
     }
