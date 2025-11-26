@@ -3,6 +3,8 @@
 package com.example.app.fragments
 
 import DownloadHelper
+import DownloadHelper2
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.DialogInterface
@@ -20,7 +22,8 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
 import androidx.activity.ComponentActivity
-import androidx.appcompat.app.AlertDialog
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.app.KernelSetupScript
 import com.example.app.R
@@ -30,11 +33,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
-import java.io.BufferedReader
 import java.io.DataOutputStream
 import java.io.File
-import java.io.FileReader
-import java.io.IOException
 
 @Suppress("DEPRECATION")
 class SecondFragment : Fragment() {
@@ -43,10 +43,34 @@ class SecondFragment : Fragment() {
     private lateinit var downloadHelper: DownloadHelper
     private lateinit var downloadHelper2: DownloadHelper2
 
-    private var kernelSetup: KernelSetupScript? = null
+    // KernelSetupScript инициализируем в onCreate (до STARTED) — безопасно
+    private lateinit var kernelScript: KernelSetupScript
 
+    // Лаунчер для запроса разрешения чтения внешнего хранилища.
+    // Регистрация лаунчера происходит как поле Fragment'а — это корректно (до STARTED).
+    private val storagePermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (isGranted) {
+                // Когда разрешение получено — выполняем установку
+                if (::kernelScript.isInitialized) {
+                    kernelScript.installFromDownload()
+                } else {
+                    Toast.makeText(requireContext(), "Ошибка: компонент инициализирован некорректно", Toast.LENGTH_LONG).show()
+                }
+            } else {
+                Toast.makeText(requireContext(), "Доступ к файлам отклонён", Toast.LENGTH_LONG).show()
+            }
+        }
+
+    // --- вспомогательный метод — приватная папка Downloads (если нужно) ---
     fun getDownloadFolder(): File? {
         return context?.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        // Инициализация KernelSetupScript здесь (до STARTED) — регистрация в KernelSetupScript больше не выполняется
+        kernelScript = KernelSetupScript(requireActivity() as ComponentActivity)
     }
 
     @SuppressLint("MissingInflatedId")
@@ -76,13 +100,22 @@ class SecondFragment : Fragment() {
         val installgh = view.findViewById<Button>(R.id.installgh)
         installgh.setOnClickListener { downloadGH() }
 
-        //кнопка установки apatch_ksu.zip
+        // кнопка установки apatch_ksu.zip
         val installApatchKsu = view.findViewById<Button>(R.id.install_apatch_ksu_zip)
-
         installApatchKsu.setOnClickListener {
-            kernelScript.startInstall()
-        }
+            // Проверяем разрешение; если его нет — запрашиваем через launcher, иначе — запускаем установку
+            val hasPermission = ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_GRANTED
 
+            kernelScript.startInstall(requestPermission = {
+                // Запрашиваем разрешение, launcher вызовет kernelScript.installFromDownload() при успехе
+                storagePermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+            })
+
+            // Если разрешие уже есть, kernelScript.startInstall сразу вызовет installFromDownload()
+        }
 
         // Кнопка скачивания ksuzip
         val downloadksuzip = view.findViewById<Button>(R.id.downloadksuzip)
@@ -116,27 +149,24 @@ class SecondFragment : Fragment() {
         val setting = view.findViewById<Button>(R.id.setsettings)
         setting.setOnClickListener { setSettings() }
 
-
         // Кнопка установки OpenSSH
         val installssh = view.findViewById<Button>(R.id.installssh)
         installssh.setOnClickListener { installSSH() }
-
 
         // Кнопка установки OpenSSH LIBS
         val installsshlibs = view.findViewById<Button>(R.id.installsshlibs)
         installsshlibs.setOnClickListener { installSSHLIBS() }
 
-        //Кнопка удаления main.tar.gz и main folder
+        // Кнопка удаления main.tar.gz и main folder
         val deleteMain = view.findViewById<Button>(R.id.deletemain)
-        deleteMain.setOnClickListener {  deleteMAIN(requireContext()) }
+        deleteMain.setOnClickListener { deleteMAIN(requireContext()) }
 
-        //Кнопка автоматической установке apk
-
+        // Кнопка автоматической установке apk
         val installAutoApk = view.findViewById<Button>(R.id.installautoapk)
-        installAutoApk .setOnClickListener { installAutoAPK(requireContext()) }
-
+        installAutoApk.setOnClickListener { installAutoAPK(requireContext()) }
     }
 
+    // --- Остальная логика (твои существующие функции) ---
     private fun downloadBusyBox() {
         downloadHelper.downloadTool("https://github.com/definitly486/Lenovo_TB-X304L/releases/download/busybox/busybox","busybox") { file ->
             handleDownloadResult(file, "busybox")
@@ -149,14 +179,9 @@ class SecondFragment : Fragment() {
         }
     }
 
-
     private fun deleteMAIN(context: Context) {
-        // Получаем приватный каталог "Загрузки"
         val privateDownloadsDir = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
-
-        // Проверяем, существует ли каталог
         if (privateDownloadsDir != null && privateDownloadsDir.exists()) {
-            // Архив main.tar.gz
             val firstFile = privateDownloadsDir.resolve("main.tar.gz")
             if (firstFile.exists()) {
                 if (firstFile.delete()) {
@@ -167,42 +192,32 @@ class SecondFragment : Fragment() {
             } else {
                 Toast.makeText(requireContext(), "Архив main.tar.gz не найден.", Toast.LENGTH_SHORT).show()
             }
-
-            // Папка redmia5-main
             val folderToDelete = privateDownloadsDir.resolve("redmia5-main")
             if (folderToDelete.exists()) {
                 if (deleteDirectory(folderToDelete)) {
                     Toast.makeText(requireContext(), "Папка 'redmia5-main' успешно удалена!", Toast.LENGTH_SHORT).show()
-
                 } else {
                     Toast.makeText(requireContext(), "Ошибка при удалении папки 'redmia5-main'.", Toast.LENGTH_SHORT).show()
-
                 }
             } else {
                 Toast.makeText(requireContext(), "Папка 'redmia5-main' не найдена.", Toast.LENGTH_SHORT).show()
-
             }
         } else {
             Toast.makeText(requireContext(), "Приватный каталог 'Загрузки' не найден.", Toast.LENGTH_SHORT).show()
-
         }
     }
-
 
     fun deleteDirectory(directory: File): Boolean {
-        if (!directory.exists()) return false // Проверяем существование папки
-
+        if (!directory.exists()) return false
         directory.listFiles()?.forEach { file ->
             if (file.isDirectory) {
-                deleteDirectory(file) // Рекурсивно удаляем подпапки
+                deleteDirectory(file)
             } else {
-                file.delete() // Удаляем файлы
+                file.delete()
             }
         }
-
-        return directory.delete() // Пробуем удалить основную папку
+        return directory.delete()
     }
-
 
     private fun downloadGH() {
         downloadHelper.downloadTool("https://github.com/definitly486/redmia5/releases/download/gh/gh","gh") { file ->
@@ -228,7 +243,6 @@ class SecondFragment : Fragment() {
             "https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/apk/Telegram+X+0.27.5.1747-arm64-v8a.apk",
             "https://github.com/definitly486/redmia5/releases/download/apk/Core+Music+Player_1.0.apk"
         )
-
         urls.forEachIndexed { index, url ->
             val result = downloadSingleAPK(url)
             handleResult(result, index + 1)
@@ -245,20 +259,14 @@ class SecondFragment : Fragment() {
 
     fun handleResult(file: File?, index: Int) {
         if (file != null) {
-            Toast.makeText(
-                requireContext(),
-                "Файл №$index загружен: ${file.name}",
-                Toast.LENGTH_SHORT
-            ).show()
+            Toast.makeText(requireContext(), "Файл №$index загружен: ${file.name}", Toast.LENGTH_SHORT).show()
         } else {
-            Toast.makeText(requireContext(), "Ошибка загрузки файла №$index", Toast.LENGTH_SHORT)
-                .show()
+            Toast.makeText(requireContext(), "Ошибка загрузки файла №$index", Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun downloadKSUZip() {
         downloadHelper.downloadToPublic("https://github.com/definitly486/redmia5/releases/download/root/APatch-KSU.zip")
-
     }
 
     private fun downloadMain() {
@@ -279,16 +287,13 @@ class SecondFragment : Fragment() {
         )
 
         for (url in urls) {
-        val appApkDir  = context?.getExternalFilesDir("APK")?.also { it.mkdirs() }
-
+            val appApkDir = context?.getExternalFilesDir("APK")?.also { it.mkdirs() }
             downloadHelper.installApkFromApkFolder(url)
         }
     }
 
     private fun setSettings() {
-        val TAG = "SETTINGS_APPLY"  // Основной тег для фильтрации в Logcat
-
-        // Анонимный объект для выполнения shell-команд с улучшенным логированием
+        val TAG = "SETTINGS_APPLY"
         val shellExecutor = object {
             fun execShellCommand(command: String): Boolean {
                 val shortCmd = if (command.length > 80) command.substring(0, 77) + "..." else command
@@ -321,7 +326,6 @@ class SecondFragment : Fragment() {
             }
         }
 
-        // Проверка и запрос WRITE_SETTINGS
         if (!Settings.System.canWrite(requireContext())) {
             Log.w(TAG, "Нет разрешения WRITE_SETTINGS — запрашиваем у пользователя")
             val intent = Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS).apply {
@@ -333,48 +337,29 @@ class SecondFragment : Fragment() {
             Log.i(TAG, "Разрешение WRITE_SETTINGS уже есть — начинаем применять настройки")
         }
 
-        // === ВЫПОЛНЯЕМ ВСЕ НАСТРОЙКИ С ЛОГИРОВАНИЕМ ===
         shellExecutor.execShellCommand("appops set ${requireContext().packageName} REQUEST_INSTALL_PACKAGES allow")
         shellExecutor.execShellCommand("pm grant ${requireContext().packageName} android.permission.WRITE_SECURE_SETTINGS")
         shellExecutor.execShellCommand("pm grant ${requireContext().packageName} android.permission.WRITE_SETTINGS")
 
-        // Яркость
         try {
-            setScreenBrightness(requireContext(), 200) // 800 — это слишком много, максимум 255!
+            setScreenBrightness(requireContext(), 200)
             Log.i(TAG, "Яркость установлена вручную (200/255)")
         } catch (e: Exception) {
             Log.e(TAG, "Ошибка установки яркости", e)
         }
 
-        // Включаем режим разработчика и ADB
         shellExecutor.execShellCommand("settings put global development_settings_enabled 1")
         shellExecutor.execShellCommand("settings put global adb_enabled 1")
-
-        // КРИТИЧЕСКИ ВАЖНО: замена нерабочей команды на рабочую!
         shellExecutor.execShellCommand("settings put global adb_wifi_enabled 1 ")
-
-
-        // Навигационная панель (жесты)
         shellExecutor.execShellCommand("cmd overlay enable com.android.internal.systemui.navbar.gestural")
-
-        // Подключение к Wi-Fi сетям
         shellExecutor.execShellCommand("cmd wifi connect-network HUAWEI-B315-AFCA wpa2 HR63B1DMTJ4")
         shellExecutor.execShellCommand("cmd wifi connect-network 32 wpa2 9175600380")
-
-        // Тёмная тема
         shellExecutor.execShellCommand("cmd uimode night yes")
-
-        // 120 Гц (если поддерживается железом)
         shellExecutor.execShellCommand("settings put system min_refresh_rate 120.0")
         shellExecutor.execShellCommand("settings put system peak_refresh_rate 120.0")
-
-        // Установка из неизвестных источников
         shellExecutor.execShellCommand("settings put secure install_non_market_apps 1")
-
-        // Отключаем Bluetooth
         shellExecutor.execShellCommand("cmd bluetooth_manager disable")
 
-        // Отключаем автояркость
         try {
             val result = Settings.System.putInt(
                 requireContext().contentResolver,
@@ -388,9 +373,9 @@ class SecondFragment : Fragment() {
 
         Log.i(TAG, "Все настройки применены!")
     }
+
     private fun enableAdbOverWifi() {
         try {
-            // 3 строки — и ADB по Wi-Fi работает на 99.9% устройств с root
             Runtime.getRuntime().exec("su -c 'setprop service.adb.tcp.port 5555 && stop adbd && start adbd'")
             Log.d("ADB", "ADB по Wi-Fi включён (порт 5555)")
         } catch (e: Exception) {
@@ -413,7 +398,6 @@ class SecondFragment : Fragment() {
             )
         }
     }
-
 
     private fun unpackMain() {
         val folder = getDownloadFolder() ?: return
@@ -451,7 +435,6 @@ class SecondFragment : Fragment() {
         if (!tarGzFile.exists()) {
             Toast.makeText(requireContext(), "Файл openssh_bin.tar.xz не существует", Toast.LENGTH_SHORT).show()
             downloadHelper.downloadFileSimple("https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/openssh/openssh_bin.tar.xz")
-
             return
         }
         downloadHelper2 = DownloadHelper2(requireContext())
@@ -467,7 +450,6 @@ class SecondFragment : Fragment() {
         if (!tarGzFile.exists()) {
             Toast.makeText(requireContext(), "Файл openssh_libs.tar.xz не существует", Toast.LENGTH_SHORT).show()
             downloadHelper.downloadFileSimple("https://github.com/definitly486/Lenovo_Tab_3_7_TB3-730X/releases/download/openssh/openssh_libs.tar.xz")
-
             return
         }
         downloadHelper2 = DownloadHelper2(requireContext())
@@ -499,8 +481,7 @@ class SecondFragment : Fragment() {
         }
     }
 
-
-    private val TAG = "PkgDeleter"  // Твоя метка для фильтрации в Logcat
+    private val TAG = "PkgDeleter"
 
     fun Fragment.deletePkgFromFile(fileName: String) {
         if (!RootChecker.hasRootAccess(requireContext())) {
@@ -553,7 +534,6 @@ class SecondFragment : Fragment() {
                     processedCount++
                     Log.i(TAG, "Обработка [$processedCount/${lines.size}]: $packageName")
 
-                    // Проверка установки
                     val isInstalled = withContext(Dispatchers.Main) {
                         isPackageInstalled(packageName)
                     }
@@ -567,7 +547,6 @@ class SecondFragment : Fragment() {
                         continue
                     }
 
-                    // Удаление
                     val deleted = deletePackageRoot(packageName)
 
                     if (deleted) {
@@ -577,10 +556,9 @@ class SecondFragment : Fragment() {
                         Log.e(TAG, "ОШИБКА при удалении: $packageName")
                     }
 
-                    delay(500) // Пауза для стабильности
+                    delay(500)
                 }
 
-                // Итог
                 val summary = "Завершено! Обработано: $processedCount | Удалено: $successCount | Пропущено: $skippedCount"
                 Log.i(TAG, summary)
 
@@ -599,29 +577,24 @@ class SecondFragment : Fragment() {
         }
     }
 
-    // Проверка установки пакета
     private fun Fragment.isPackageInstalled(packageName: String): Boolean {
         val pm = requireContext().packageManager
         return try {
             when {
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
-                    // API 33+: используем MATCH_ALL через флаги
                     pm.getPackageInfo(
                         packageName,
                         PackageManager.PackageInfoFlags.of(PackageManager.MATCH_ALL.toLong())
                     )
                     true
                 }
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> { // API 30+
-                    // На API 30–32 используем новый метод с int-флагами
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
                     pm.getPackageInfo(packageName, PackageManager.MATCH_ALL)
                     true
                 }
                 else -> {
-                    // До API 30: старый способ (депрекейтед, но работает)
                     @Suppress("DEPRECATION")
                     pm.getPackageInfo(packageName, PackageManager.GET_ACTIVITIES or PackageManager.GET_SERVICES)
-                    // Или просто 0 — но с 0 системные тоже могут не находиться на некоторых устройствах
                     true
                 }
             }
@@ -633,7 +606,6 @@ class SecondFragment : Fragment() {
         }
     }
 
-    // Удаление через root
     private suspend fun deletePackageRoot(packageName: String): Boolean {
         return try {
             Log.d(TAG, "Выполняется: su -c pm uninstall $packageName")
@@ -653,7 +625,7 @@ class SecondFragment : Fragment() {
     }
 
     fun showCompletionDialogroot(context: Context) {
-        val builder = AlertDialog.Builder(context)
+        val builder = androidx.appcompat.app.AlertDialog.Builder(context)
         builder.setTitle("Проверка root")
         builder.setMessage("Root доступ отсуствует,приложения не будут удалены")
         builder.setPositiveButton("Продолжить") { dialog, _ ->
@@ -663,7 +635,7 @@ class SecondFragment : Fragment() {
     }
 
     fun showCompletionDialog(context: Context) {
-        val builder = AlertDialog.Builder(context)
+        val builder = androidx.appcompat.app.AlertDialog.Builder(context)
         builder.setTitle("Удаление завершено")
         builder.setMessage("Все выбранные пакеты успешно удалены.")
         builder.setPositiveButton("Продолжить") { dialog, _ ->
@@ -681,34 +653,20 @@ class SecondFragment : Fragment() {
         }
     }
 
-     fun createReloadDialog() {
-        val alertBuilder = AlertDialog.Builder(requireContext())
-
-        // Заголовок диалога
+    fun createReloadDialog() {
+        val alertBuilder = androidx.appcompat.app.AlertDialog.Builder(requireContext())
         alertBuilder.setTitle("Подтверждение перезагрузки")
-
-        // Сообщение в диалоговом окне
         alertBuilder.setMessage("Вы действительно хотите перезагрузить устройство?")
-
-        // Положительная кнопка (перезагружаем устройство)
         alertBuilder.setPositiveButton("Да") { _: DialogInterface, _: Int ->
-            // Логика перезагрузки устройства (нужны права администратора или root)
-
-            rebootDevice() }
-
-        // Отрицательная кнопка (закрываем диалог)
+            rebootDevice()
+        }
         alertBuilder.setNegativeButton("Нет") { dialog: DialogInterface, _: Int ->
             dialog.cancel()
         }
-
-        // Показываем диалог
         val dialog = alertBuilder.create()
         dialog.show()
     }
 
-
-
-    // Лог-тег, используемый для идентификации сообщений нашего приложения
     private val LOG_TAG = "InstallAutoAPK"
 
     private fun installAutoAPK(context: Context?) {
@@ -717,9 +675,6 @@ class SecondFragment : Fragment() {
             return
         }
 
-        val packageManager = context.packageManager
-
-        // Список APK-файлов (можно менять как угодно)
         val apks = listOf(
             "Total_Commander_v.3.50d.apk",
             "k9mail-13.0.apk",
@@ -732,7 +687,6 @@ class SecondFragment : Fragment() {
             "Core+Music+Player_1.0.apk"
         )
 
-        // Путь к папке с APK (оставил твой оригинальный, но с безопасным созданием)
         val appApkDir = File(
             Environment.getExternalStorageDirectory(),
             "/Android/data/${context.packageName}/files/APK"
@@ -748,22 +702,18 @@ class SecondFragment : Fragment() {
 
         for (apkFileName in apks) {
             val apkFile = File(appApkDir, apkFileName)
-
             if (!apkFile.exists()) {
                 Log.w(LOG_TAG, "Файл не найден → пропуск: $apkFileName")
                 continue
             }
 
-            // Автоматически получаем package name из APK
             val packageName = getPackageNameFromApk(context, apkFile)
             if (packageName == null) {
                 Log.e(LOG_TAG, "Не удалось прочитать package name из APK → пропуск: $apkFileName")
                 continue
             }
 
-            // Проверяем, установлен ли уже пакет
-            val alreadyInstalled = isPackageInstalled(packageManager, packageName)
-
+            val alreadyInstalled = isPackageInstalled(context.packageManager, packageName)
             if (alreadyInstalled) {
                 Log.i(LOG_TAG, "Уже установлен → пропуск: $apkFileName [$packageName]")
                 continue
@@ -772,13 +722,9 @@ class SecondFragment : Fragment() {
             Log.i(LOG_TAG, "Установка: $apkFileName → $packageName")
 
             try {
-                // Временно отключаем SELinux (если нужно на твоём устройстве)
                 Runtime.getRuntime().exec(arrayOf("su", "-c", "setenforce 0"))
-
-                // pm install -r = переустановка, если вдруг старая версия есть (на всякий случай)
                 val cmd = "pm install -r \"${apkFile.absolutePath}\""
                 val process = Runtime.getRuntime().exec(arrayOf("su", "-c", cmd))
-
                 val exitCode = process.waitFor()
 
                 if (exitCode == 0) {
@@ -788,21 +734,18 @@ class SecondFragment : Fragment() {
                     Log.e(LOG_TAG, "Ошибка установки $apkFileName (код $exitCode): $error")
                 }
 
-                // Возвращаем SELinux в безопасное состояние
                 Runtime.getRuntime().exec(arrayOf("su", "-c", "setenforce 1")).waitFor()
 
             } catch (e: Exception) {
                 Log.e(LOG_TAG, "Исключение при установке $apkFileName", e)
             }
 
-            // Задержка между установками (чтобы система не захлебнулась)
             Thread.sleep(700)
         }
 
         Log.i(LOG_TAG, "Автоустановка APK завершена.")
     }
 
-    // Вспомогательная функция: получить package name из APK
     private fun getPackageNameFromApk(context: Context, apkFile: File): String? {
         return try {
             val pm = context.packageManager
@@ -814,7 +757,6 @@ class SecondFragment : Fragment() {
         }
     }
 
-    // Вспомогательная функция: проверка установки пакета
     private fun isPackageInstalled(pm: PackageManager, packageName: String): Boolean {
         return try {
             pm.getPackageInfo(packageName, 0)
@@ -826,5 +768,4 @@ class SecondFragment : Fragment() {
             false
         }
     }
-
 }

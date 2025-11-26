@@ -1,4 +1,3 @@
-// KernelSetupScript.kt
 package com.example.app
 
 import android.Manifest
@@ -6,36 +5,46 @@ import android.content.pm.PackageManager
 import android.os.Environment
 import android.widget.Toast
 import androidx.activity.ComponentActivity
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import java.io.File
 
+/**
+ * Класс выполняет установку модуля из файла в папке "Загрузки".
+ *
+ * Важно: этот класс НЕ выполняет запрос разрешений — это обязанность вызывающего (Fragment / Activity).
+ */
 class KernelSetupScript(private val activity: ComponentActivity) {
 
-    // <-- ИМЯ ТВОЕГО ZIP-ФАЙЛА В ПАПКЕ "Загрузки"
-    private val MODULE_FILE_NAME = "APatch-KSU.zip"   // ← поменяй, если у тебя другое имя
-
-    // Регистрация происходит сразу в конструкторе — это безопасно, если объект создаётся в onViewCreated
-    private val permissionLauncher = activity.registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (isGranted) installFromDownload()
-        else Toast.makeText(activity, "Доступ к файлам отклонён", Toast.LENGTH_LONG).show()
-    }
-    /** Вызывай эту функцию по нажатию кнопки */
-    fun startInstall() {
-        if (hasStoragePermission()) {
-            installFromDownload()
-        } else {
-            permissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
-        }
+    // Имя ZIP-файла в публичной папке "Загрузки"
+    companion object {
+        const val MODULE_FILE_NAME = "APatch-KSU.zip" // поменяй при необходимости
     }
 
-    private fun hasStoragePermission(): Boolean =
+    /**
+     * Проверяет, есть ли у приложения разрешение на чтение внешнего хранилища.
+     * Замечание: поведение на Android 11+ может отличаться — лучше использовать SAF в будущем.
+     */
+    fun hasStoragePermission(): Boolean =
         ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE) ==
                 PackageManager.PERMISSION_GRANTED
 
-    private fun installFromDownload() {
+    /**
+     * Запустить установку. Если разрешения нет, вызывающий должен запросить его (requestPermission lambda).
+     * requestPermission — лямбда для запуска ActivityResultLauncher (запрос разрешения).
+     */
+    fun startInstall(requestPermission: (() -> Unit)? = null) {
+        if (hasStoragePermission()) {
+            installFromDownload()
+        } else {
+            requestPermission?.invoke()
+        }
+    }
+
+    /**
+     * Пытается найти ZIP в публичной папке Загрузки и запустить установку через root.
+     * Этот метод публичный, чтобы фрагмент мог вызывать его после получения разрешения.
+     */
+    fun installFromDownload() {
         val downloadDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
         val zipFile = File(downloadDir, MODULE_FILE_NAME)
 
@@ -54,13 +63,25 @@ class KernelSetupScript(private val activity: ComponentActivity) {
     private fun installViaRoot(zipFile: File) {
         val moduleId = MODULE_FILE_NAME.removeSuffix(".zip")
 
+        // Собираем команду — учитываем, что unzip может отсутствовать на некоторых прошивках
+        // Поэтому сначала пытаемся распаковать через toybox/unzip, если нет — попытаемся через busybox unzip.
+        val zipPathEscaped = zipFile.absolutePath.replace("\"", "\\\"")
         val cmd = """
             rm -rf /data/adb/modules/$moduleId
             mkdir -p /data/adb/modules/$moduleId
-            unzip -o "${zipFile.absolutePath}" -d /data/adb/modules/$moduleId
-            touch /data/adb/modules/$moduleId/module.prop 2>/dev/null
+            if command -v unzip >/dev/null 2>&1; then
+                unzip -o "$zipPathEscaped" -d /data/adb/modules/$moduleId
+            elif command -v busybox >/dev/null 2>&1 && busybox unzip >/dev/null 2>&1; then
+                busybox unzip -o "$zipPathEscaped" -d /data/adb/modules/$moduleId
+            else
+                echo "NO_UNZIP"
+            fi
+            # Создаём module.prop если его нет — лучше, чтобы он содержал необходимые поля
+            if [ ! -f /data/adb/modules/$moduleId/module.prop ]; then
+                touch /data/adb/modules/$moduleId/module.prop 2>/dev/null
+            fi
             chmod -R 755 /data/adb/modules/$moduleId 2>/dev/null
-            echo "Модуль $moduleId установлен"
+            echo "END_OF_INSTALL"
         """.trimIndent()
 
         try {
@@ -69,13 +90,22 @@ class KernelSetupScript(private val activity: ComponentActivity) {
                 it.write(cmd)
                 it.newLine()
                 it.write("exit")
+                it.newLine()
                 it.flush()
             }
-            val code = p.waitFor()
-            if (code == 0) {
+
+            val exit = p.waitFor()
+
+            // читаем stdout/stderr для диагностических сообщений (не обязателен)
+            val stdout = p.inputStream.bufferedReader().readText().trim()
+            val stderr = p.errorStream.bufferedReader().readText().trim()
+
+            if (exit == 0 && stdout.contains("END_OF_INSTALL")) {
                 Toast.makeText(activity, "Модуль установлен успешно!\nПерезагрузи устройство", Toast.LENGTH_LONG).show()
+            } else if (stdout.contains("NO_UNZIP") || stdout.contains("can't find") || stderr.isNotEmpty()) {
+                Toast.makeText(activity, "Ошибка установки: отсутствует unzip (или произошла другая ошибка).", Toast.LENGTH_LONG).show()
             } else {
-                Toast.makeText(activity, "Ошибка root (код $code)", Toast.LENGTH_LONG).show()
+                Toast.makeText(activity, "Ошибка root (код $exit).", Toast.LENGTH_LONG).show()
             }
         } catch (e: Exception) {
             Toast.makeText(activity, "Root недоступен: ${e.message}", Toast.LENGTH_LONG).show()
