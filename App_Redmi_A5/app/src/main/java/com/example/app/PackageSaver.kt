@@ -136,7 +136,8 @@ fun Context.savePackagesToFile(filename: String): Boolean {
         "com.android.rkpdapp",
         "com.google.android.ondevicepersonalization.services",
         "com.huaqin.factory",
-        "com.android.overlay.gmssettings"
+        "com.android.overlay.gmssettings",
+        "com.sprd.linkturbo"
     ).joinToString("\n")
 
     val downloadFolder = this.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)

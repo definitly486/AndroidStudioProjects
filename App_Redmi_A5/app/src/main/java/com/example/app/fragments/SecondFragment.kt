@@ -582,7 +582,7 @@ class SecondFragment : Fragment() {
     private suspend fun deletePackageRoot(packageName: String): Boolean {
         return try {
             Log.d(TAG, "Выполняется: su -c pm uninstall $packageName")
-            val process = Runtime.getRuntime().exec(arrayOf("su", "-c", "pm uninstall $packageName"))
+            val process = Runtime.getRuntime().exec(arrayOf("su", "-c", "pm uninstall --user 0  $packageName"))
             val exitCode = process.waitFor()
             val success = exitCode == 0
             if (success) {
