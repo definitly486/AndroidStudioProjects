@@ -18,8 +18,11 @@ android {
         buildConfigField("long", "BUILD_TIME", "${System.currentTimeMillis()}L")
         versionNameSuffix = "-${gitBranch()}"
         buildConfigField("String", "GIT_BRANCH", "\"${gitBranch()}\"")
+        buildConfigField("String", "GIT_COMMIT_SHORT", "\"$gitCommitShort\"")   // ← теперь будет!
         buildConfigField("String", "GIT_COMMIT", "\"${gitCommit()}\"")
         buildConfigField("String", "VERSION_NAME_SUFFIX", "\"${gitBranch()}\"")
+
+     
 
         // По желанию можно ещё и полное versionName закинуть
         buildConfigField("String", "FULL_VERSION_NAME", "\"${defaultConfig.versionName}${versionNameSuffix ?: ""}\"")
@@ -48,6 +51,15 @@ android {
         viewBinding = true
     }
 }
+
+
+val gitCommitShort = providers.exec {
+    commandLine("git", "rev-parse", "--short", "HEAD")
+}.standardOutput.asText.get().trim().ifEmpty { "unknown" }
+
+val gitCommitFull = providers.exec {
+    commandLine("git", "rev-parse", "HEAD")
+}.standardOutput.asText.get().trim().ifEmpty { "unknown" }
 
 fun gitBranch(): String = try {
     providers.exec {
