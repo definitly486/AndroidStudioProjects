@@ -66,8 +66,19 @@
         app:layout_constraintTop_toBottomOf="@id/versionNameText"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <!-- НОВАЯ СТРОКА: номер (хэш) коммита -->
+    <TextView
+        android:id="@+id/commitHashText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Коммит: неизвестно"
+        android:textSize="16sp"
+        android:textColor="#FFFFFF"
+        android:layout_marginTop="4dp"
+        app:layout_constraintTop_toBottomOf="@id/branchText"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <!-- КРАСИВАЯ КНОПКА СБРОСА -->
-    <!-- КРАСИВАЯ КНОПКА СБРОСА (работает на всех версиях без ошибок) -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnFactoryReset"
         android:layout_width="0dp"
@@ -95,7 +106,7 @@
 
         android:layout_marginHorizontal="24dp"
         android:layout_marginTop="56dp"
-        app:layout_constraintTop_toBottomOf="@id/branchText"
+        app:layout_constraintTop_toBottomOf="@id/commitHashText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
