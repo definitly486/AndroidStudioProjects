@@ -48,3 +48,23 @@
 
 # На всякий случай — если где-то используешь ServiceLoader
 -keep class ** extends java.security.Provider { *; }
+# Не падать, если классы отсутствуют
+-dontwarn javax.management.**
+-dontwarn java.lang.ProcessHandle
+-dontwarn org.ietf.jgss.**
+-dontwarn org.slf4j.impl.StaticLoggerBinder
+
+# Не обфусцировать JGit
+-keep class org.eclipse.jgit.** { *; }
+-keep class org.slf4j.** { *; }
+
+-dontwarn java.lang.ProcessHandle
+-dontwarn javax.management.**
+-dontwarn org.ietf.jgss.**
+-dontwarn java.lang.management.**
+-dontwarn org.slf4j.impl.StaticLoggerBinder
+-dontwarn org.slf4j.impl.**
+
+# JGit core
+-keep class org.eclipse.jgit.** { *; }
+-dontwarn org.eclipse.jgit.**

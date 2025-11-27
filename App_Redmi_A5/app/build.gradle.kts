@@ -43,7 +43,6 @@ android {
             isShrinkResources = true
             isDebuggable = false
             signingConfig = signingConfigs.getByName("debug")   // ← обязательно!
-
             applicationIdSuffix = null
             versionNameSuffix = null
 
