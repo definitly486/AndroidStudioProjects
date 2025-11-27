@@ -1,3 +1,6 @@
+import com.android.build.api.dsl.ApkSigningConfig
+import org.gradle.kotlin.dsl.debug
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -36,8 +39,25 @@ android {
     }
 
     buildTypes {
+        debug {
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-debug"
+            isDebuggable = true
+            // минификация выключена — как и было
+        }
+
         release {
-            isMinifyEnabled = false
+            // Главное — включаем R8 (он же новый ProGuard)
+            isMinifyEnabled = true          // было false → теперь true
+            isShrinkResources = true        // удаляет неиспользуемые ресурсы
+
+            isDebuggable = false            // нельзя будет отлаживать
+
+            // Подпись — можно оставить debug-ключом (Android Studio подпишет автоматически)
+            signingConfig = signingConfigs.getByName("debug")            // Убираем любые debug-суффиксы из названия пакета и версии
+            applicationIdSuffix = null
+            versionNameSuffix = null
+
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
