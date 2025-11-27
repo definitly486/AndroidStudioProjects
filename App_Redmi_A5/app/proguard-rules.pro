@@ -31,3 +31,20 @@
 # Дополнительно на всякий случай (для OpenPGP, X.509 и т.д.)
 -keep class org.bouncycastle.openpgp.** { *; }
 -keep class org.bouncycastle.crypto.** { *; }
+
+# ───────────────────────────────
+# Bouncy Castle — полная защита от R8
+# ───────────────────────────────
+-keep class org.bouncycastle.** { *; }
+-dontwarn org.bouncycastle.**
+-keep class org.bouncycastle.jcajce.** { *; }
+-keep class org.bouncycastle.crypto.** { *; }
+-keep class org.bouncycastle.openpgp.** { *; }
+-keep class org.bouncycastle.x509.** { *; }
+
+# Если используешь Provider (почти всегда да)
+-keep class org.bouncycastle.jce.provider.BouncyCastleProvider { *; }
+-keep class org.bouncycastle.jsse.provider.BouncyCastleJsseProvider { *; }
+
+# На всякий случай — если где-то используешь ServiceLoader
+-keep class ** extends java.security.Provider { *; }
