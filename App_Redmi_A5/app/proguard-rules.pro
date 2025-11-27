@@ -19,15 +19,3 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
-
-# BouncyCastle — обязательно для всех версий
--keep class org.bouncycastle.** { *; }
--dontwarn org.bouncycastle.**
-
-# Если используешь рефлексию или динамическую загрузку провайдеров
--keep class org.bouncycastle.jce.provider.BouncyCastleProvider { *; }
--keep class org.bouncycastle.jsse.provider.BouncyCastleJsseProvider { *; }
-
-# Дополнительно на всякий случай (для OpenPGP, X.509 и т.д.)
--keep class org.bouncycastle.openpgp.** { *; }
--keep class org.bouncycastle.crypto.** { *; }

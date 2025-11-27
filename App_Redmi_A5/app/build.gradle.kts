@@ -14,14 +14,18 @@ android {
         versionCode = 1
         versionName = "1.0"
 
+        // Время сборки
         buildConfigField("long", "BUILD_TIME", "${System.currentTimeMillis()}L")
 
+        // === Git-информация (вычисляется один раз, до использования) ===
         val gitBranch = gitBranch()
         val gitCommitShort = gitCommitShort()
         val gitCommitFull = gitCommitFull()
 
+        // Суффикс версии (например: 1.0-main)
         versionNameSuffix = "-$gitBranch"
 
+        // Добавляем в BuildConfig
         buildConfigField("String", "GIT_BRANCH", "\"$gitBranch\"")
         buildConfigField("String", "GIT_COMMIT_SHORT", "\"$gitCommitShort\"")
         buildConfigField("String", "GIT_COMMIT_FULL", "\"$gitCommitFull\"")
@@ -32,21 +36,8 @@ android {
     }
 
     buildTypes {
-        debug {
-            applicationIdSuffix = ".debug"
-            versionNameSuffix = "-debug"
-            isDebuggable = true
-        }
-
         release {
-            isMinifyEnabled = true
-            isShrinkResources = true
-            isDebuggable = false
-            signingConfig = signingConfigs.getByName("debug")   // ← обязательно!
-
-            applicationIdSuffix = null
-            versionNameSuffix = null
-
+            isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -65,35 +56,36 @@ android {
 
     buildFeatures {
         viewBinding = true
-        buildConfig = true
+        buildConfig = true // явно включаем (на всякий случай)
     }
 }
 
-// === Git-функции ===
-private fun gitBranch() = runGitCommand("git rev-parse --abbrev-ref HEAD") ?: "unknown"
-private fun gitCommitShort() = runGitCommand("git rev-parse --short HEAD") ?: "unknown"
-private fun gitCommitFull() = runGitCommand("git rev-parse HEAD") ?: "unknown"
+// === Надёжные функции для получения Git-данных ===
+private fun gitBranch(): String = runGitCommand("git rev-parse --abbrev-ref HEAD") ?: "unknown"
+private fun gitCommitShort(): String = runGitCommand("git rev-parse --short HEAD") ?: "unknown"
+private fun gitCommitFull(): String = runGitCommand("git rev-parse HEAD") ?: "unknown"
 
-private fun runGitCommand(command: String): String? = try {
-    providers.exec {
-        commandLine(command.split(" "))
-        workingDir = project.rootProject.projectDir
-    }.standardOutput.asText.get().trim().takeIf { it.isNotEmpty() && it != "HEAD" } ?: "unknown"
-} catch (e: Exception) {
-    "unknown"
+private fun runGitCommand(command: String): String? {
+    return try {
+        providers.exec {
+            commandLine(command.split(" "))
+            // Указываем рабочую директорию — корень проекта (важно!)
+            workingDir = project.rootProject.projectDir
+        }.standardOutput.asText.get().trim().takeIf { it.isNotEmpty() && it != "HEAD" }
+            ?: "unknown"
+    } catch (e: Exception) {
+        "unknown"
+    }
 }
 
-// ←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←
-// ВОТ ЭТОТ БЛОК ОБЯЗАТЕЛЬНО ДОЛЖЕН БЫТЬ В КОНЦЕ ФАЙЛА!
 dependencies {
     implementation("org.bouncycastle:bcprov-jdk18on:1.78.1")
     implementation("org.bouncycastle:bcpg-jdk18on:1.78.1")
     implementation("org.bouncycastle:bcpkix-jdk18on:1.78.1")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.6")
-    implementation("com.google.android.material:material:1.11.0")
 
-    // Если используешь Version Catalog (libs.xxx) — оставь так:
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.6")
     implementation(libs.material)
+    implementation("com.google.android.material:material:1.11.0")
     implementation(libs.org.eclipse.jgit)
     implementation(libs.androidx.viewpager2)
     implementation(libs.commons.compress)
@@ -109,4 +101,3 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }
-// ←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←
