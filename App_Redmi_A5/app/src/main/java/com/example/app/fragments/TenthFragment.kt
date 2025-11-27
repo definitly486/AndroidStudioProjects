@@ -33,15 +33,23 @@ class TenthFragment : Fragment() {
         rootView.findViewById<TextView>(R.id.buildTimeText).text =
             "APK создан: ${formatter.format(buildDate)}"
 
-        // === Версия и ветка ===
+        // === Версия приложения ===
         val packageInfo = requireContext().packageManager
             .getPackageInfo(requireContext().packageName, 0)
         rootView.findViewById<TextView>(R.id.versionNameText).text =
             "Версия приложения: ${packageInfo.versionName ?: "unknown"}"
 
-        val suffix = BuildConfig.VERSION_NAME_SUFFIX
+        // === Ветка Git ===
+        val branch = BuildConfig.GIT_BRANCH
         rootView.findViewById<TextView>(R.id.branchText).text =
-            if (suffix.isNotEmpty()) "Ветка Git: $suffix" else "Ветка: release"
+            if (branch.isNotEmpty() && branch != "unknown") "Ветка Git: $branch" else "Ветка: release"
+
+        // === НОВАЯ СТРОКА: Git-коммит (короткий хэш) ===
+        val commitHash = BuildConfig.GIT_COMMIT_SHORT
+        rootView.findViewById<TextView>(R.id.commitHashText).text = when {
+            commitHash.isEmpty() || commitHash == "unknown" -> "Коммит: неизвестно"
+            else -> "Коммит: $commitHash"
+        }
 
         // === Root-чекбоксы ===
         rootView.findViewById<CheckBox>(R.id.checkBox).isChecked =
@@ -49,7 +57,7 @@ class TenthFragment : Fragment() {
         rootView.findViewById<CheckBox>(R.id.checkBox2).isChecked =
             RootChecker.checkWriteAccess("/system")
 
-        // === КНОПКА СБРОСА ВСЕХ ДАННЫХ ===
+        // === КНОПКА СБРОСА ===
         btnFactoryReset = rootView.findViewById(R.id.btnFactoryReset)
         btnFactoryReset.setOnClickListener {
             showConfirmDialog()
@@ -57,7 +65,6 @@ class TenthFragment : Fragment() {
 
         return rootView
     }
-
     // Диалог подтверждения — чтобы случайно не удалить всё
     private fun showConfirmDialog() {
         MaterialAlertDialogBuilder(requireContext())
