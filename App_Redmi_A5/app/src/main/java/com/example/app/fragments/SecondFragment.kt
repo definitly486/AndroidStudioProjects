@@ -1,4 +1,4 @@
-@file:Suppress("ControlFlowWithEmptyBody", "SpellCheckingInspection")
+@file:Suppress("ControlFlowWithEmptyBody", "SpellCheckingInspection", "LocalVariableName")
 
 package com.example.app.fragments
 
@@ -19,7 +19,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
-import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import com.example.app.R
@@ -241,11 +240,6 @@ class SecondFragment : Fragment() {
         }
     }
 
-    private fun downloadKSUZip() {
-        downloadHelper.downloadToPublic("https://github.com/definitly486/redmia5/releases/download/root/APatch-KSU.zip")
-
-    }
-
     private fun downloadMain() {
         downloadHelper.downloadFileSimple("https://github.com/definitly486/redmia5/archive/main.tar.gz")
     }
@@ -264,7 +258,7 @@ class SecondFragment : Fragment() {
         )
 
         for (url in urls) {
-            val appApkDir  = context?.getExternalFilesDir("APK")?.also { it.mkdirs() }
+            context?.getExternalFilesDir("APK")?.also { it.mkdirs() }
 
             downloadHelper.installApkFromApkFolder(url)
         }
@@ -300,7 +294,7 @@ class SecondFragment : Fragment() {
                     Log.e(TAG, "ИСКЛЮЧЕНИЕ при выполнении: $shortCmd", e)
                     false
                 } finally {
-                    try { outputStream?.close() } catch (ignore: Exception) {}
+                    try { outputStream?.close() } catch (_: Exception) {}
                     process?.destroy()
                 }
             }
@@ -346,6 +340,9 @@ class SecondFragment : Fragment() {
         shellExecutor.execShellCommand("cmd wifi connect-network HUAWEI-B315-AFCA wpa2 HR63B1DMTJ4")
         shellExecutor.execShellCommand("cmd wifi connect-network 32 wpa2 9175600380")
 
+        //установить безвук
+        shellExecutor.execShellCommand("cmd audio set-ringer-mode SILENT")
+
         // Тёмная тема
         shellExecutor.execShellCommand("cmd uimode night yes")
 
@@ -372,15 +369,6 @@ class SecondFragment : Fragment() {
         }
 
         Log.i(TAG, "Все настройки применены!")
-    }
-    private fun enableAdbOverWifi() {
-        try {
-            // 3 строки — и ADB по Wi-Fi работает на 99.9% устройств с root
-            Runtime.getRuntime().exec("su -c 'setprop service.adb.tcp.port 5555 && stop adbd && start adbd'")
-            Log.d("ADB", "ADB по Wi-Fi включён (порт 5555)")
-        } catch (e: Exception) {
-            Log.e("ADB", "Ошибка включения ADB по Wi-Fi", e)
-        }
     }
 
     fun setScreenBrightness(context: Context, brightnessValue: Int) {
@@ -485,6 +473,7 @@ class SecondFragment : Fragment() {
     }
 
 
+    @Suppress("PrivatePropertyName")
     private val TAG = "PkgDeleter"  // Твоя метка для фильтрации в Logcat
 
     fun Fragment.deletePkgFromFile(fileName: String) {
@@ -610,7 +599,7 @@ class SecondFragment : Fragment() {
                     true
                 }
             }
-        } catch (e: PackageManager.NameNotFoundException) {
+        } catch (_: PackageManager.NameNotFoundException) {
             false
         } catch (e: Exception) {
             Log.e(TAG, "Ошибка при проверке пакета $packageName", e)
@@ -619,14 +608,14 @@ class SecondFragment : Fragment() {
     }
 
     // Удаление через root
-    private suspend fun deletePackageRoot(packageName: String): Boolean {
+    private fun deletePackageRoot(packageName: String): Boolean {
         return try {
             Log.d(TAG, "Выполняется: su -c pm uninstall $packageName")
             val process = Runtime.getRuntime().exec(arrayOf("su", "-c", "pm uninstall --user 0  $packageName"))
             val exitCode = process.waitFor()
             val success = exitCode == 0
             if (success) {
-                Log.i(TAG, "Команда выполнена успешно (exit code: $exitCode)")
+                Log.i(TAG, "Команда выполнена успешно (exit code: ${0})")
             } else {
                 Log.e(TAG, "Команда завершилась с ошибкой (exit code: $exitCode)")
             }
@@ -694,6 +683,7 @@ class SecondFragment : Fragment() {
 
 
     // Лог-тег, используемый для идентификации сообщений нашего приложения
+    @Suppress("PrivatePropertyName")
     private val LOG_TAG = "InstallAutoAPK"
 
     private fun installAutoAPK(context: Context?) {
@@ -804,7 +794,7 @@ class SecondFragment : Fragment() {
         return try {
             pm.getPackageInfo(packageName, 0)
             true
-        } catch (e: PackageManager.NameNotFoundException) {
+        } catch (_: PackageManager.NameNotFoundException) {
             false
         } catch (e: Exception) {
             Log.w(LOG_TAG, "Ошибка проверки установки пакета $packageName", e)
