@@ -43,18 +43,17 @@ android {
             applicationIdSuffix = ".debug"
             versionNameSuffix = "-debug"
             isDebuggable = true
-            // минификация выключена — как и было
         }
 
         release {
-            // Главное — включаем R8 (он же новый ProGuard)
-            isMinifyEnabled = true          // было false → теперь true
-            isShrinkResources = true        // удаляет неиспользуемые ресурсы
+            isMinifyEnabled = true
+            isShrinkResources = true
+            isDebuggable = false
 
-            isDebuggable = false            // нельзя будет отлаживать
+            // ← ЭТО ОБЯЗАТЕЛЬНО! Без этого минификация НЕ работает в AGP 8+
+            signingConfig = signingConfigs.getByName("debug")
 
-            // Подпись — можно оставить debug-ключом (Android Studio подпишет автоматически)
-            signingConfig = signingConfigs.getByName("debug")            // Убираем любые debug-суффиксы из названия пакета и версии
+            // Сбрасываем суффиксы, которые ты ставишь в defaultConfig
             applicationIdSuffix = null
             versionNameSuffix = null
 
