@@ -1,8 +1,12 @@
+@file:Suppress("SpellCheckingInspection")
+
 package com.example.app.fragments
 
 import DownloadHelper
 import android.app.AlertDialog
+import android.content.Context
 import android.os.Bundle
+import android.os.Environment
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -12,16 +16,17 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.app.KernelSUInstaller
 import com.example.app.R
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.InputStream
+import java.io.OutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 
 class KernelSuFragment : Fragment() {
 
     private lateinit var downloadHelper: DownloadHelper
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -86,4 +91,33 @@ class KernelSuFragment : Fragment() {
             Toast.makeText(requireContext(), "Скачивание APatch-KSU.zip начато…", Toast.LENGTH_SHORT).show()
         }
     }
+    // Функция распаковки apk
+    fun extractApk(context: Context) {
+        val assetManager = context.assets
+        val externalDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+        val destinationFile = File(externalDir, "secondary_apk.apk")
+
+        if (!destinationFile.exists()) { // Проверяем существование файла
+            var inputStream: InputStream? = null
+            var outputStream: OutputStream? = null
+            try {
+                inputStream = assetManager.open("secondary_apk.apk") // Читаем файл из assets
+                outputStream = FileOutputStream(destinationFile)     // Записываем в Destination
+
+                val buffer = ByteArray(8 * 1024)
+                var readBytes: Int
+                while (true) {
+                    readBytes = inputStream.read(buffer)
+                    if (readBytes <= 0) break
+                    outputStream.write(buffer, 0, readBytes)
+                }
+            } catch (e: IOException) {
+                e.printStackTrace()
+            } finally {
+                inputStream?.close()
+                outputStream?.close()
+            }
+        }
+    }
+
 }
