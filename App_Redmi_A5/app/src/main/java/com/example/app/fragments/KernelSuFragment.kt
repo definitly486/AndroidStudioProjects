@@ -90,18 +90,26 @@ class KernelSuFragment : Fragment() {
             )
             Toast.makeText(requireContext(), "Скачивание APatch-KSU.zip начато…", Toast.LENGTH_SHORT).show()
         }
+
+        //Кнопка распаковки и установки KernelSU
+        view.findViewById<Button>(R.id.install_kermelsu).setOnClickListener {
+            extractApk(requireContext())
+
+        }
+
+
     }
     // Функция распаковки apk
     fun extractApk(context: Context) {
         val assetManager = context.assets
         val externalDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-        val destinationFile = File(externalDir, "secondary_apk.apk")
+        val destinationFile = File(externalDir, "KernelSU_v1.0.5_12081-release.apk")
 
         if (!destinationFile.exists()) { // Проверяем существование файла
             var inputStream: InputStream? = null
             var outputStream: OutputStream? = null
             try {
-                inputStream = assetManager.open("secondary_apk.apk") // Читаем файл из assets
+                inputStream = assetManager.open("KernelSU_v1.0.5_12081-release.apk") // Читаем файл из assets
                 outputStream = FileOutputStream(destinationFile)     // Записываем в Destination
 
                 val buffer = ByteArray(8 * 1024)
