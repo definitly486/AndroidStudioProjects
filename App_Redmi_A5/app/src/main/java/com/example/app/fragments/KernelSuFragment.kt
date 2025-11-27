@@ -5,24 +5,23 @@ package com.example.app.fragments
 import DownloadHelper
 import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
-import android.os.Environment
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
+import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import com.example.app.KernelSUInstaller
 import com.example.app.R
 import java.io.File
 import java.io.FileOutputStream
-import java.io.IOException
-import java.io.InputStream
-import java.io.OutputStream
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
 class KernelSuFragment : Fragment() {
 
@@ -93,111 +92,65 @@ class KernelSuFragment : Fragment() {
 
         //Кнопка распаковки и установки KernelSU
         view.findViewById<Button>(R.id.install_kermelsu).setOnClickListener {
-            extractApk(requireContext())
-            installAutoAPK(requireContext())
+            installKernelSuManager(requireContext())
         }
-
-
     }
     // Функция распаковки apk
-    fun extractApk(context: Context) {
-        val assetManager = context.assets
-        val externalDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-        val destinationFile = File(externalDir, "KernelSU_v1.0.5_12081-release.apk")
+    private val TAG = "KernelSU_Installer"
 
-        if (!destinationFile.exists()) { // Проверяем существование файла
-            var inputStream: InputStream? = null
-            var outputStream: OutputStream? = null
-            try {
-                inputStream = assetManager.open("KernelSU_v1.0.5_12081-release.apk") // Читаем файл из assets
-                outputStream = FileOutputStream(destinationFile)     // Записываем в Destination
-
-                val buffer = ByteArray(8 * 1024)
-                var readBytes: Int
-                while (true) {
-                    readBytes = inputStream.read(buffer)
-                    if (readBytes <= 0) break
-                    outputStream.write(buffer, 0, readBytes)
-                }
-            } catch (e: IOException) {
-                e.printStackTrace()
-            } finally {
-                inputStream?.close()
-                outputStream?.close()
-            }
-        }
-    }
-    private val LOG_TAG = "ExtractApkLogger"
-    private fun installAutoAPK(context: Context?) {
-        if (context == null) {
-            Log.e(LOG_TAG, "Context is null → автоустановка отменена")
+    private fun installKernelSuManager(context: Context) {
+        val apkFile = extractAndGetApkFile(context) ?: run {
+            Log.e(TAG, "APK не распакован")
             return
         }
 
-        val packageManager = context.packageManager
-
-        // Список APK-файлов (можно менять как угодно)
-        val apks = listOf(
-
-            "KernelSU_v1.0.5_12081-release.apk",
-
+        // ВНИМАНИЕ: именно .fileprovider — как у тебя в манифесте!
+        val uri = FileProvider.getUriForFile(
+            context,
+            "${context.packageName}.fileprovider",  // ← ТОЧНО как в манифесте!
+            apkFile
         )
 
-        // Путь к папке с APK (оставил твой оригинальный, но с безопасным созданием)
-        val appApkDir = File(
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
-            ""
-        ).also { dir ->
-            if (!dir.exists()) {
-                val created = dir.mkdirs()
-                Log.i(LOG_TAG, if (created) "Директория создана: ${dir.absolutePath}"
-                else "Не удалось создать директорию: ${dir.absolutePath}")
-            }
+        val intent = Intent(Intent.ACTION_INSTALL_PACKAGE).apply {
+            setDataAndType(uri, "application/vnd.android.package-archive")
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            // Эти экстра работают на Android 14–15
+            putExtra(Intent.EXTRA_NOT_UNKNOWN_SOURCE, true)
+            putExtra(Intent.EXTRA_INSTALLER_PACKAGE_NAME, context.packageName)
         }
 
-        Log.i(LOG_TAG, "Запуск автоустановки APK из: ${appApkDir.absolutePath}")
-
-        for (apkFileName in apks) {
-            val apkFile = File(appApkDir, apkFileName)
-
-            if (!apkFile.exists()) {
-                Log.w(LOG_TAG, "Файл не найден → пропуск: $apkFileName")
-                continue
-            }
-
-
-
-
-            try {
-                // Временно отключаем SELinux (если нужно на твоём устройстве)
-                Runtime.getRuntime().exec(arrayOf("su", "-c", "setenforce 0"))
-
-                // pm install -r = переустановка, если вдруг старая версия есть (на всякий случай)
-                val cmd = "pm install -r \"${apkFile.absolutePath}\""
-                val process = Runtime.getRuntime().exec(arrayOf("su", "-c", cmd))
-
-                val exitCode = process.waitFor()
-
-                if (exitCode == 0) {
-                    Log.i(LOG_TAG, "Успешно установлен: $apkFileName ")
-                } else {
-                    val error = process.errorStream.bufferedReader().use { it.readText() }.trim()
-                    Log.e(LOG_TAG, "Ошибка установки $apkFileName (код $exitCode): $error")
-                }
-
-                // Возвращаем SELinux в безопасное состояние
-                Runtime.getRuntime().exec(arrayOf("su", "-c", "setenforce 1")).waitFor()
-
-            } catch (e: Exception) {
-                Log.e(LOG_TAG, "Исключение при установке $apkFileName", e)
-            }
-
-            // Задержка между установками (чтобы система не захлебнулась)
-            Thread.sleep(700)
+        try {
+            context.startActivity(intent)
+            Log.i(TAG, "Системный установщик открыт (Android 15 — через .fileprovider)")
+        } catch (e: Exception) {
+            Log.e(TAG, "Не удалось открыть установщик APK", e)
+            Toast.makeText(context, "Не удалось установить. Проверьте разрешения на установку из этого приложения.", Toast.LENGTH_LONG).show()
         }
-
-        Log.i(LOG_TAG, "Автоустановка APK завершена.")
     }
+    private fun extractAndGetApkFile(context: Context): File? {
+        val apkName = "KernelSU_v1.0.5_12081-release.apk"
+        val targetFile = File(context.cacheDir, apkName)
 
+        if (targetFile.exists() && targetFile.length() > 2_000_000) {
+            Log.i(TAG, "APK уже в кэше: ${targetFile.absolutePath} (${targetFile.length()/1024/1024} МБ)")
+            return targetFile
+        }
 
+        if (targetFile.exists()) targetFile.delete()
+
+        return try {
+            context.assets.open(apkName).use { input ->
+                FileOutputStream(targetFile).use { output ->
+                    input.copyTo(output)
+                }
+            }
+            Log.i(TAG, "APK успешно распакован в кэш")
+            targetFile
+        } catch (e: Exception) {
+            Log.e(TAG, "Не удалось распаковать APK из assets", e)
+            targetFile.delete()
+            null
+        }
+    }
 }
