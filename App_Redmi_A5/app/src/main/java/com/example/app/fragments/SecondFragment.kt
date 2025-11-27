@@ -319,9 +319,9 @@ class SecondFragment : Fragment() {
         }
 
         // === ВЫПОЛНЯЕМ ВСЕ НАСТРОЙКИ С ЛОГИРОВАНИЕМ ===
-        shellExecutor.execShellCommand("appops set ${requireContext().packageName} REQUEST_INSTALL_PACKAGES allow")
-        shellExecutor.execShellCommand("pm grant ${requireContext().packageName} android.permission.WRITE_SECURE_SETTINGS")
-        shellExecutor.execShellCommand("pm grant ${requireContext().packageName} android.permission.WRITE_SETTINGS")
+        shellExecutor.execShellCommand("appops set com.example.app  REQUEST_INSTALL_PACKAGES allow")
+        shellExecutor.execShellCommand("pm grant com.example.app android.permission.WRITE_SECURE_SETTINGS")
+        shellExecutor.execShellCommand("pm grant com.example.app  android.permission.WRITE_SETTINGS")
 
         // Яркость
         try {
