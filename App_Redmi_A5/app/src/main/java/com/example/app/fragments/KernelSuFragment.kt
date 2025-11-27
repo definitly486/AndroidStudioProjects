@@ -1,6 +1,7 @@
 package com.example.app.fragments
 
 import DownloadHelper
+import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -42,24 +43,30 @@ class KernelSuFragment : Fragment() {
 
             Toast.makeText(requireContext(), "Установка APatch-KSU…", Toast.LENGTH_LONG).show()
 
-            // Выполняем установку в отдельном потоке (чтобы не зависал UI)
             Thread {
                 val success = KernelSUInstaller.installAPatchKSU()
 
                 activity?.runOnUiThread {
                     if (success) {
-                        Toast.makeText(
-                            requireContext(),
-                            "APatch-KSU успешно установлен!\nПерезагружаю устройство…",
-                            Toast.LENGTH_LONG
-                        ).show()
-
-                        // Автоматическая перезагрузка
-                        try {
-                            Runtime.getRuntime().exec("su -mm -c reboot")
-                        } catch (e: Exception) {
-                            e.printStackTrace()
-                        }
+                        // Показываем диалог с предложением перезагрузки
+                        AlertDialog.Builder(requireContext())
+                            .setTitle("Установка завершена")
+                            .setMessage("APatch-KSU успешно установлен!\n\nПерезагрузить устройство сейчас?")
+                            .setPositiveButton("Перезагрузить") { _, _ ->
+                                try {
+                                    Runtime.getRuntime().exec("su -mm -c reboot")
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
+                                    Toast.makeText(
+                                        requireContext(),
+                                        "Не удалось выполнить перезагрузку",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            }
+                            .setNegativeButton("Позже", null)
+                            .setCancelable(false)
+                            .show()
                     } else {
                         Toast.makeText(
                             requireContext(),
