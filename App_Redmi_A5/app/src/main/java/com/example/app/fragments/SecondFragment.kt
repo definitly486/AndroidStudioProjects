@@ -319,8 +319,8 @@ class SecondFragment : Fragment() {
 
         // Яркость
         try {
-            setScreenBrightness(requireContext(), 200) // 800 — это слишком много, максимум 255!
-            Log.i(TAG, "Яркость установлена вручную (200/255)")
+            setScreenBrightness(requireContext(), 240) // 800 — это слишком много, максимум 255!
+            Log.i(TAG, "Яркость установлена вручную (230/400)")
         } catch (e: Exception) {
             Log.e(TAG, "Ошибка установки яркости", e)
         }
