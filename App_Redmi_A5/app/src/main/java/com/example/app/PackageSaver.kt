@@ -138,7 +138,8 @@ fun Context.savePackagesToFile(filename: String): Boolean {
         "com.huaqin.factory",
         "com.android.overlay.gmssettings",
         "com.sprd.linkturbo",
-        "com.android.role.notes.enabled"
+        "com.android.role.notes.enabled",
+        "com.goodix.gftest"
     ).joinToString("\n")
 
     val downloadFolder = this.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
