@@ -190,10 +190,8 @@ class KernelSuFragment : Fragment() {
      * 4) Ждёт PACKAGE_ADDED с таким packageName и затем устанавливает APatch-KSU.zip
      */
     private fun installKernelSuManager() {
-
         val context = requireContext()
 
-        // 1. Извлекаем APK + ZIP в cache
         val files = extractAssetsFiles(
             context,
             listOf(
@@ -203,88 +201,69 @@ class KernelSuFragment : Fragment() {
         )
 
         val apkFile = files.firstOrNull { it.name.endsWith(".apk") }
-        val zipFile = files.firstOrNull { it.name == "APatch-KSU.zip" }
+        val zipFile = files.firstOrNull { it.name.endsWith(".zip") }
 
         if (apkFile == null || zipFile == null) {
-            Toast.makeText(context, "Файлы не найдены", Toast.LENGTH_LONG).show()
+            Toast.makeText(context, "Не удалось извлечь файлы", Toast.LENGTH_LONG).show()
             return
         }
 
-        // 2. Готовим URI для APK
+        // *** УСТАНОВКА APK ***
         val uri = FileProvider.getUriForFile(
             context,
             "${context.packageName}.fileprovider",
             apkFile
         )
 
-        // 3. Проверяем разрешение
-        if (!context.packageManager.canRequestPackageInstalls()) {
-            val intent = Intent(android.provider.Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES).apply {
-                data = Uri.parse("package:${context.packageName}")
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            }
-            startActivity(intent)
-            return
-        }
-
-        // 4. Запускаем системный установщик APK
         val installIntent = Intent(Intent.ACTION_VIEW).apply {
             setDataAndType(uri, "application/vnd.android.package-archive")
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
+
         startActivity(installIntent)
 
-        // 5. После установки — ставим APatch-KSU.zip (root)
+        // *** ЖДЕМ 5 СЕКУНД, ПОТОМ ПРОБУЕМ su ***
         lifecycleScope.launch(Dispatchers.IO) {
+            delay(5000)
 
-            // Ожидаем появление установленного KernelSU
-            var kernelSuInstalled = false
-
-            repeat(20) {    // максимум 10 секунд
-                if (isPackageInstalled(context, "me.weishu.kernelsu")) {
-                    kernelSuInstalled = true
-                    return@repeat
-                }
-                delay(500)
-            }
-
-            if (!kernelSuInstalled) {
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(context, "KernelSU не установлен", Toast.LENGTH_LONG).show()
-                }
-                return@launch
-            }
-
-            // Устанавливаем ZIP через root
-            val success = KernelSUInstaller.installAPatchKSUfromcachfolder(context)
+            val suWorks = isSuAvailable()
 
             withContext(Dispatchers.Main) {
-                if (success) {
-                    AlertDialog.Builder(context)
-                        .setTitle("APatch-KSU установлен")
-                        .setMessage("Перезагрузить устройство?")
-                        .setPositiveButton("Перезагрузить") { _, _ ->
-                            try {
-                                Runtime.getRuntime().exec("su -mm -c reboot")
-                            } catch (_: Exception) {
-                                Toast.makeText(context, "Ошибка перезагрузки", Toast.LENGTH_SHORT).show()
-                            }
-                        }
-                        .setNegativeButton("Позже", null)
-                        .show()
+                if (!suWorks) {
+                    Toast.makeText(context, "Root (su) пока недоступен", Toast.LENGTH_LONG).show()
+                    return@withContext
+                }
+            }
+
+            // *** УСТАНОВКА APatch-KSU.zip ***
+            val installed = installZipWithSu(zipFile)
+
+            withContext(Dispatchers.Main) {
+                if (installed) {
+                    Toast.makeText(context, "APatch-KSU.zip установлен", Toast.LENGTH_LONG).show()
                 } else {
-                    Toast.makeText(context, "Ошибка установки APatch-KSU.zip", Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, "Не удалось установить ZIP", Toast.LENGTH_LONG).show()
                 }
             }
         }
     }
 
 
-    private fun isPackageInstalled(context: Context, pkg: String): Boolean {
+    private fun isSuAvailable(): Boolean {
         return try {
-            context.packageManager.getPackageInfo(pkg, 0)
-            true
+            val process = Runtime.getRuntime().exec(arrayOf("su", "-c", "echo ok"))
+            val result = process.waitFor()
+            result == 0
+        } catch (e: Exception) {
+            false
+        }
+    }
+    private fun installZipWithSu(zipFile: File): Boolean {
+        return try {
+            val cmd = "su -c 'sh /data/adb/ksu/bin/ksud --install \"${zipFile.absolutePath}\"'"
+            val process = Runtime.getRuntime().exec(cmd)
+            process.waitFor() == 0
         } catch (e: Exception) {
             false
         }
