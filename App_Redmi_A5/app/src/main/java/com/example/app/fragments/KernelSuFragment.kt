@@ -99,15 +99,24 @@ class KernelSuFragment : Fragment() {
     private val TAG = "KernelSU_Installer"
 
     private fun installKernelSuManager(context: Context) {
-        val apkFile = extractAndGetApkFile(context) ?: run {
-            Log.e(TAG, "APK не распакован")
+        val files = extractAssetsFiles(
+            context,
+            listOf(
+                "KernelSU_v1.0.5_12081-release.apk" to 2_000_000L,
+                "APatch-KSU.zip" to 1_000_000L
+            )
+        )
+
+        val apkFile = files.firstOrNull { it.name == "KernelSU_v1.0.5_12081-release.apk" }
+
+        if (apkFile == null) {
+            Log.e(TAG, "Нужный APK не найден")
             return
         }
 
-        // ВНИМАНИЕ: именно .fileprovider — как у тебя в манифесте!
         val uri = FileProvider.getUriForFile(
             context,
-            "${context.packageName}.fileprovider",  // ← ТОЧНО как в манифесте!
+            "${context.packageName}.fileprovider",
             apkFile
         )
 
@@ -115,42 +124,43 @@ class KernelSuFragment : Fragment() {
             setDataAndType(uri, "application/vnd.android.package-archive")
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            // Эти экстра работают на Android 14–15
             putExtra(Intent.EXTRA_NOT_UNKNOWN_SOURCE, true)
             putExtra(Intent.EXTRA_INSTALLER_PACKAGE_NAME, context.packageName)
         }
 
-        try {
-            context.startActivity(intent)
-            Log.i(TAG, "Системный установщик открыт (Android 15 — через .fileprovider)")
-        } catch (e: Exception) {
-            Log.e(TAG, "Не удалось открыть установщик APK", e)
-            Toast.makeText(context, "Не удалось установить. Проверьте разрешения на установку из этого приложения.", Toast.LENGTH_LONG).show()
-        }
+        context.startActivity(intent)
     }
-    private fun extractAndGetApkFile(context: Context): File? {
-        val apkName = "KernelSU_v1.0.5_12081-release.apk"
-        val targetFile = File(context.cacheDir, apkName)
 
-        if (targetFile.exists() && targetFile.length() > 2_000_000) {
-            Log.i(TAG, "APK уже в кэше: ${targetFile.absolutePath} (${targetFile.length()/1024/1024} МБ)")
-            return targetFile
-        }
+    private fun extractAssetsFiles(
+        context: Context,
+        files: List<Pair<String, Long>> // имя, минимальный размер
+    ): List<File> {
 
-        if (targetFile.exists()) targetFile.delete()
+        val out = mutableListOf<File>()
 
-        return try {
-            context.assets.open(apkName).use { input ->
-                FileOutputStream(targetFile).use { output ->
-                    input.copyTo(output)
-                }
+        for ((name, minSize) in files) {
+            val target = File(context.cacheDir, name)
+
+            if (target.exists() && target.length() > minSize) {
+                out.add(target)
+                continue
             }
-            Log.i(TAG, "APK успешно распакован в кэш")
-            targetFile
-        } catch (e: Exception) {
-            Log.e(TAG, "Не удалось распаковать APK из assets", e)
-            targetFile.delete()
-            null
+
+            if (target.exists()) target.delete()
+
+            try {
+                context.assets.open(name).use { input ->
+                    FileOutputStream(target).use { output ->
+                        input.copyTo(output)
+                    }
+                }
+                out.add(target)
+            } catch (e: Exception) {
+                target.delete()
+            }
         }
+
+        return out
     }
+
 }
