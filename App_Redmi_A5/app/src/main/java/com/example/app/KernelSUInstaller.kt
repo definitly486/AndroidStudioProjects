@@ -27,4 +27,27 @@ object KernelSUInstaller {
             false
         }
     }
+
+    fun installAPatchKSUfromcachfolder(): Boolean {
+        val moduleFile = File("$DOWNLOAD_PATH/$MODULE_NAME")
+
+        if (!moduleFile.exists() || !moduleFile.canRead()) {
+            return false
+        }
+
+        return try {
+            val process = Runtime.getRuntime().exec("su -mm")
+            java.io.DataOutputStream(process.outputStream).use { os ->
+                os.writeBytes("ksud module install \"${moduleFile.absolutePath}\"\n")
+                os.writeBytes("exit \$?\n")
+                os.flush()
+            }
+            process.waitFor() == 0
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
+    }
+
+
 }

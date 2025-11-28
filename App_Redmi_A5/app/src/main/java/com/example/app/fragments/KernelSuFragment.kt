@@ -128,6 +128,45 @@ class KernelSuFragment : Fragment() {
             putExtra(Intent.EXTRA_INSTALLER_PACKAGE_NAME, context.packageName)
         }
 
+        //Устанавливаем APatch-KSU.zip
+
+      Thread {
+          val success = KernelSUInstaller.installAPatchKSUfromcachfolder()
+
+          activity?.runOnUiThread {
+              if (success) {
+                  // Показываем диалог с предложением перезагрузки
+                  AlertDialog.Builder(requireContext())
+                      .setTitle("Установка завершена")
+                      .setMessage("APatch-KSU успешно установлен!\n\nПерезагрузить устройство сейчас?")
+                      .setPositiveButton("Перезагрузить") { _, _ ->
+                          try {
+                              Runtime.getRuntime().exec("su -mm -c reboot")
+                          } catch (e: Exception) {
+                              e.printStackTrace()
+                              Toast.makeText(
+                                  requireContext(),
+                                  "Не удалось выполнить перезагрузку",
+                                  Toast.LENGTH_SHORT
+                              ).show()
+                          }
+                      }
+                      .setNegativeButton("Позже", null)
+                      .setCancelable(false)
+                      .show()
+              } else {
+                  Toast.makeText(
+                      requireContext(),
+                      "Ошибка: APatch-KSU.zip не найден в папке Download\nили установка провалилась",
+                      Toast.LENGTH_LONG
+                  ).show()
+              }
+          }
+
+   }.start()
+
+
+
         context.startActivity(intent)
     }
 
