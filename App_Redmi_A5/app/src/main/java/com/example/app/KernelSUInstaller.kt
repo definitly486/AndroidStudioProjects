@@ -7,6 +7,7 @@ object KernelSUInstaller {
     private const val MODULE_NAME = "APatch-KSU.zip"
     private const val DOWNLOAD_PATH = "/storage/emulated/0/Download"
 
+    @Suppress("SpellCheckingInspection")
     fun installAPatchKSU(): Boolean {
         val moduleFile = File("$DOWNLOAD_PATH/$MODULE_NAME")
 
