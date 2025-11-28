@@ -139,7 +139,10 @@ fun Context.savePackagesToFile(filename: String): Boolean {
         "com.android.overlay.gmssettings",
         "com.sprd.linkturbo",
         "com.android.role.notes.enabled",
-        "com.goodix.gftest"
+        "com.goodix.gftest",
+        "com.sprd.engineermode",
+        "com.android.overlay.gmscontactprovider",
+        "com.android.overlay.gmssettingprovider"
     ).joinToString("\n")
 
     val downloadFolder = this.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
