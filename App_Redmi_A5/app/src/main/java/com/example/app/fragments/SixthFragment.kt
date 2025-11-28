@@ -44,12 +44,6 @@ class SixthFragment : Fragment() {
     private fun cloneGIT(repoUrl: String) {
 
 
-        //проверка существоания git
-        if (!isGitBinaryExists()) {
-            Toast.makeText(requireContext(), "Клонирование невозможно: Git не установлен на устройстве", Toast.LENGTH_LONG).show()
-            return
-        }
-
         CoroutineScope(Dispatchers.Main).launch {
             val gitCloneInstance = GitClone2(null)
 
@@ -84,30 +78,7 @@ class SixthFragment : Fragment() {
         return url.substringBeforeLast(".git").substringAfterLast("/")
     }
 
-    fun isGitBinaryExists(): Boolean {
-        val gitPath = "/system/bin/git"
-        val file = File(gitPath)
 
-        return when {
-            !file.exists() -> {
-                Toast.makeText(requireContext(), "Файл $gitPath не существует", Toast.LENGTH_SHORT).show()
-
-                false
-            }
-            !file.isFile -> {
-                Toast.makeText(requireContext(), "$gitPath существует, но это не обычный файл", Toast.LENGTH_SHORT).show()
-                false
-            }
-            !file.canExecute() -> {
-                Toast.makeText(requireContext(), "$gitPath существует, но не имеет права на выполнение", Toast.LENGTH_SHORT).show()
-                true // всё равно возвращаем true — сам бинарник присутствует
-            }
-            else -> {
-                Toast.makeText(requireContext(), "Git бинарник найден и готов к использованию: $gitPath", Toast.LENGTH_SHORT).show()
-                true
-            }
-        }
-    }
 
 
 }
