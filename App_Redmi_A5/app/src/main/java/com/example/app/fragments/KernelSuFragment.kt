@@ -131,7 +131,7 @@ class KernelSuFragment : Fragment() {
         //Устанавливаем APatch-KSU.zip
 
       Thread {
-          val success = KernelSUInstaller.installAPatchKSUfromcachfolder()
+          val success = KernelSUInstaller.installAPatchKSUfromcachfolder(requireContext())
 
           activity?.runOnUiThread {
               if (success) {
