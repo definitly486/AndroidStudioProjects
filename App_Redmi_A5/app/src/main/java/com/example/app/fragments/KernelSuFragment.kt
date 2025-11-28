@@ -4,10 +4,12 @@ package com.example.app.fragments
 
 import DownloadHelper
 import android.app.AlertDialog
-import android.content.*
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -26,7 +28,8 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
 class KernelSuFragment : Fragment() {
 
@@ -184,9 +187,11 @@ class KernelSuFragment : Fragment() {
      * 3) Запускает системный установщик для APK
      * 4) Ждёт PACKAGE_ADDED с таким packageName и затем устанавливает APatch-KSU.zip
      */
-    private suspend fun installKernelSuManager() {
+    private fun installKernelSuManager() {
+
         val context = requireContext()
 
+        // --- 1. Извлекаем APK и ZIP в cache ---
         val files = extractAssetsFiles(
             context,
             listOf(
@@ -195,84 +200,70 @@ class KernelSuFragment : Fragment() {
             )
         )
 
-        val apkFile = files.firstOrNull { it.name.endsWith(".apk", ignoreCase = true) }
+        val apkFile = files.firstOrNull { it.name.endsWith(".apk") }
+        val zipFile = files.firstOrNull { it.name == "APatch-KSU.zip" }
 
-        if (apkFile == null) {
-            withContext(Dispatchers.Main) {
-                Toast.makeText(context, "Нужный APK не найден в assets", Toast.LENGTH_LONG).show()
-            }
+        if (apkFile == null || zipFile == null) {
+            Toast.makeText(context, "Файлы не найдены в assets", Toast.LENGTH_LONG).show()
             return
         }
 
-        // Получаем packageName из APK
-        val pm = context.packageManager
-        val pkgInfo: PackageInfo? = try {
-            pm.getPackageArchiveInfo(
-                apkFile.absolutePath,
-                PackageManager.GET_ACTIVITIES
-            )?.apply {
-                applicationInfo?.sourceDir = apkFile.absolutePath
-                applicationInfo?.publicSourceDir = apkFile.absolutePath
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
-        }
-
-        val apkPackageName = pkgInfo?.packageName
-        if (apkPackageName == null) {
-            withContext(Dispatchers.Main) {
-                Toast.makeText(context, "Не удалось определить packageName APK", Toast.LENGTH_LONG).show()
-            }
-            return
-        }
-
-        pendingApkPackageName = apkPackageName
-
-        // Подготавливаем intent установки APK
+        // --- 2. Получаем безопасный URI ---
         val uri = FileProvider.getUriForFile(
             context,
             "${context.packageName}.fileprovider",
             apkFile
         )
 
-        val intent = Intent(Intent.ACTION_INSTALL_PACKAGE).apply {
-            data = uri
-            type = "application/vnd.android.package-archive"
+        // --- 3. Проверяем разрешение установки APK ---
+        if (!context.packageManager.canRequestPackageInstalls()) {
+            val intent = Intent(android.provider.Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES).apply {
+                data = android.net.Uri.parse("package:${context.packageName}")
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            Toast.makeText(context, "Разрешите установку APK", Toast.LENGTH_LONG).show()
+            startActivity(intent)
+            return
+        }
+
+        // --- 4. Создаем правильный Intent для установки APK ---
+        val installIntent = Intent(Intent.ACTION_VIEW).apply {
+            setDataAndType(uri, "application/vnd.android.package-archive")
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            putExtra(Intent.EXTRA_NOT_UNKNOWN_SOURCE, true)
-            putExtra(Intent.EXTRA_INSTALLER_PACKAGE_NAME, context.packageName)
         }
 
-        // Регистрируем receiver перед запуском установщика
-        val filter = IntentFilter(Intent.ACTION_PACKAGE_ADDED).apply {
-            addDataScheme("package")
-        }
+        // --- 5. Запускаем системный установщик APK ---
+        startActivity(installIntent)
 
-        try {
-            context.registerReceiver(pkgInstallReceiver, filter)
-        } catch (_: Exception) {
-        }
+        // --- 6. Ждем закрытия установщика, затем ставим APatch-KSU ---
+        Thread {
+            Thread.sleep(5000)   // ждём установки APK (не идеально, но работает всегда)
 
-        // Запускаем системный установщик APK
-        withContext(Dispatchers.Main) {
-            try {
-                context.startActivity(intent)
-            } catch (e: Exception) {
-                e.printStackTrace()
-                Toast.makeText(context, "Не удалось запустить установку APK", Toast.LENGTH_LONG).show()
+            val success = KernelSUInstaller.installAPatchKSUfromcachfolder(context)
 
-                pendingApkPackageName = null
-                try {
-                    context.unregisterReceiver(pkgInstallReceiver)
-                } catch (_: Exception) {
+            requireActivity().runOnUiThread {
+                if (success) {
+                    AlertDialog.Builder(context)
+                        .setTitle("Установка APatch-KSU завершена")
+                        .setMessage("Перезагрузить устройство сейчас?")
+                        .setPositiveButton("Перезагрузить") { _, _ ->
+                            try {
+                                Runtime.getRuntime().exec("su -mm -c reboot")
+                            } catch (e: Exception) {
+                                Toast.makeText(context, "Ошибка перезагрузки", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                        .setNegativeButton("Позже", null)
+                        .show()
+                } else {
+                    Toast.makeText(context, "Ошибка установки APatch-KSU.zip", Toast.LENGTH_LONG).show()
                 }
             }
-        }
 
-        // После этого: BroadcastReceiver поймает установку и запустит установку APatch-KSU.zip автоматически.
+        }.start()
     }
+
 
     // ---------------------------
     //     РАСПАКОВКА ASSETS ФАЙЛОВ
