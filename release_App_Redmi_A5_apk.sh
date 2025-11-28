@@ -18,4 +18,5 @@ mv $APK_PATH_DEBUG/app-debug.apk  $APK_PATH_DEBUG/app_redmi_a5-$GIT_BRANCH.apk
 echo "Y" | gh release  delete-asset apk app_redmi_a5-$GIT_BRANCH.apk
 gh release  upload apk $APK_PATH/app_redmi_a5-$GIT_BRANCH.apk
 
+echo "Y" | gh release  delete-asset apk app-release.apk
 gh release  upload apk  $APK_PATH_RELEASE/app-release.apk
