@@ -10,6 +10,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -23,6 +24,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.app.KernelSUInstaller
 import com.example.app.R
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -191,7 +193,7 @@ class KernelSuFragment : Fragment() {
 
         val context = requireContext()
 
-        // --- 1. Извлекаем APK и ZIP в cache ---
+        // 1. Извлекаем APK + ZIP в cache
         val files = extractAssetsFiles(
             context,
             listOf(
@@ -204,53 +206,68 @@ class KernelSuFragment : Fragment() {
         val zipFile = files.firstOrNull { it.name == "APatch-KSU.zip" }
 
         if (apkFile == null || zipFile == null) {
-            Toast.makeText(context, "Файлы не найдены в assets", Toast.LENGTH_LONG).show()
+            Toast.makeText(context, "Файлы не найдены", Toast.LENGTH_LONG).show()
             return
         }
 
-        // --- 2. Получаем безопасный URI ---
+        // 2. Готовим URI для APK
         val uri = FileProvider.getUriForFile(
             context,
             "${context.packageName}.fileprovider",
             apkFile
         )
 
-        // --- 3. Проверяем разрешение установки APK ---
+        // 3. Проверяем разрешение
         if (!context.packageManager.canRequestPackageInstalls()) {
             val intent = Intent(android.provider.Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES).apply {
-                data = android.net.Uri.parse("package:${context.packageName}")
+                data = Uri.parse("package:${context.packageName}")
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
-            Toast.makeText(context, "Разрешите установку APK", Toast.LENGTH_LONG).show()
             startActivity(intent)
             return
         }
 
-        // --- 4. Создаем правильный Intent для установки APK ---
+        // 4. Запускаем системный установщик APK
         val installIntent = Intent(Intent.ACTION_VIEW).apply {
             setDataAndType(uri, "application/vnd.android.package-archive")
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
-
-        // --- 5. Запускаем системный установщик APK ---
         startActivity(installIntent)
 
-        // --- 6. Ждем закрытия установщика, затем ставим APatch-KSU ---
-        Thread {
-            Thread.sleep(5000)   // ждём установки APK (не идеально, но работает всегда)
+        // 5. После установки — ставим APatch-KSU.zip (root)
+        lifecycleScope.launch(Dispatchers.IO) {
 
+            // Ожидаем появление установленного KernelSU
+            var kernelSuInstalled = false
+
+            repeat(20) {    // максимум 10 секунд
+                if (isPackageInstalled(context, "me.weishu.kernelsu")) {
+                    kernelSuInstalled = true
+                    return@repeat
+                }
+                delay(500)
+            }
+
+            if (!kernelSuInstalled) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(context, "KernelSU не установлен", Toast.LENGTH_LONG).show()
+                }
+                return@launch
+            }
+
+            // Устанавливаем ZIP через root
             val success = KernelSUInstaller.installAPatchKSUfromcachfolder(context)
 
-            requireActivity().runOnUiThread {
+            withContext(Dispatchers.Main) {
                 if (success) {
                     AlertDialog.Builder(context)
-                        .setTitle("Установка APatch-KSU завершена")
-                        .setMessage("Перезагрузить устройство сейчас?")
+                        .setTitle("APatch-KSU установлен")
+                        .setMessage("Перезагрузить устройство?")
                         .setPositiveButton("Перезагрузить") { _, _ ->
                             try {
                                 Runtime.getRuntime().exec("su -mm -c reboot")
-                            } catch (e: Exception) {
+                            } catch (_: Exception) {
                                 Toast.makeText(context, "Ошибка перезагрузки", Toast.LENGTH_SHORT).show()
                             }
                         }
@@ -260,8 +277,17 @@ class KernelSuFragment : Fragment() {
                     Toast.makeText(context, "Ошибка установки APatch-KSU.zip", Toast.LENGTH_LONG).show()
                 }
             }
+        }
+    }
 
-        }.start()
+
+    private fun isPackageInstalled(context: Context, pkg: String): Boolean {
+        return try {
+            context.packageManager.getPackageInfo(pkg, 0)
+            true
+        } catch (e: Exception) {
+            false
+        }
     }
 
 
