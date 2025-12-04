@@ -64,7 +64,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         // ← Регистрация приёмника с правильным флагом
-        val filter = IntentFilter("com.example.tcp.COMMAND_RECEIVED")
+        val filter = IntentFilter("com.example.tcpserver.COMMAND_RECEIVED")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             registerReceiver(commandReceiver, filter, RECEIVER_NOT_EXPORTED)
         } else {

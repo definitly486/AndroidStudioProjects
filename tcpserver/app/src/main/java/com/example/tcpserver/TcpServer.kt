@@ -44,34 +44,55 @@ object TcpServer {
 
     private fun handleClient(socket: Socket, onCommand: (String) -> Unit) {
         try {
+            socket.soTimeout = 3000  // важно! защита от зависаний
+
             val input = BufferedReader(InputStreamReader(socket.getInputStream()))
-            val requestLine = input.readLine() ?: ""
+            val output = socket.getOutputStream()
+
+            val requestLine = input.readLine() ?: return
             Log.d("TcpServer", "Запрос: $requestLine")
 
-            // Читаем до пустой строки (конец заголовков)
+            // Безопасно читаем заголовки
             var line: String?
-            while (input.readLine().also { line = it } != null) {
-                if (line.isNullOrBlank()) break
+            while (true) {
+                try {
+                    line = input.readLine()
+                    if (line == null || line.isBlank()) break
+                    // Log.d("TcpServer", "Header: $line")  // раскомментируй при отладке
+                } catch (e: IOException) {
+                    // Клиент закрыл соединение — это НОРМА для HTTP/1.1 без keep-alive
+                    break
+                }
             }
 
-            // Извлекаем команду из пути: GET /LED_ON HTTP/1.1 → LED_ON
-            val cmd = requestLine.split(" ").getOrNull(1)
-                ?.removePrefix("/")
-                ?.split("?")?.get(0)
-                ?.trim() ?: ""
+            // Извлекаем команду
+            val path = requestLine.split(" ").getOrNull(1) ?: ""
+            val cmd = path.removePrefix("/").split("?").first().trim().uppercase()
 
             if (cmd.isNotEmpty()) {
-                Log.d("TcpServer", "Команда: $cmd")
+                Log.d("TcpServer", "Команда: $cmd")  // ← Теперь ВСЕГДА видно!
                 onCommand(cmd)
             }
 
-            // Простой ответ
-            val response = "HTTP/1.1 200 OK\r\nContent-Length: 3\r\n\r\nOK\n"
-            socket.getOutputStream().write(response.toByteArray())
-        } catch (e: Exception) {
-            Log.e("TcpServer", "Ошибка обработки", e)
+            // Отправляем ответ ДО закрытия
+            val response = "HTTP/1.1 200 OK\r\nContent-Length: 3\r\nConnection: close\r\n\r\nOK\n"
+            output.write(response.toByteArray())
+            output.flush()
+
+        } catch (e: SocketTimeoutException) {
+            Log.w("TcpServer", "Таймаут клиента")
+        } catch (e: IOException) {
+            // Это нормально при закрытии соединения клиентом
+            if (!e.message?.contains("Socket closed", true)!! &&
+                !e.message?.contains("Broken pipe", true)!! &&
+                !e.message?.contains("Connection reset", true)!!) {
+                Log.e("TcpServer", "Реальная ошибка обработки", e)
+            }
+            // Иначе — молчим, это нормальное поведение HTTP
+        } catch (t: Throwable) {
+            Log.e("TcpServer", "Критическая ошибка", t)
         } finally {
-            try { socket.close() } catch (t: Throwable) { }
+            try { socket.close() } catch (ignored: Throwable) {}
         }
     }
 
