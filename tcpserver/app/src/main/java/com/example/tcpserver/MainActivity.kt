@@ -1,4 +1,3 @@
-
 package com.example.tcpserver
 
 import android.annotation.SuppressLint
@@ -15,9 +14,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.example.tcpserver.TcpServer
-import com.example.tcpserver.TcpServerService
-
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 
 class MainActivity : AppCompatActivity() {
 
@@ -27,21 +24,30 @@ class MainActivity : AppCompatActivity() {
     private lateinit var tvStatus: TextView
     private lateinit var tvAddress: TextView
 
-    // ← Добавь это поле
+    // ←←←←← LocalBroadcast-приёмник (работает всегда!)
     private val commandReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             val command = intent?.getStringExtra("command") ?: return
+
             runOnUiThread {
                 when (command.uppercase()) {
-                    "LED_ON" -> Toast.makeText(this@MainActivity, "LED ON", Toast.LENGTH_LONG).show()
-                    "LED_OFF" -> Toast.makeText(this@MainActivity, "LED OFF", Toast.LENGTH_LONG).show()
-                    else -> Toast.makeText(this@MainActivity, "Команда: $command", Toast.LENGTH_LONG).show()
+                    "LED_ON" -> {
+                        Toast.makeText(this@MainActivity, "LED ВКЛЮЧЁН", Toast.LENGTH_LONG).show()
+                        tvStatus.text = "LED: ВКЛЮЧЁН"
+                    }
+                    "LED_OFF" -> {
+                        Toast.makeText(this@MainActivity, "LED ВЫКЛЮЧЕН", Toast.LENGTH_LONG).show()
+                        tvStatus.text = "LED: ВЫКЛЮЧЕН"
+                    }
+                    else -> {
+                        Toast.makeText(this@MainActivity, "Команда: $command", Toast.LENGTH_LONG).show()
+                        tvStatus.text = "Команда: $command"
+                    }
                 }
             }
         }
     }
 
-    @SuppressLint("UnspecifiedRegisterReceiverFlag")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -59,16 +65,12 @@ class MainActivity : AppCompatActivity() {
 
         updateUi()
 
+        // ← Регистрируем LocalBroadcast-приёмник
+        LocalBroadcastManager.getInstance(this)
+            .registerReceiver(commandReceiver, IntentFilter("TCP_COMMAND"))
+
         btnToggle.setOnClickListener {
             if (isServerRunning) stopServer() else startServer()
-        }
-
-        // ← Регистрация приёмника с правильным флагом
-        val filter = IntentFilter("com.example.tcpserver.COMMAND_RECEIVED")
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            registerReceiver(commandReceiver, filter, RECEIVER_NOT_EXPORTED)
-        } else {
-            registerReceiver(commandReceiver, filter)
         }
     }
 
@@ -108,10 +110,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
-        // Обязательно отписываемся!
-        try {
-            unregisterReceiver(commandReceiver)
-        } catch (e: Exception) { /* уже отписан */ }
+        // Отписываемся от LocalBroadcast
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(commandReceiver)
         if (isServerRunning) stopServer()
         super.onDestroy()
     }
