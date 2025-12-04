@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">TCP</string>
+    <string name="tcp">TCP Сервер</string>
 </resources>
